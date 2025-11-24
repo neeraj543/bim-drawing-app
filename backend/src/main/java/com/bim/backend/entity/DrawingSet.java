@@ -5,40 +5,33 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "drawing_sets")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Task {
+public class DrawingSet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Builder.Default
-    private TaskStatus status = TaskStatus.TO_DO;
-
-    //Many tasks belong to one project
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    //A task may or may not be assigned to a user
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_to_id")
-    private User assignedTo;
+    @Column(name = "revision_number")
+    private String revisionNumber;
 
-    @Column(name = "due_date")
-    private LocalDateTime dueDate;
+    @Column(name = "is_latest")
+    @Builder.Default
+    private Boolean isLatest = false;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -46,7 +39,6 @@ public class Task {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    //Automatic timestamps. When you first save a task, both timestamps are set. 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -56,11 +48,5 @@ public class Task {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public enum TaskStatus {
-        TO_DO,
-        IN_PROGRESS,
-        DONE
     }
 }
