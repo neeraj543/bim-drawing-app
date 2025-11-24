@@ -92,5 +92,28 @@ Web app for BIM teams to organize Revit PDF drawings and track tasks. **Main ben
 
 ---
 
-## Notes to Add Later
-(Add any additional context, decisions, or reminders here as we progress)
+## Architecture Approach
+
+### Similar to MVC (Model-View-Controller) but adapted for React + REST API
+
+- **Model** = JPA Entities (User, Project, Task, DrawingSet, DrawingFile)
+- **View** = React Frontend (no Thymeleaf - we have a separate frontend)
+- **Controller** = Spring Boot REST Controllers (handles API requests/responses)
+- **Repository** = Spring Data JPA Repositories (database access layer)
+
+### Keep it Simple
+- No complex service layers initially
+- Controllers call repositories directly for now
+- Add layers only when needed
+- DTOs will separate API responses from database entities
+
+## Database Entities Created
+✅ User - username, password, email, fullName, timestamps
+✅ Project - name, description, owner, members (many-to-many)
+✅ Task - title, description, status (enum), project, assignedTo, dueDate
+✅ DrawingSet - name, description, project, revisionNumber, isLatest
+✅ DrawingFile - originalFileName, renamedFileName, filePath, fileSize
+
+## Next Steps
+- Create Spring Data Repositories for each entity
+- Create REST Controllers with basic CRUD endpoints
