@@ -19,7 +19,7 @@ public class Project {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String name; 
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -34,6 +34,7 @@ public class Project {
         joinColumns = @JoinColumn(name = "project_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @Builder.Default
     private Set<User> members = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
