@@ -20,6 +20,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.disable()) // disable cors handling
             .csrf(csrf -> csrf.disable()) // disable csrf protection
+            .headers(headers -> headers.frameOptions().sameOrigin()) 
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); //allow all request to everywhere, no auth or login as of yet
 
         return http.build();
