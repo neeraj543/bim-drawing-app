@@ -1,8 +1,13 @@
+import { Link } from 'react-router-dom'
+
 function ProjectCard({ project }) {
-  const { name, description, ownerName, createdAt } = project
+  const { id, name, description, ownerName, createdAt } = project
 
   return (
-    <div className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-indigo-200 transform hover:-translate-y-1">
+    <Link
+      to={`/projects/${id}`}
+      className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-indigo-200 transform hover:-translate-y-1 block cursor-pointer"
+    >
       <div className="bg-linear-to-r from-indigo-500 to-blue-500 h-2"></div>
 
       <div className="p-6">
@@ -38,7 +43,7 @@ function ProjectCard({ project }) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 
