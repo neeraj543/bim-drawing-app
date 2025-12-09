@@ -114,6 +114,48 @@ Web app for BIM teams to organize Revit PDF drawings and track tasks. **Main ben
 ✅ DrawingSet - name, description, project, revisionNumber, isLatest
 ✅ DrawingFile - originalFileName, renamedFileName, filePath, fileSize
 
-## Next Steps
-- Create Spring Data Repositories for each entity
-- Create REST Controllers with basic CRUD endpoints
+## Progress Tracker
+
+### ✅ COMPLETED
+**Backend:**
+- User entity, repository, DataInitializer (auto-creates system user)
+- Project entity, repository, controller, DTOs
+- All Project CRUD endpoints tested in Postman
+
+**Frontend:**
+- Dashboard page with project list
+- CreateProjectForm component
+- ProjectCard component
+- ProjectDetails page with edit/delete functionality
+- React Router configured
+- Modern UI with Tailwind CSS
+
+### 🚧 IN PROGRESS
+**Drawing Management (Feature 4):**
+- DrawingSet & DrawingFile entities already exist
+- DrawingSet & DrawingFile repositories already exist
+- **NEXT:** Create DTOs and controller for drawing management
+
+### 📋 TODO
+1. DrawingSet DTOs and controller
+2. File upload configuration
+3. File upload endpoint with auto-rename logic
+4. Frontend: Create DrawingSet UI
+5. Frontend: File upload UI
+6. Task Board (Feature 3)
+7. Revision History (Feature 5)
+8. User Authentication
+
+## Important Implementation Notes
+
+### Auto-Rename Logic
+- Happens DURING file upload (not after)
+- Extract sheet number from "Sheet_A101.pdf" → "A101"
+- Combine with DrawingSet metadata (revision, date, description)
+- Result: "A101_Floor-Plan-Level-1_RevB_2024-11-17.pdf"
+
+### Architecture Decisions Made
+- Backend serves JSON API only (no HTML)
+- Frontend is pure React SPA
+- H2 database for development (will switch to PostgreSQL)
+- System user auto-created on app startup
