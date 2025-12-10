@@ -9,9 +9,12 @@ function ProjectDetails() {
   const [error, setError] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [drawingSets, setDrawingSets] = useState([])
+  const [showCreateSetModal, setShowCreateSetModal] = useState(false)
 
   useEffect(() => {
     fetchProject()
+    fetchDrawingSets()
   }, [id])
 
   const fetchProject = async () => {
@@ -69,6 +72,35 @@ function ProjectDetails() {
     } catch (err) {
       setError(err.message)
       setShowDeleteDialog(false)
+    }
+  }
+
+  const fetchDrawingSets = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/projects/${id}/drawing-sets`)
+      if (response.ok) {
+        const data = await response.json()
+        setDrawingSets(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch drawing sets:', err)
+    }
+  }
+
+  const handleCreateDrawingSet = async (setData) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/projects/${id}/drawing-sets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...setData, projectId: parseInt(id) })
+      })
+
+      if (!response.ok) throw new Error('Failed to create drawing set')
+
+      await fetchDrawingSets()
+      setShowCreateSetModal(false)
+    } catch (err) {
+      throw new Error(err.message)
     }
   }
 
@@ -217,25 +249,48 @@ function ProjectDetails() {
         </div>
       </div>
 
-      {/* Drawings Section (Placeholder for future) */}
+      {/* Drawing Sets Section */}
       <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-        <div className="flex items-center gap-3 mb-6">
-          <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <h2 className="text-2xl font-bold text-gray-800">Drawings</h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <h2 className="text-2xl font-bold text-gray-800">Drawing Sets</h2>
+          </div>
+          <button
+            onClick={() => setShowCreateSetModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            New Drawing Set
+          </button>
         </div>
-        <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-          <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-          <p className="text-gray-600 font-medium">No drawings yet</p>
-          <p className="text-gray-500 text-sm mt-2">Drawing management coming soon!</p>
-        </div>
+
+        {drawingSets.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <p className="text-gray-600 font-medium">No drawing sets yet</p>
+            <p className="text-gray-500 text-sm mt-2">Create your first drawing set to upload PDFs</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {drawingSets.map(set => (
+              <DrawingSetCard key={set.id} set={set} onRefresh={fetchDrawingSets} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Edit Modal */}
       {showEditModal && <EditModal project={project} onClose={() => setShowEditModal(false)} onSave={handleUpdateProject} />}
+
+      {/* Create Drawing Set Modal */}
+      {showCreateSetModal && <CreateDrawingSetModal onClose={() => setShowCreateSetModal(false)} onSave={handleCreateDrawingSet} />}
 
       {/* Delete Confirmation Dialog */}
       {showDeleteDialog && <DeleteDialog onClose={() => setShowDeleteDialog(false)} onConfirm={handleDeleteProject} projectName={project.name} />}
@@ -348,6 +403,298 @@ function EditModal({ project, onClose, onSave }) {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Create Drawing Set Modal Component
+function CreateDrawingSetModal({ onClose, onSave }) {
+  const [formData, setFormData] = useState({ name: '', description: '', revisionNumber: '' })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!formData.name.trim() || !formData.revisionNumber.trim()) {
+      setError('Name and revision number are required')
+      return
+    }
+
+    try {
+      setLoading(true)
+      setError(null)
+      await onSave(formData)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
+        <div className="bg-linear-to-r from-indigo-500 to-blue-500 h-2"></div>
+        <div className="p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-gray-800">Create Drawing Set</h2>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-4">
+              <p className="font-medium">{error}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="e.g., Rev A - Initial Submission"
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Revision Number <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.revisionNumber}
+                onChange={(e) => setFormData(prev => ({ ...prev, revisionNumber: e.target.value }))}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="e.g., RevA"
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                rows="3"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                placeholder="Optional description"
+                disabled={loading}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+              >
+                {loading ? 'Creating...' : 'Create Set'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Drawing Set Card Component
+function DrawingSetCard({ set, onRefresh }) {
+  const [files, setFiles] = useState([])
+  const [showUpload, setShowUpload] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetchFiles()
+  }, [set.id])
+
+  const fetchFiles = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/drawing-sets/${set.id}/files`)
+      if (response.ok) {
+        const data = await response.json()
+        setFiles(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch files:', err)
+    }
+  }
+
+  const handleUpload = async (uploadedFiles, descriptions) => {
+    try {
+      setLoading(true)
+      const formData = new FormData()
+
+      uploadedFiles.forEach(file => {
+        formData.append('files', file)
+      })
+
+      descriptions.forEach(desc => {
+        formData.append('descriptions', desc)
+      })
+
+      const response = await fetch(`http://localhost:8080/api/drawing-sets/${set.id}/upload`, {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) throw new Error('Upload failed')
+
+      await fetchFiles()
+      await onRefresh()
+      setShowUpload(false)
+    } catch (err) {
+      alert('Upload failed: ' + err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <h3 className="text-xl font-bold text-gray-800">{set.name}</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {set.revisionNumber} • {new Date(set.createdAt).toLocaleDateString()} • {set.fileCount} files
+          </p>
+          {set.description && <p className="text-gray-600 mt-2">{set.description}</p>}
+        </div>
+        <button
+          onClick={() => setShowUpload(true)}
+          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md transition-all"
+        >
+          Upload PDFs
+        </button>
+      </div>
+
+      {files.length > 0 && (
+        <div className="mt-4 space-y-2">
+          <h4 className="font-semibold text-gray-700 text-sm">Files:</h4>
+          {files.map(file => (
+            <div key={file.id} className="flex items-center justify-between bg-gray-50 rounded px-4 py-2">
+              <div>
+                <p className="font-medium text-gray-800">{file.renamedFileName}</p>
+                <p className="text-xs text-gray-500">Original: {file.originalFileName}</p>
+              </div>
+              <span className="text-sm text-gray-600">{(file.fileSize / 1024).toFixed(1)} KB</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showUpload && <FileUploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} loading={loading} />}
+    </div>
+  )
+}
+
+// File Upload Modal Component
+function FileUploadModal({ onClose, onUpload, loading }) {
+  const [selectedFiles, setSelectedFiles] = useState([])
+  const [descriptions, setDescriptions] = useState([])
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files)
+    setSelectedFiles(files)
+    setDescriptions(files.map(() => ''))
+  }
+
+  const handleSubmit = () => {
+    if (selectedFiles.length === 0) {
+      alert('Please select files')
+      return
+    }
+    onUpload(selectedFiles, descriptions)
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-linear-to-r from-green-500 to-teal-500 h-2"></div>
+        <div className="p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-gray-800">Upload PDFs</h2>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700" disabled={loading}>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Select PDF Files</label>
+            <input
+              type="file"
+              accept=".pdf"
+              multiple
+              onChange={handleFileChange}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg"
+              disabled={loading}
+            />
+          </div>
+
+          {selectedFiles.length > 0 && (
+            <div className="space-y-3 mb-6">
+              <h3 className="font-semibold text-gray-700">Files to upload:</h3>
+              {selectedFiles.map((file, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
+                  <p className="font-medium text-gray-800 mb-2">{file.name}</p>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description (optional):
+                  </label>
+                  <input
+                    type="text"
+                    value={descriptions[index]}
+                    onChange={(e) => {
+                      const newDescs = [...descriptions]
+                      newDescs[index] = e.target.value
+                      setDescriptions(newDescs)
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    placeholder="e.g., Floor Plan Level 1"
+                    disabled={loading}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading || selectedFiles.length === 0}
+              className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+            >
+              {loading ? 'Uploading...' : `Upload ${selectedFiles.length} File${selectedFiles.length !== 1 ? 's' : ''}`}
+            </button>
+          </div>
         </div>
       </div>
     </div>
