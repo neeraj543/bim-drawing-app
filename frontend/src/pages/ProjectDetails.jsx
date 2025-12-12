@@ -68,7 +68,7 @@ function ProjectDetails() {
         throw new Error('Failed to delete project')
       }
 
-      navigate('/')
+      navigate('/dashboard')
     } catch (err) {
       setError(err.message)
       setShowDeleteDialog(false)
@@ -124,7 +124,7 @@ function ProjectDetails() {
     return (
       <div className="max-w-7xl mx-auto">
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/dashboard')}
           className="mb-6 flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,10 +149,10 @@ function ProjectDetails() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div>
       {/* Back Button */}
       <button
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/dashboard')}
         className="mb-6 flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

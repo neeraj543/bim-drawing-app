@@ -1,8 +1,8 @@
-# BIM Drawing Manager - Progress Checklist
+# BIM Drawing Manager - Task Tracker
 
 ## 📊 Current Status
-**Active Feature:** Feature 3 - Bulk Download & Custom Naming
 **Last Updated:** 2025-12-12
+**Active Work:** Frontend Redesign & Refactoring
 
 ---
 
@@ -35,42 +35,66 @@
   - [x] Save to organized structure: `uploads/project-{id}/set-{id}/`
   - [x] Store both original and renamed filenames
 - [x] Frontend: CreateDrawingSetModal
-- [x] Frontend: DrawingSetCard component
+- [x] Frontend: DrawingSetCard component (inline in ProjectDetails.jsx)
 - [x] Frontend: FileUploadModal with file picker and description inputs
 - [x] Frontend: Display files with renamed filenames
 - [x] Commits: `feat: Add DrawingSet DTOs and CRUD controller`, `feat: Add file upload with auto-rename functionality`
 
+### Feature 3: Bulk Download (Part A)
+- [x] Backend: ZIP download endpoint implemented
+  - [x] `GET /api/drawing-sets/{id}/download` - Bundles all files as ZIP
+  - [x] Uses Java's ZipOutputStream to create archive
+  - [x] Includes renamed filenames in ZIP
+- [x] Frontend: "Download All" button on DrawingSetCard
+- [x] Commit ready: `feat: Add bulk download feature for drawing sets`
+
 ---
 
-## 🚧 In Progress: Feature 3 - Bulk Download & Custom Naming
+## 🚧 Current Tasks (In Progress)
 
-### Part A: Bulk Download
-- [ ] Backend: Add ZIP download endpoint
-  - [ ] `GET /api/drawing-sets/{id}/download` - Bundle all files as ZIP
-  - [ ] Use Java's ZipOutputStream to create archive
-  - [ ] Include renamed filenames in ZIP
-- [ ] Frontend: Add "Download All" button on DrawingSetCard
-- [ ] Test: Verify ZIP downloads with correct filenames
+### Frontend Redesign & Architecture
+**Priority: HIGH**
 
-### Part B: Custom Naming Structures
+#### Task 1: Application Structure Redesign
+- [ ] Design proper application layout with:
+  - [ ] Navigation bar/sidebar
+  - [ ] Proper home page (not just dashboard redirect)
+  - [ ] Better routing structure
+  - [ ] Professional application feel (like a real SaaS app)
+- [ ] Create layout components:
+  - [ ] Header/Navbar component
+  - [ ] Sidebar component (if needed)
+  - [ ] Footer component
+  - [ ] Main layout wrapper
+- [ ] Update routing to include home page
+
+#### Task 2: Frontend Code Refactoring & Component Extraction
+**Problem:** ProjectDetails.jsx has 750+ lines with all components inline
+- [ ] Extract components from ProjectDetails.jsx into separate files:
+  - [ ] `EditModal.jsx` → `frontend/src/components/modals/EditProjectModal.jsx`
+  - [ ] `CreateDrawingSetModal.jsx` → `frontend/src/components/modals/CreateDrawingSetModal.jsx`
+  - [ ] `DrawingSetCard.jsx` → `frontend/src/components/DrawingSetCard.jsx`
+  - [ ] `FileUploadModal.jsx` → `frontend/src/components/modals/FileUploadModal.jsx`
+  - [ ] `DeleteDialog.jsx` → `frontend/src/components/modals/DeleteDialog.jsx`
+- [ ] Improve code organization:
+  - [ ] Create folder structure: `components/`, `components/modals/`, `components/cards/`
+  - [ ] Ensure each component is self-contained and readable
+  - [ ] Add proper prop types/documentation
+- [ ] Test that all functionality still works after refactoring
+
+---
+
+## 📋 Backlog (Future Features)
+
+### Feature 3: Custom Naming Structures (Part B) - ON HOLD
 - [ ] Backend: Add naming pattern support
   - [ ] Add `namingPattern` field to DrawingSet entity
   - [ ] Create predefined template options
   - [ ] Support placeholders: `{sheet}`, `{description}`, `{revision}`, `{date}`, `{project}`
   - [ ] Update `generateRenamedFileName()` to use selected pattern
-- [ ] Backend: Pattern validation logic
 - [ ] Frontend: Naming pattern selector in CreateDrawingSetModal
-  - [ ] Dropdown with template options:
-    - [ ] Template 1: `{sheet}_{description}_{revision}_{date}.pdf` (current default)
-    - [ ] Template 2: `{project}-{sheet}-{revision}.pdf`
-    - [ ] Template 3: `{sheet}_{date}_{revision}.pdf`
-    - [ ] Custom: User-provided pattern
+  - [ ] Dropdown with template options
   - [ ] Preview of example filename
-- [ ] Test: Create sets with different patterns and verify file naming
-
----
-
-## 📋 Backlog (Future Features)
 
 ### Feature 4: Tasks/Task Board
 - [ ] Backend: Task entity and repository
@@ -99,7 +123,7 @@
 - **Styling:** Tailwind CSS
 - **File Storage:** Local filesystem (`uploads/` directory)
 
-### Key File Locations
+### Current File Structure
 ```
 backend/src/main/java/com/bim/backend/
 ├── entity/          # DrawingSet, DrawingFile, Project, User
@@ -109,9 +133,34 @@ backend/src/main/java/com/bim/backend/
 └── config/          # DataInitializer (system user setup)
 
 frontend/src/
-├── pages/           # Dashboard, ProjectDetails
-├── components/      # CreateDrawingSetModal, FileUploadModal, DrawingSetCard
+├── pages/           # Dashboard, ProjectDetails (750+ lines - NEEDS REFACTORING)
+├── components/      # CreateProjectForm, ProjectCard (need to extract more)
 └── App.jsx          # React Router configuration
+```
+
+### Target File Structure (After Refactoring)
+```
+frontend/src/
+├── pages/
+│   ├── Home.jsx                    # NEW: Proper home/landing page
+│   ├── Dashboard.jsx               # Project listing
+│   └── ProjectDetails.jsx          # Simplified, components extracted
+├── components/
+│   ├── layout/
+│   │   ├── Header.jsx              # NEW: Navigation bar
+│   │   ├── Sidebar.jsx             # NEW: Optional sidebar
+│   │   └── Layout.jsx              # NEW: Main layout wrapper
+│   ├── cards/
+│   │   ├── ProjectCard.jsx         # Existing
+│   │   └── DrawingSetCard.jsx     # EXTRACT from ProjectDetails
+│   ├── modals/
+│   │   ├── EditProjectModal.jsx   # EXTRACT from ProjectDetails
+│   │   ├── CreateDrawingSetModal.jsx  # EXTRACT from ProjectDetails
+│   │   ├── FileUploadModal.jsx    # EXTRACT from ProjectDetails
+│   │   └── DeleteDialog.jsx       # EXTRACT from ProjectDetails
+│   └── forms/
+│       └── CreateProjectForm.jsx  # Existing
+└── App.jsx                         # Updated routing
 ```
 
 ### Current Endpoints
@@ -128,6 +177,7 @@ frontend/src/
 - GET `/api/projects/{projectId}/drawing-sets` - List sets for project
 - GET `/api/drawing-sets/{id}` - Get set details
 - DELETE `/api/drawing-sets/{id}` - Delete set
+- GET `/api/drawing-sets/{id}/download` - Download all files as ZIP
 
 **File Upload:**
 - POST `/api/drawing-sets/{setId}/upload` - Upload multiple PDFs with auto-rename
@@ -136,29 +186,14 @@ frontend/src/
 
 ## 🎯 Next Session Action Items
 
-### Immediate Next Steps (Feature 3):
-1. Implement ZIP download endpoint in DrawingSetController
-2. Add "Download All" button in DrawingSetCard
-3. Add `namingPattern` field to DrawingSet entity and migration
-4. Create naming pattern templates
-5. Update auto-rename logic to use selected pattern
-6. Add pattern selector UI to CreateDrawingSetModal
+### Immediate Priority:
+1. **Frontend Redesign:** Create proper home page and navigation structure
+2. **Code Refactoring:** Extract inline components from ProjectDetails.jsx
+3. **Commit:** Bulk download feature (already implemented, needs commit)
 
-### Testing Checklist:
-- [ ] ZIP download includes all files with correct names
-- [ ] Different naming patterns generate correct filenames
-- [ ] Pattern preview updates in real-time
-- [ ] Files uploaded with custom patterns are stored correctly
-
----
-
-## 📝 Git Status (Snapshot)
-```
-Current branch: master
-Modified: PROJECT_PLAN.md
-Modified: backend/src/main/java/com/bim/backend/controller/DrawingSetController.java
-Untracked: backend/uploads/project-1/set-1/*.pdf (3 test PDFs)
-```
+### After Frontend Work:
+- Resume Feature 3 Part B (Custom Naming Structures)
+- Begin Feature 4 (Task Board) or Feature 5 (Revision History)
 
 ---
 
@@ -167,3 +202,4 @@ Untracked: backend/uploads/project-1/set-1/*.pdf (3 test PDFs)
 2. ✅ **Method-by-method** - Show each method for review before creating next
 3. ✅ **Test before commit** - Verify functionality works
 4. ✅ **Realistic commits** - One commit per complete feature
+5. ✅ **Keep code clean** - Extract components, avoid huge files
