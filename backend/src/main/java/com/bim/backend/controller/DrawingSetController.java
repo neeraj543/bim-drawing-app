@@ -10,11 +10,16 @@ import com.bim.backend.repository.DrawingFileRepository;
 import com.bim.backend.repository.DrawingSetRepository;
 import com.bim.backend.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +31,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 @RequestMapping("/api")
@@ -161,6 +168,42 @@ public class DrawingSetController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
+    }
+
+    // Download all files in a drawing set as ZIP
+    @GetMapping("/drawing-sets/{id}/download")
+    public ResponseEntity<Resource> downloadDrawingSetAsZip(@PathVariable Long id) throws IOException {
+        DrawingSet drawingSet = drawingSetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+
+        List<DrawingFile> files = drawingFileRepository.findByDrawingSet(drawingSet);
+
+        // Create ZIP in memory
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            for (DrawingFile file : files) {
+                Path filePath = Paths.get(file.getFilePath());
+
+                // Add file to ZIP with renamed filename
+                ZipEntry zipEntry = new ZipEntry(file.getRenamedFileName());
+                zos.putNextEntry(zipEntry);
+
+                // Write file content
+                Files.copy(filePath, zos);
+                zos.closeEntry();
+            }
+        }
+
+        // Create resource from byte array
+        ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
+
+        // Set filename for download
+        String zipFilename = drawingSet.getName().replaceAll("[^A-Za-z0-9-]", "_") + ".zip";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + zipFilename + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     // Delete a drawing set

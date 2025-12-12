@@ -570,6 +570,25 @@ function DrawingSetCard({ set, onRefresh }) {
     }
   }
 
+  const handleDownloadAll = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/drawing-sets/${set.id}/download`)
+      if (!response.ok) throw new Error('Download failed')
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${set.name.replace(/[^A-Za-z0-9-]/g, '_')}.zip`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (err) {
+      alert('Download failed: ' + err.message)
+    }
+  }
+
   return (
     <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-4">
@@ -580,12 +599,25 @@ function DrawingSetCard({ set, onRefresh }) {
           </p>
           {set.description && <p className="text-gray-600 mt-2">{set.description}</p>}
         </div>
-        <button
-          onClick={() => setShowUpload(true)}
-          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md transition-all"
-        >
-          Upload PDFs
-        </button>
+        <div className="flex gap-2">
+          {files.length > 0 && (
+            <button
+              onClick={handleDownloadAll}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md transition-all flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download All
+            </button>
+          )}
+          <button
+            onClick={() => setShowUpload(true)}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md transition-all"
+          >
+            Upload PDFs
+          </button>
+        </div>
       </div>
 
       {files.length > 0 && (
