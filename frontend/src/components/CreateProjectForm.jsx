@@ -50,7 +50,7 @@ function CreateProjectForm({ onProjectCreated }) {
       // Clear success message after 2 seconds
       setTimeout(() => setSuccess(false), 2000)
     } catch (err) {
-      setError(err.message)
+      setError(err.message) 
     } finally {
       setLoading(false)
     }
