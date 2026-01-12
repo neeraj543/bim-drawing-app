@@ -12,6 +12,11 @@ import java.time.LocalDateTime;
 @Builder
 public class User {
 
+    public enum Role {
+        ADMIN,
+        USER
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +32,11 @@ public class User {
 
     @Column(name = "full_name")
     private String fullName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Role role = Role.USER;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

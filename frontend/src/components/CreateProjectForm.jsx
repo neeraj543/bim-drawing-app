@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { api } from '../utils/api'
 
 function CreateProjectForm({ onProjectCreated }) {
   const [formData, setFormData] = useState({
@@ -40,17 +41,7 @@ function CreateProjectForm({ onProjectCreated }) {
 
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:8080/api/projects', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to create project')
-      }
+      await api.post('/api/projects', formData)
 
       setSuccess(true)
       setFormData({

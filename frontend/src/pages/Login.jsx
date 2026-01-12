@@ -1,14 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 function Login() {
   const navigate = useNavigate()
+  const { login, isAuthenticated } = useAuth()
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: ''
   })
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -23,15 +31,27 @@ function Login() {
     setError(null)
     setLoading(true)
 
-    // Simulate login - replace with actual API call later
-    setTimeout(() => {
-      if (formData.email && formData.password) {
-        navigate('/dashboard')
-      } else {
-        setError('Please enter both email and password')
-        setLoading(false)
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(errorText || 'Login failed')
       }
-    }, 500)
+
+      const data = await response.json()
+      login(data)
+      navigate('/dashboard', { replace: true })
+    } catch (err) {
+      setError(err.message)
+      setLoading(false)
+    }
   }
 
   return (
@@ -58,16 +78,16 @@ function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                Email Address
+              <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
+                Username
               </label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
-                placeholder="you@example.com"
+                placeholder="Enter your username"
                 className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 disabled={loading}
                 required
@@ -136,7 +156,7 @@ function Login() {
         {/* Demo Note */}
         <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800 text-center">
-            <span className="font-semibold">Demo:</span> Enter any email and password to continue
+            <span className="font-semibold">Default Admin:</span> username: admin, password: admin123
           </p>
         </div>
       </div>

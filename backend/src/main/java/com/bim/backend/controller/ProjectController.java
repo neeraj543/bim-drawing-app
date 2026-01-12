@@ -8,6 +8,8 @@ import com.bim.backend.repository.ProjectRepository;
 import com.bim.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +27,10 @@ public class ProjectController {
         this.userRepository = userRepository;
     }
 
-    // Get all projects
+    // Get all projects (all users can see all projects)
     @GetMapping
     public ResponseEntity<List<ProjectResponse>> getAllProjects() {
-        User systemUser = userRepository.findByUsername("system")
-                .orElseThrow(() -> new RuntimeException("System user not found"));
-
-        List<ProjectResponse> projects = projectRepository.findByOwner(systemUser)
+        List<ProjectResponse> projects = projectRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -52,15 +51,18 @@ public class ProjectController {
     // Request body is the data from the backend and reponse body is the backend to frontend
     @PostMapping
     public ResponseEntity<ProjectResponse> createProject(@RequestBody ProjectCreateRequest request) {
-        User systemUser = userRepository.findByUsername("system")
-                .orElseThrow(() -> new RuntimeException("System user not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Project project = Project.builder()
                 .name(request.getName())
                 .projectNumber(request.getProjectNumber())
                 .projectName(request.getProjectName())
                 .description(request.getDescription())
-                .owner(systemUser)
+                .owner(currentUser)
                 .build();
 
         Project savedProject = projectRepository.save(project);

@@ -1,9 +1,16 @@
 package com.bim.backend.controller;
 
+import com.bim.backend.dto.CreateUserRequest;
 import com.bim.backend.dto.UserResponse;
 import com.bim.backend.entity.User;
 import com.bim.backend.repository.UserRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,32 +18,99 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // Get all users for dropdown selection
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserResponse> users = userRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
+        List<UserResponse> users = userRepository.findAll().stream()
+                .map(user -> UserResponse.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .fullName(user.getFullName())
+                        .role(user.getRole())
+                        .createdAt(user.getCreatedAt())
+                        .build())
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(users);
     }
 
-    private UserResponse mapToResponse(User user) {
-        return UserResponse.builder()
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .fullName(user.getFullName())
                 .email(user.getEmail())
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .createdAt(user.getCreatedAt())
                 .build();
+
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            return ResponseEntity.badRequest().body("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already exists");
+        }
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail())
+                .fullName(request.getFullName())
+                .role(request.getRole())
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        UserResponse userResponse = UserResponse.builder()
+                .id(savedUser.getId())
+                .username(savedUser.getUsername())
+                .email(savedUser.getEmail())
+                .fullName(savedUser.getFullName())
+                .role(savedUser.getRole())
+                .createdAt(savedUser.getCreatedAt())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+
+        if (currentUser.getId().equals(id)) {
+            return ResponseEntity.badRequest().body("Cannot delete yourself");
+        }
+
+        User userToDelete = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userRepository.delete(userToDelete);
+
+        return ResponseEntity.ok("User deleted successfully");
     }
 }

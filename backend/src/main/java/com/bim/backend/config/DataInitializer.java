@@ -5,26 +5,28 @@ import com.bim.backend.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    public CommandLineRunner initializeData(UserRepository userRepository) {
+    public CommandLineRunner initializeData(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            // Check if system user already exists
-            if (!userRepository.existsByUsername("system")) {
-                User systemUser = User.builder()
-                        .username("system")
-                        .password("system123")
-                        .email("system@bim.local")
-                        .fullName("System User")
+            // Create default admin user
+            if (!userRepository.existsByUsername("admin")) {
+                User adminUser = User.builder()
+                        .username("admin")
+                        .password(passwordEncoder.encode("admin123"))
+                        .email("admin@bim.local")
+                        .fullName("Administrator")
+                        .role(User.Role.ADMIN)
                         .build();
 
-                userRepository.save(systemUser);
-                System.out.println("✓ System user created successfully");
+                userRepository.save(adminUser);
+                System.out.println("✓ Admin user created (username: admin, password: admin123)");
             } else {
-                System.out.println("✓ System user already exists");
+                System.out.println("✓ Admin user already exists");
             }
         };
     }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { EditModal, CreateDrawingSetModal, DeleteDialog } from '../components/ProjectDetails/Modals'
 import DrawingSetCard from '../components/ProjectDetails/DrawingSetCard'
+import { api } from '../utils/api'
 
 function ProjectDetails() {
   const { id } = useParams()
@@ -23,13 +24,7 @@ function ProjectDetails() {
   const fetchProject = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:8080/api/projects/${id}`)
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch project')
-      }
-
-      const data = await response.json()
+      const data = await api.get(`/api/projects/${id}`)
       setProject(data)
       setError(null)
     } catch (err) {
@@ -42,18 +37,7 @@ function ProjectDetails() {
 
   const handleUpdateProject = async (updatedData) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/projects/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedData)
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to update project')
-      }
-
+      await api.put(`/api/projects/${id}`, updatedData)
       await fetchProject()
       setShowEditModal(false)
     } catch (err) {
@@ -63,14 +47,7 @@ function ProjectDetails() {
 
   const handleDeleteProject = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/projects/${id}`, {
-        method: 'DELETE'
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete project')
-      }
-
+      await api.delete(`/api/projects/${id}`)
       navigate('/dashboard')
     } catch (err) {
       setError(err.message)
@@ -80,11 +57,8 @@ function ProjectDetails() {
 
   const fetchDrawingSets = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/projects/${id}/drawing-sets`)
-      if (response.ok) {
-        const data = await response.json()
-        setDrawingSets(data)
-      }
+      const data = await api.get(`/api/projects/${id}/drawing-sets`)
+      setDrawingSets(data)
     } catch (err) {
       console.error('Failed to fetch drawing sets:', err)
     }
@@ -92,14 +66,7 @@ function ProjectDetails() {
 
   const handleCreateDrawingSet = async (setData) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/projects/${id}/drawing-sets`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...setData, projectId: parseInt(id) })
-      })
-
-      if (!response.ok) throw new Error('Failed to create drawing set')
-
+      await api.post(`/api/projects/${id}/drawing-sets`, { ...setData, projectId: parseInt(id) })
       await fetchDrawingSets()
       setShowCreateSetModal(false)
     } catch (err) {

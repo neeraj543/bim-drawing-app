@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ProjectCard from '../components/ProjectCard'
 import CreateProjectForm from '../components/CreateProjectForm'
+import { api } from '../utils/api'
 
 function Dashboard() {
   const [projects, setProjects] = useState([])
@@ -19,13 +20,7 @@ function Dashboard() {
   const fetchProjects = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:8080/api/projects')
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch projects')
-      }
-
-      const data = await response.json()
+      const data = await api.get('/api/projects')
       setProjects(data)
       setError(null)
     } catch (err) {
