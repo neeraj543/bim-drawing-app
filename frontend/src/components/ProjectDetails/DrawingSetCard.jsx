@@ -23,7 +23,7 @@ function DrawingSetCard({ set, onRefresh }) {
     }
   }
 
-  const handleUpload = async (uploadedFiles, descriptions) => {
+  const handleUpload = async (uploadedFiles, floors, designerInitials) => {
     try {
       setLoading(true)
       const formData = new FormData()
@@ -32,8 +32,12 @@ function DrawingSetCard({ set, onRefresh }) {
         formData.append('files', file)
       })
 
-      descriptions.forEach(desc => {
-        formData.append('descriptions', desc)
+      floors.forEach(floor => {
+        formData.append('floors', floor)
+      })
+
+      designerInitials.forEach(initials => {
+        formData.append('designerInitials', initials)
       })
 
       const response = await fetch(`http://localhost:8080/api/drawing-sets/${set.id}/upload`, {

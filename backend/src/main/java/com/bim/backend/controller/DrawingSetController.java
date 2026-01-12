@@ -112,15 +112,21 @@ public class DrawingSetController {
         return ResponseEntity.ok(files);
     }
 
-    // Upload files to a drawing set with auto-rename
+    // Upload files to a drawing set with metadata
     @PostMapping("/drawing-sets/{setId}/upload")
     public ResponseEntity<List<DrawingFileResponse>> uploadFiles(
             @PathVariable Long setId,
             @RequestParam("files") MultipartFile[] files,
-            @RequestParam(value = "descriptions", required = false) String[] descriptions) throws IOException {
+            @RequestParam("floors") String[] floors,
+            @RequestParam("designerInitials") String[] designerInitials) throws IOException {
 
         DrawingSet drawingSet = drawingSetRepository.findById(setId)
                 .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+
+        // Validate array lengths match
+        if (floors.length != files.length || designerInitials.length != files.length) {
+            throw new IllegalArgumentException("Floors and designer initials arrays must match files array length");
+        }
 
         // Create upload directory if it doesn't exist
         Path uploadPath = Paths.get(uploadDir, "project-" + drawingSet.getProject().getId(), "set-" + setId);
@@ -132,32 +138,34 @@ public class DrawingSetController {
             MultipartFile file = files[i];
             String originalFileName = file.getOriginalFilename();
 
-            // Extract sheet number from filename (e.g., "Sheet_A101.pdf" -> "A101")
-            String sheetNumber = extractSheetNumber(originalFileName);
+            // Validate required fields
+            if (floors[i] == null || floors[i].trim().isEmpty()) {
+                throw new IllegalArgumentException("Floor is required for file: " + originalFileName);
+            }
+            if (designerInitials[i] == null || designerInitials[i].trim().isEmpty()) {
+                throw new IllegalArgumentException("Designer initials are required for file: " + originalFileName);
+            }
 
-            // Get description (use index if provided, otherwise use empty string)
-            String description = (descriptions != null && i < descriptions.length)
-                ? descriptions[i]
-                : "";
+            // Generate UUID-based filename for storage
+            String extension = "";
+            if (originalFileName != null && originalFileName.contains(".")) {
+                extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            }
+            String storedFileName = java.util.UUID.randomUUID().toString() + extension;
 
-            // Generate renamed filename: A101_Floor-Plan_RevA_2025-12-09.pdf
-            String renamedFileName = generateRenamedFileName(
-                sheetNumber,
-                description,
-                drawingSet.getRevisionNumber()
-            );
-
-            // Save file to disk
-            Path filePath = uploadPath.resolve(renamedFileName);
+            // Save file to disk with UUID name
+            Path filePath = uploadPath.resolve(storedFileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Create DrawingFile record
+            // Create DrawingFile record with metadata
             DrawingFile drawingFile = DrawingFile.builder()
                     .drawingSet(drawingSet)
                     .originalFileName(originalFileName)
-                    .storedFileName(renamedFileName)
+                    .storedFileName(storedFileName)
                     .filePath(filePath.toString())
                     .fileSize(file.getSize())
+                    .floor(floors[i].trim())
+                    .designerInitials(designerInitials[i].trim())
                     .build();
 
             uploadedFiles.add(drawingFileRepository.save(drawingFile));

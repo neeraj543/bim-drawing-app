@@ -1,13 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function FileUploadModal({ onClose, onUpload, loading }) {
   const [selectedFiles, setSelectedFiles] = useState([])
-  const [descriptions, setDescriptions] = useState([])
+  const [floors, setFloors] = useState([])
+  const [designerInitials, setDesignerInitials] = useState([])
+  const [users, setUsers] = useState([])
+  const [loadingUsers, setLoadingUsers] = useState(true)
+
+  // Fetch users for dropdown
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/users')
+        if (response.ok) {
+          const data = await response.json()
+          setUsers(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch users:', error)
+      } finally {
+        setLoadingUsers(false)
+      }
+    }
+    fetchUsers()
+  }, [])
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files)
     setSelectedFiles(files)
-    setDescriptions(files.map(() => ''))
+    setFloors(files.map(() => ''))
+    setDesignerInitials(files.map(() => ''))
   }
 
   const handleSubmit = () => {
@@ -15,7 +37,20 @@ function FileUploadModal({ onClose, onUpload, loading }) {
       alert('Please select files')
       return
     }
-    onUpload(selectedFiles, descriptions)
+
+    // Validate all floors and designer initials are filled
+    for (let i = 0; i < selectedFiles.length; i++) {
+      if (!floors[i] || floors[i].trim() === '') {
+        alert(`Please enter floor for file: ${selectedFiles[i].name}`)
+        return
+      }
+      if (!designerInitials[i] || designerInitials[i].trim() === '') {
+        alert(`Please select designer initials for file: ${selectedFiles[i].name}`)
+        return
+      }
+    }
+
+    onUpload(selectedFiles, floors, designerInitials)
   }
 
   return (
@@ -45,26 +80,56 @@ function FileUploadModal({ onClose, onUpload, loading }) {
           </div>
 
           {selectedFiles.length > 0 && (
-            <div className="space-y-3 mb-6">
-              <h3 className="font-semibold text-gray-700">Files to upload:</h3>
+            <div className="space-y-4 mb-6">
+              <h3 className="font-semibold text-gray-700">Files to upload - Enter metadata for each file:</h3>
               {selectedFiles.map((file, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                  <p className="font-medium text-gray-800 mb-2">{file.name}</p>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description (optional):
-                  </label>
-                  <input
-                    type="text"
-                    value={descriptions[index]}
-                    onChange={(e) => {
-                      const newDescs = [...descriptions]
-                      newDescs[index] = e.target.value
-                      setDescriptions(newDescs)
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    placeholder="e.g., Floor Plan Level 1"
-                    disabled={loading}
-                  />
+                <div key={index} className="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <p className="font-medium text-gray-800 mb-3">{file.name}</p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Floor Input */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                        Floor <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={floors[index]}
+                        onChange={(e) => {
+                          const newFloors = [...floors]
+                          newFloors[index] = e.target.value
+                          setFloors(newFloors)
+                        }}
+                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="e.g., Gelijkvloers, Verdieping1"
+                        disabled={loading}
+                      />
+                    </div>
+
+                    {/* Designer Initials Dropdown */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                        Designer Initials <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        value={designerInitials[index]}
+                        onChange={(e) => {
+                          const newInitials = [...designerInitials]
+                          newInitials[index] = e.target.value
+                          setDesignerInitials(newInitials)
+                        }}
+                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        disabled={loading || loadingUsers}
+                      >
+                        <option value="">Select designer...</option>
+                        {users.map(user => (
+                          <option key={user.id} value={user.username.substring(0, 3).toUpperCase()}>
+                            {user.username} ({user.username.substring(0, 3).toUpperCase()})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -80,7 +145,7 @@ function FileUploadModal({ onClose, onUpload, loading }) {
             </button>
             <button
               onClick={handleSubmit}
-              disabled={loading || selectedFiles.length === 0}
+              disabled={loading || selectedFiles.length === 0 || loadingUsers}
               className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50"
             >
               {loading ? 'Uploading...' : `Upload ${selectedFiles.length} File${selectedFiles.length !== 1 ? 's' : ''}`}

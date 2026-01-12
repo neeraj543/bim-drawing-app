@@ -50,14 +50,15 @@ public class DrawingFile {
 
     /**
      * Generates the standardized download name for this drawing file.
-     * Format: {projectNumber}_{projectName}_PROD_{version}_{designerInitials}.pdf
-     * Example: 2025001_Wiekevorst_PROD_RevA_eDP.pdf
+     * Format: {projectNumber}_{projectName}_PROD_{floor}_{version}_{designerInitials}.pdf
+     * Example: 2025001_Wiekevorst_PROD_Gelijkvloers_01_eDP.pdf
      *
      * @return the generated download filename
      */
     public String generateDownloadName() {
         String projectNumber = this.drawingSet.getProject().getProjectNumber();
         String projectName = this.drawingSet.getProject().getProjectName();
+        String floorName = this.floor != null ? this.floor : "";
         String version = this.drawingSet.getRevisionNumber();
         String initials = this.designerInitials != null ? this.designerInitials : "";
 
@@ -67,9 +68,10 @@ public class DrawingFile {
             extension = originalFileName.substring(originalFileName.lastIndexOf("."));
         }
 
-        return String.format("%s_%s_PROD_%s_%s%s",
+        return String.format("%s_%s_PROD_%s_%s_%s%s",
                 projectNumber,
                 projectName,
+                floorName,
                 version,
                 initials,
                 extension);
