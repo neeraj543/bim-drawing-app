@@ -6,6 +6,7 @@ import Layout from './components/layout/Layout'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import ProjectDetails from './pages/ProjectDetails'
+import Tasks from './pages/Tasks'
 import Login from './pages/Login'
 import UserManagement from './pages/UserManagement'
 import './App.css'
@@ -31,6 +32,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <ProjectDetails />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/tasks"
+              element={
+                <PrivateRoute>
+                  <Tasks />
                 </PrivateRoute>
               }
             />

@@ -28,6 +28,34 @@ public class DataInitializer {
             } else {
                 System.out.println("✓ Admin user already exists");
             }
+
+            // Create test user 1
+            if (!userRepository.existsByUsername("john")) {
+                User user1 = User.builder()
+                        .username("john")
+                        .password(passwordEncoder.encode("password123"))
+                        .email("john@bim.local")
+                        .fullName("John Smith")
+                        .role(User.Role.USER)
+                        .build();
+
+                userRepository.save(user1);
+                System.out.println("✓ Test user created (username: john, password: password123)");
+            }
+
+            // Create test user 2
+            if (!userRepository.existsByUsername("sarah")) {
+                User user2 = User.builder()
+                        .username("sarah")
+                        .password(passwordEncoder.encode("password123"))
+                        .email("sarah@bim.local")
+                        .fullName("Sarah Johnson")
+                        .role(User.Role.USER)
+                        .build();
+
+                userRepository.save(user2);
+                System.out.println("✓ Test user created (username: sarah, password: password123)");
+            }
         };
     }
 }

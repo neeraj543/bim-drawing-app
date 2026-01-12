@@ -2,6 +2,7 @@ package com.bim.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +12,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Task {
+
+    public enum TaskStatus {
+        TO_DO,
+        IN_PROGRESS,
+        DONE
+    }
+
+    public enum Priority {
+        LOW,
+        MEDIUM,
+        HIGH
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,18 +40,28 @@ public class Task {
     @Builder.Default
     private TaskStatus status = TaskStatus.TO_DO;
 
-    //Many tasks belong to one project
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
-    private Project project;
-
-    //A task may or may not be assigned to a user
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_to_id")
-    private User assignedTo;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Priority priority = Priority.MEDIUM;
 
     @Column(name = "due_date")
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
+
+    // Many tasks belong to one drawing set
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "drawing_set_id", nullable = false)
+    private DrawingSet drawingSet;
+
+    // Task is assigned to a user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_user_id", nullable = false)
+    private User assignedUser;
+
+    // Task creator (admin/mentor who created the task)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_id", nullable = false)
+    private User createdBy;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -46,7 +69,7 @@ public class Task {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    //Automatic timestamps. When you first save a task, both timestamps are set. 
+    // Automatic timestamps. When you first save a task, both timestamps are set.
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -56,11 +79,5 @@ public class Task {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public enum TaskStatus {
-        TO_DO,
-        IN_PROGRESS,
-        DONE
     }
 }
