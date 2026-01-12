@@ -3,6 +3,8 @@ import { useState } from 'react'
 function CreateProjectForm({ onProjectCreated }) {
   const [formData, setFormData] = useState({
     name: '',
+    projectNumber: '',
+    projectName: '',
     description: ''
   })
   const [loading, setLoading] = useState(false)
@@ -11,10 +13,10 @@ function CreateProjectForm({ onProjectCreated }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
+    setFormData({
+      ...formData,
       [name]: value
-    }))
+    })
   }
 
   const handleSubmit = async (e) => {
@@ -22,8 +24,17 @@ function CreateProjectForm({ onProjectCreated }) {
     setError(null)
     setSuccess(false)
 
+    // Validation
     if (!formData.name.trim()) {
       setError('Project name is required')
+      return
+    }
+    if (!formData.projectNumber.trim()) {
+      setError('Project number is required')
+      return
+    }
+    if (!formData.projectName.trim()) {
+      setError('Project location/client is required')
       return
     }
 
@@ -42,7 +53,12 @@ function CreateProjectForm({ onProjectCreated }) {
       }
 
       setSuccess(true)
-      setFormData({ name: '', description: '' })
+      setFormData({
+        name: '',
+        projectNumber: '',
+        projectName: '',
+        description: ''
+      })
 
       // Notify parent to refresh projects
       onProjectCreated()
@@ -50,7 +66,7 @@ function CreateProjectForm({ onProjectCreated }) {
       // Clear success message after 2 seconds
       setTimeout(() => setSuccess(false), 2000)
     } catch (err) {
-      setError(err.message) 
+      setError(err.message)
     } finally {
       setLoading(false)
     }
@@ -80,6 +96,7 @@ function CreateProjectForm({ onProjectCreated }) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Project Name */}
         <div>
           <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
             Project Name <span className="text-red-500">*</span>
@@ -90,12 +107,48 @@ function CreateProjectForm({ onProjectCreated }) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="e.g., Office Building Renovation"
+            placeholder="e.g., Wiekevorst Office Building"
             className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
             disabled={loading}
           />
         </div>
 
+        {/* Project Number and Location/Client Row */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="projectNumber" className="block text-sm font-semibold text-gray-700 mb-2">
+              Project Number <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="projectNumber"
+              name="projectNumber"
+              value={formData.projectNumber}
+              onChange={handleChange}
+              placeholder="e.g., 2025001"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              disabled={loading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="projectName" className="block text-sm font-semibold text-gray-700 mb-2">
+              Location/Client <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="projectName"
+              name="projectName"
+              value={formData.projectName}
+              onChange={handleChange}
+              placeholder="e.g., Wiekevorst"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        {/* Description */}
         <div>
           <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
             Description

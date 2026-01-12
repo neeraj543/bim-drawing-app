@@ -19,7 +19,13 @@ public class Project {
     private Long id;
 
     @Column(nullable = false)
-    private String name; 
+    private String name; // User-defined project name (e.g., "Wiekevorst Office Building")
+
+    @Column(nullable = false)
+    private String projectNumber; // e.g., "2025001" - shared across all drawing sets
+
+    @Column(nullable = false)
+    private String projectName; // e.g., "Wiekevorst" - shared across all drawing sets
 
     @Column(columnDefinition = "TEXT")
     private String description;

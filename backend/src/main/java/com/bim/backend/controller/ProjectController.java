@@ -57,6 +57,8 @@ public class ProjectController {
 
         Project project = Project.builder()
                 .name(request.getName())
+                .projectNumber(request.getProjectNumber())
+                .projectName(request.getProjectName())
                 .description(request.getDescription())
                 .owner(systemUser)
                 .build();
@@ -75,6 +77,8 @@ public class ProjectController {
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         project.setName(request.getName());
+        project.setProjectNumber(request.getProjectNumber());
+        project.setProjectName(request.getProjectName());
         project.setDescription(request.getDescription());
 
         Project updatedProject = projectRepository.save(project);
@@ -95,6 +99,8 @@ public class ProjectController {
         return ProjectResponse.builder()
                 .id(project.getId())
                 .name(project.getName())
+                .projectNumber(project.getProjectNumber())
+                .projectName(project.getProjectName())
                 .description(project.getDescription())
                 .ownerName(project.getOwner().getUsername())
                 .createdAt(project.getCreatedAt())

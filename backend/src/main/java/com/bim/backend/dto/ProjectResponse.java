@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 public class ProjectResponse {
     private Long id;
     private String name;
+    private String projectNumber;
+    private String projectName;
     private String description;
     private String ownerName;
     private LocalDateTime createdAt;

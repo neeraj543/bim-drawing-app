@@ -159,3 +159,5 @@ Web app for BIM teams to organize Revit PDF drawings and track tasks. **Main ben
 - Frontend is pure React SPA
 - H2 database for development (will switch to PostgreSQL)
 - System user auto-created on app startup
+
+

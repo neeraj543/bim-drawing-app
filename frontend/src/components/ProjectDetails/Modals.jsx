@@ -2,7 +2,9 @@ import { useState } from 'react'
 
 export function EditModal({ project, onClose, onSave }) {
   const [formData, setFormData] = useState({
-    name: project.name,
+    name: project.name || '',
+    projectNumber: project.projectNumber || '',
+    projectName: project.projectName || '',
     description: project.description || ''
   })
   const [loading, setLoading] = useState(false)
@@ -10,13 +12,26 @@ export function EditModal({ project, onClose, onSave }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setFormData({
+      ...formData,
+      [name]: value
+    })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Validation
     if (!formData.name.trim()) {
       setError('Project name is required')
+      return
+    }
+    if (!formData.projectNumber.trim()) {
+      setError('Project number is required')
+      return
+    }
+    if (!formData.projectName.trim()) {
+      setError('Project location/client is required')
       return
     }
 
@@ -56,6 +71,7 @@ export function EditModal({ project, onClose, onSave }) {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Project Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
                 Project Name <span className="text-red-500">*</span>
@@ -66,11 +82,48 @@ export function EditModal({ project, onClose, onSave }) {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                placeholder="e.g., Wiekevorst Office Building"
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 disabled={loading}
               />
             </div>
 
+            {/* Project Number and Location/Client Row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="projectNumber" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Project Number <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="projectNumber"
+                  name="projectNumber"
+                  value={formData.projectNumber}
+                  onChange={handleChange}
+                  placeholder="e.g., 2025001"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  disabled={loading}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="projectName" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Location/Client <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="projectName"
+                  name="projectName"
+                  value={formData.projectName}
+                  onChange={handleChange}
+                  placeholder="e.g., Wiekevorst"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            {/* Description */}
             <div>
               <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
                 Description

@@ -155,7 +155,7 @@ public class DrawingSetController {
             DrawingFile drawingFile = DrawingFile.builder()
                     .drawingSet(drawingSet)
                     .originalFileName(originalFileName)
-                    .renamedFileName(renamedFileName)
+                    .storedFileName(renamedFileName)
                     .filePath(filePath.toString())
                     .fileSize(file.getSize())
                     .build();
@@ -184,8 +184,8 @@ public class DrawingSetController {
             for (DrawingFile file : files) {
                 Path filePath = Paths.get(file.getFilePath());
 
-                // Add file to ZIP with renamed filename
-                ZipEntry zipEntry = new ZipEntry(file.getRenamedFileName());
+                // Add file to ZIP with dynamically generated filename
+                ZipEntry zipEntry = new ZipEntry(file.generateDownloadName());
                 zos.putNextEntry(zipEntry);
 
                 // Write file content
@@ -278,7 +278,7 @@ public class DrawingSetController {
         return DrawingFileResponse.builder()
                 .id(file.getId())
                 .originalFileName(file.getOriginalFileName())
-                .renamedFileName(file.getRenamedFileName())
+                .renamedFileName(file.generateDownloadName())
                 .fileSize(file.getFileSize())
                 .createdAt(file.getCreatedAt())
                 .build();
