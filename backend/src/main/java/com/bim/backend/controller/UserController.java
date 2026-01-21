@@ -3,6 +3,7 @@ package com.bim.backend.controller;
 import com.bim.backend.dto.CreateUserRequest;
 import com.bim.backend.dto.UserResponse;
 import com.bim.backend.entity.User;
+import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class UserController {
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
@@ -100,14 +101,14 @@ public class UserController {
         String currentUsername = authentication.getName();
 
         User currentUser = userRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new RuntimeException("Current user not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + currentUsername));
 
         if (currentUser.getId().equals(id)) {
             return ResponseEntity.badRequest().body("Cannot delete yourself");
         }
 
         User userToDelete = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         userRepository.delete(userToDelete);
 

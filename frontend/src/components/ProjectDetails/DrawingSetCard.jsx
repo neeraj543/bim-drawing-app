@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { api } from '../../utils/api'
 import FileUploadModal from './FileUploadModal'
 
 function DrawingSetCard({ set, onRefresh }) {
@@ -13,11 +14,8 @@ function DrawingSetCard({ set, onRefresh }) {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/drawing-sets/${set.id}/files`)
-      if (response.ok) {
-        const data = await response.json()
-        setFiles(data)
-      }
+      const data = await api.get(`/api/drawing-sets/${set.id}/files`)
+      setFiles(data)
     } catch (err) {
       console.error('Failed to fetch files:', err)
     }
@@ -40,12 +38,7 @@ function DrawingSetCard({ set, onRefresh }) {
         formData.append('designerInitials', initials)
       })
 
-      const response = await fetch(`http://localhost:8080/api/drawing-sets/${set.id}/upload`, {
-        method: 'POST',
-        body: formData
-      })
-
-      if (!response.ok) throw new Error('Upload failed')
+      await api.upload(`/api/drawing-sets/${set.id}/upload`, formData)
 
       await fetchFiles()
       await onRefresh()

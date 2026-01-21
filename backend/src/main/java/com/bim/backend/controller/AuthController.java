@@ -4,6 +4,7 @@ import com.bim.backend.dto.AuthResponse;
 import com.bim.backend.dto.LoginRequest;
 import com.bim.backend.dto.RegisterRequest;
 import com.bim.backend.entity.User;
+import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.UserRepository;
 import com.bim.backend.util.JwtUtil;
 import jakarta.validation.Valid;
@@ -44,7 +45,7 @@ public class AuthController {
             );
 
             User user = userRepository.findByUsername(loginRequest.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
             String token = jwtUtil.generateToken(user.getUsername());
 

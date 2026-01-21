@@ -4,6 +4,7 @@ import com.bim.backend.dto.ProjectCreateRequest;
 import com.bim.backend.dto.ProjectResponse;
 import com.bim.backend.entity.Project;
 import com.bim.backend.entity.User;
+import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.ProjectRepository;
 import com.bim.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class ProjectController {
     @GetMapping("/{id}")
     public ResponseEntity<ProjectResponse> getProjectById(@PathVariable Long id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
 
         return ResponseEntity.ok(mapToResponse(project));
     }
@@ -55,7 +56,7 @@ public class ProjectController {
         String username = authentication.getName();
 
         User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
 
         Project project = Project.builder()
                 .name(request.getName())
@@ -76,7 +77,7 @@ public class ProjectController {
             @RequestBody ProjectCreateRequest request) {
 
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
 
         project.setName(request.getName());
         project.setProjectNumber(request.getProjectNumber());
@@ -91,7 +92,7 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
 
         projectRepository.delete(project);
         return ResponseEntity.noContent().build();

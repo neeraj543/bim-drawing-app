@@ -58,7 +58,7 @@ function CreateProjectForm({ onProjectCreated }) {
       setTimeout(() => setSuccess(false), 2000)
     } catch (err) {
       setError(err.message)
-    } finally {
+    } finally { 
       setLoading(false)
     }
   }

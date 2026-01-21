@@ -18,6 +18,9 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+data/
+uploads/
+backend.log
 
 ### STS ###
 .apt_generated

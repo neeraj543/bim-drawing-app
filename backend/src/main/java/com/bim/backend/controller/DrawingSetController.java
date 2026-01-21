@@ -6,6 +6,7 @@ import com.bim.backend.dto.DrawingSetResponse;
 import com.bim.backend.entity.DrawingFile;
 import com.bim.backend.entity.DrawingSet;
 import com.bim.backend.entity.Project;
+import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.DrawingFileRepository;
 import com.bim.backend.repository.DrawingSetRepository;
 import com.bim.backend.repository.ProjectRepository;
@@ -61,7 +62,7 @@ public class DrawingSetController {
             @RequestBody DrawingSetCreateRequest request) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
 
         DrawingSet drawingSet = DrawingSet.builder()
                 .name(request.getName())
@@ -79,7 +80,7 @@ public class DrawingSetController {
     @GetMapping("/projects/{projectId}/drawing-sets")
     public ResponseEntity<List<DrawingSetResponse>> getDrawingSetsByProject(@PathVariable Long projectId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
 
         List<DrawingSetResponse> drawingSets = drawingSetRepository.findByProjectOrderByCreatedAtDesc(project)
                 .stream()
@@ -93,7 +94,7 @@ public class DrawingSetController {
     @GetMapping("/drawing-sets/{id}")
     public ResponseEntity<DrawingSetResponse> getDrawingSetById(@PathVariable Long id) {
         DrawingSet drawingSet = drawingSetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing set not found with id: " + id));
 
         return ResponseEntity.ok(mapToResponse(drawingSet));
     }
@@ -102,7 +103,7 @@ public class DrawingSetController {
     @GetMapping("/drawing-sets/{id}/files")
     public ResponseEntity<List<DrawingFileResponse>> getFilesByDrawingSet(@PathVariable Long id) {
         DrawingSet drawingSet = drawingSetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing set not found with id: " + id));
 
         List<DrawingFileResponse> files = drawingFileRepository.findByDrawingSet(drawingSet)
                 .stream()
@@ -121,7 +122,7 @@ public class DrawingSetController {
             @RequestParam("designerInitials") String[] designerInitials) throws IOException {
 
         DrawingSet drawingSet = drawingSetRepository.findById(setId)
-                .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing set not found with id: " + setId));
 
         // Validate array lengths match
         if (floors.length != files.length || designerInitials.length != files.length) {
@@ -182,7 +183,7 @@ public class DrawingSetController {
     @GetMapping("/drawing-sets/{id}/download")
     public ResponseEntity<Resource> downloadDrawingSetAsZip(@PathVariable Long id) throws IOException {
         DrawingSet drawingSet = drawingSetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing set not found with id: " + id));
 
         List<DrawingFile> files = drawingFileRepository.findByDrawingSet(drawingSet);
 
@@ -218,7 +219,7 @@ public class DrawingSetController {
     @DeleteMapping("/drawing-sets/{id}")
     public ResponseEntity<Void> deleteDrawingSet(@PathVariable Long id) {
         DrawingSet drawingSet = drawingSetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing set not found with id: " + id));
 
         drawingSetRepository.delete(drawingSet);
         return ResponseEntity.noContent().build();

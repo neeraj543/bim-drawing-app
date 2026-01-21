@@ -6,6 +6,7 @@ import com.bim.backend.dto.UpdateTaskRequest;
 import com.bim.backend.entity.DrawingSet;
 import com.bim.backend.entity.Task;
 import com.bim.backend.entity.User;
+import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.DrawingSetRepository;
 import com.bim.backend.repository.TaskRepository;
 import com.bim.backend.repository.UserRepository;
@@ -40,7 +41,7 @@ public class TaskController {
         String username = authentication.getName();
 
         User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         List<Task> tasks;
         if (currentUser.getRole() == User.Role.ADMIN) {
@@ -60,7 +61,7 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
         return ResponseEntity.ok(mapToResponse(task));
     }
@@ -72,7 +73,7 @@ public class TaskController {
         String username = authentication.getName();
 
         User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Only admins can create tasks
         if (currentUser.getRole() != User.Role.ADMIN) {
@@ -80,10 +81,10 @@ public class TaskController {
         }
 
         User assignedUser = userRepository.findById(request.getAssignedUserId())
-                .orElseThrow(() -> new RuntimeException("Assigned user not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.getAssignedUserId()));
 
         DrawingSet drawingSet = drawingSetRepository.findById(request.getDrawingSetId())
-                .orElseThrow(() -> new RuntimeException("Drawing set not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing set not found with id: " + request.getDrawingSetId()));
 
         Task task = Task.builder()
                 .title(request.getTitle())
@@ -104,13 +105,13 @@ public class TaskController {
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody UpdateTaskRequest request) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Regular users can only update tasks assigned to them, admins can update any task
         if (currentUser.getRole() != User.Role.ADMIN && !task.getAssignedUser().getId().equals(currentUser.getId())) {
@@ -134,7 +135,7 @@ public class TaskController {
         }
         if (request.getAssignedUserId() != null && currentUser.getRole() == User.Role.ADMIN) {
             User newAssignedUser = userRepository.findById(request.getAssignedUserId())
-                    .orElseThrow(() -> new RuntimeException("Assigned user not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.getAssignedUserId()));
             task.setAssignedUser(newAssignedUser);
         }
 
@@ -149,7 +150,7 @@ public class TaskController {
         String username = authentication.getName();
 
         User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Only admins can delete tasks
         if (currentUser.getRole() != User.Role.ADMIN) {
@@ -157,7 +158,7 @@ public class TaskController {
         }
 
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
         taskRepository.delete(task);
         return ResponseEntity.noContent().build();

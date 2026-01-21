@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../../utils/api'
 
 function FileUploadModal({ onClose, onUpload, loading }) {
   const [selectedFiles, setSelectedFiles] = useState([])
@@ -11,11 +12,8 @@ function FileUploadModal({ onClose, onUpload, loading }) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/users')
-        if (response.ok) {
-          const data = await response.json()
-          setUsers(data)
-        }
+        const data = await api.get('/api/users')
+        setUsers(data)
       } catch (error) {
         console.error('Failed to fetch users:', error)
       } finally {
