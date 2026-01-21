@@ -37,7 +37,6 @@ import java.util.zip.ZipOutputStream;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173")
 public class DrawingSetController {
 
     private final DrawingSetRepository drawingSetRepository;
