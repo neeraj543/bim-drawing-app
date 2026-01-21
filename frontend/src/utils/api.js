@@ -8,6 +8,21 @@ const getAuthHeaders = () => {
   };
 };
 
+const getErrorMessage = async (response) => {
+  try {
+    const errorData = await response.json();
+    return errorData.message || 'Request failed';
+  } catch {
+    // If JSON parsing fails, try to get text
+    try {
+      const text = await response.text();
+      return text || 'Request failed';
+    } catch {
+      return 'Request failed';
+    }
+  }
+};
+
 export const api = {
   async get(endpoint) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -24,8 +39,8 @@ export const api = {
     }
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Request failed');
+      const errorMessage = await getErrorMessage(response);
+      throw new Error(errorMessage);
     }
 
     return response.json();
@@ -46,8 +61,8 @@ export const api = {
     }
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Request failed');
+      const errorMessage = await getErrorMessage(response);
+      throw new Error(errorMessage);
     }
 
     return response.json();
@@ -68,8 +83,8 @@ export const api = {
     }
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Request failed');
+      const errorMessage = await getErrorMessage(response);
+      throw new Error(errorMessage);
     }
 
     return response.json();
@@ -89,8 +104,8 @@ export const api = {
     }
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Request failed');
+      const errorMessage = await getErrorMessage(response);
+      throw new Error(errorMessage);
     }
 
     // Some delete endpoints return text, some return JSON
@@ -122,8 +137,8 @@ export const api = {
     }
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Upload failed');
+      const errorMessage = await getErrorMessage(response);
+      throw new Error(errorMessage);
     }
 
     return response.json();
