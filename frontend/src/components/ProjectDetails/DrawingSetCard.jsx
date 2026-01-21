@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../utils/api'
 import FileUploadModal from './FileUploadModal'
+import FilePreviewModal from './FilePreviewModal'
 
 function DrawingSetCard({ set, onRefresh }) {
   const [files, setFiles] = useState([])
   const [showUpload, setShowUpload] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [previewFile, setPreviewFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState(null)
 
   useEffect(() => {
     fetchFiles()
@@ -52,10 +55,9 @@ function DrawingSetCard({ set, onRefresh }) {
 
   const handleDownloadAll = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/drawing-sets/${set.id}/download`)
-      if (!response.ok) throw new Error('Download failed')
+      const blob = await api.download(`/api/drawing-sets/${set.id}/download`)
+      if (!blob) return // User was redirected to login
 
-      const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -67,6 +69,27 @@ function DrawingSetCard({ set, onRefresh }) {
     } catch (err) {
       alert('Download failed: ' + err.message)
     }
+  }
+
+  const handlePreview = async (file) => {
+    try {
+      const blob = await api.download(`/api/files/${file.id}`)
+      if (!blob) return // User was redirected to login
+
+      const url = window.URL.createObjectURL(blob)
+      setPreviewUrl(url)
+      setPreviewFile(file)
+    } catch (err) {
+      alert('Preview failed: ' + err.message)
+    }
+  }
+
+  const closePreview = () => {
+    if (previewUrl) {
+      window.URL.revokeObjectURL(previewUrl)
+    }
+    setPreviewUrl(null)
+    setPreviewFile(null)
   }
 
   return (
@@ -117,18 +140,32 @@ function DrawingSetCard({ set, onRefresh }) {
       {files.length > 0 && isExpanded && (
         <div className="mt-3 ml-7 space-y-1.5">
           {files.map(file => (
-            <div key={file.id} className="flex items-center justify-between bg-gray-50 rounded px-3 py-2 text-sm">
-              <div>
+            <div key={file.id} className="flex items-center justify-between bg-gray-50 rounded px-3 py-2 text-sm group hover:bg-gray-100 transition-colors">
+              <div className="flex-1">
                 <p className="font-medium text-gray-800">{file.renamedFileName}</p>
                 <p className="text-xs text-gray-500">Original: {file.originalFileName}</p>
               </div>
-              <span className="text-xs text-gray-600">{(file.fileSize / 1024).toFixed(1)} KB</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-600">{(file.fileSize / 1024).toFixed(1)} KB</span>
+                <button
+                  onClick={() => handlePreview(file)}
+                  className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1"
+                  title="Preview file"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Preview
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {showUpload && <FileUploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} loading={loading} />}
+      {previewFile && <FilePreviewModal file={previewFile} fileUrl={previewUrl} onClose={closePreview} />}
     </div>
   )
 }

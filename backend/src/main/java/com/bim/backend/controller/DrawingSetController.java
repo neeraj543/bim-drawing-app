@@ -63,12 +63,20 @@ public class DrawingSetController {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
 
+        // Mark all existing drawing sets for this project as not latest
+        List<DrawingSet> existingSets = drawingSetRepository.findByProjectOrderByCreatedAtDesc(project);
+        existingSets.forEach(set -> {
+            set.setIsLatest(false);
+            drawingSetRepository.save(set);
+        });
+
+        // Create new drawing set and mark it as latest
         DrawingSet drawingSet = DrawingSet.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .revisionNumber(request.getRevisionNumber())
                 .project(project)
-                .isLatest(false)
+                .isLatest(true)
                 .build();
 
         DrawingSet savedDrawingSet = drawingSetRepository.save(drawingSet);
@@ -176,6 +184,32 @@ public class DrawingSetController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
+    }
+
+    // Download a single file by file ID
+    @GetMapping("/files/{fileId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) throws IOException {
+        DrawingFile file = drawingFileRepository.findById(fileId)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found with id: " + fileId));
+
+        Path filePath = Paths.get(file.getFilePath());
+
+        if (!Files.exists(filePath)) {
+            throw new ResourceNotFoundException("File not found on disk: " + file.getOriginalFileName());
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(filePath));
+
+        // Determine content type based on file extension
+        String contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getOriginalFileName() + "\"")
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
     }
 
     // Download all files in a drawing set as ZIP
