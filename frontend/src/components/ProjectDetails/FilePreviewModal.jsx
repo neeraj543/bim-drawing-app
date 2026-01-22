@@ -1,48 +1,19 @@
 import { useState } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
-
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 function FilePreviewModal({ file, fileUrl, onClose }) {
-  const [numPages, setNumPages] = useState(null)
-  const [pageNumber, setPageNumber] = useState(1)
-  const [scale, setScale] = useState(1.0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   const isPDF = file?.originalFileName?.toLowerCase().endsWith('.pdf')
   const isImage = file?.originalFileName?.match(/\.(jpg|jpeg|png|gif|bmp|svg)$/i)
 
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages)
+  const handleIframeLoad = () => {
     setLoading(false)
   }
 
-  function onDocumentLoadError(error) {
-    console.error('Error loading PDF:', error)
+  const handleIframeError = () => {
     setError('Failed to load PDF file')
     setLoading(false)
-  }
-
-  const changePage = (offset) => {
-    setPageNumber(prevPageNumber => prevPageNumber + offset)
-  }
-
-  const previousPage = () => {
-    changePage(-1)
-  }
-
-  const nextPage = () => {
-    changePage(1)
-  }
-
-  const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.2, 3.0))
-  }
-
-  const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.2, 0.5))
   }
 
   return (
@@ -94,20 +65,14 @@ function FilePreviewModal({ file, fileUrl, onClose }) {
           )}
 
           {!error && isPDF && (
-            <div className="flex flex-col items-center">
-              <Document
-                file={fileUrl}
-                onLoadSuccess={onDocumentLoadSuccess}
-                onLoadError={onDocumentLoadError}
-                loading=""
-              >
-                <Page
-                  pageNumber={pageNumber}
-                  scale={scale}
-                  renderTextLayer={true}
-                  renderAnnotationLayer={true}
-                />
-              </Document>
+            <div className="flex items-center justify-center h-full">
+              <iframe
+                src={fileUrl}
+                className="w-full h-full border-0 rounded"
+                title={file?.originalFileName}
+                onLoad={handleIframeLoad}
+                onError={handleIframeError}
+              />
             </div>
           )}
 
@@ -117,7 +82,6 @@ function FilePreviewModal({ file, fileUrl, onClose }) {
                 src={fileUrl}
                 alt={file?.originalFileName}
                 className="max-w-full max-h-full object-contain"
-                style={{ transform: `scale(${scale})` }}
                 onLoad={() => setLoading(false)}
                 onError={() => {
                   setError('Failed to load image')
@@ -140,57 +104,18 @@ function FilePreviewModal({ file, fileUrl, onClose }) {
           )}
         </div>
 
-        {/* Footer Controls */}
+        {/* Footer Info */}
         <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
-          {/* PDF Navigation */}
-          {isPDF && numPages && !error && (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={previousPage}
-                disabled={pageNumber <= 1}
-                className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm font-medium"
-              >
-                Previous
-              </button>
-              <span className="text-sm text-gray-600 px-3">
-                Page {pageNumber} of {numPages}
-              </span>
-              <button
-                onClick={nextPage}
-                disabled={pageNumber >= numPages}
-                className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm font-medium"
-              >
-                Next
-              </button>
-            </div>
-          )}
-
-          {/* Zoom Controls */}
-          {(isPDF || isImage) && !error && (
-            <div className="flex items-center gap-2 ml-auto">
-              <button
-                onClick={zoomOut}
-                disabled={scale <= 0.5}
-                className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm font-medium flex items-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                </svg>
-                Zoom Out
-              </button>
-              <span className="text-sm text-gray-600 px-2">{Math.round(scale * 100)}%</span>
-              <button
-                onClick={zoomIn}
-                disabled={scale >= 3.0}
-                className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm font-medium flex items-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Zoom In
-              </button>
-            </div>
-          )}
+          <div className="text-sm text-gray-600">
+            {isPDF && !error && <span>Use your browser's PDF controls to zoom and navigate</span>}
+            {isImage && !error && <span>Image preview</span>}
+          </div>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors text-sm"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
