@@ -49,7 +49,7 @@ export function EditModal({ project, onClose, onSave }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="bg-linear-to-r from-indigo-500 to-blue-500 h-2"></div>
+        <div className="bg-linear-to-r from-amber-500 to-orange-500 h-2"></div>
 
         <div className="p-8">
           <div className="flex items-center justify-between mb-6">
@@ -83,7 +83,7 @@ export function EditModal({ project, onClose, onSave }) {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g., Wiekevorst Office Building"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                 disabled={loading}
               />
             </div>
@@ -101,7 +101,7 @@ export function EditModal({ project, onClose, onSave }) {
                   value={formData.projectNumber}
                   onChange={handleChange}
                   placeholder="e.g., 2025001"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                   disabled={loading}
                 />
               </div>
@@ -117,7 +117,7 @@ export function EditModal({ project, onClose, onSave }) {
                   value={formData.projectName}
                   onChange={handleChange}
                   placeholder="e.g., Wiekevorst"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                   disabled={loading}
                 />
               </div>
@@ -134,7 +134,7 @@ export function EditModal({ project, onClose, onSave }) {
                 value={formData.description}
                 onChange={handleChange}
                 rows="4"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none"
                 disabled={loading}
               />
             </div>
@@ -151,7 +151,7 @@ export function EditModal({ project, onClose, onSave }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-6 py-3 bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+                className="flex-1 px-6 py-3 bg-linear-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50"
               >
                 {loading ? 'Saving...' : 'Save Changes'}
               </button>
@@ -189,7 +189,7 @@ export function CreateDrawingSetModal({ onClose, onSave }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-        <div className="bg-linear-to-r from-indigo-500 to-blue-500 h-2"></div>
+        <div className="bg-linear-to-r from-amber-500 to-orange-500 h-2"></div>
         <div className="p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-gray-800">Create Drawing Set</h2>
@@ -215,7 +215,7 @@ export function CreateDrawingSetModal({ onClose, onSave }) {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="e.g., Rev A - Initial Submission"
                 disabled={loading}
               />
@@ -229,7 +229,7 @@ export function CreateDrawingSetModal({ onClose, onSave }) {
                 type="text"
                 value={formData.revisionNumber}
                 onChange={(e) => setFormData(prev => ({ ...prev, revisionNumber: e.target.value }))}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="e.g., RevA"
                 disabled={loading}
               />
@@ -241,7 +241,7 @@ export function CreateDrawingSetModal({ onClose, onSave }) {
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows="3"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
                 placeholder="Optional description"
                 disabled={loading}
               />
@@ -259,7 +259,7 @@ export function CreateDrawingSetModal({ onClose, onSave }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+                className="flex-1 px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50"
               >
                 {loading ? 'Creating...' : 'Create Set'}
               </button>

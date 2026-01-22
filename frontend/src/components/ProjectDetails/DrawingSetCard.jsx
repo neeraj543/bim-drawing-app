@@ -95,8 +95,8 @@ function DrawingSetCard({ set, onRefresh }) {
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
+        <div className="flex items-start gap-2">
+          <div className="w-5 shrink-0">
             {files.length > 0 && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
@@ -107,20 +107,20 @@ function DrawingSetCard({ set, onRefresh }) {
                 </svg>
               </button>
             )}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">{set.name}</h3>
-              <p className="text-sm text-gray-500 mt-0.5">
-                {set.revisionNumber} • {new Date(set.createdAt).toLocaleDateString()} • {set.fileCount} files
-              </p>
-            </div>
           </div>
-          {set.description && <p className="text-sm text-gray-600 mt-2 ml-7">{set.description}</p>}
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-800">{set.name}</h3>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {set.revisionNumber} • {new Date(set.createdAt).toLocaleDateString()} • {set.fileCount} files
+            </p>
+            {set.description && <p className="text-sm text-gray-600 mt-2">{set.description}</p>}
+          </div>
         </div>
         <div className="flex gap-2 ml-4">
           {files.length > 0 && (
             <button
               onClick={handleDownloadAll}
-              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-all flex items-center gap-1.5"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -149,7 +149,7 @@ function DrawingSetCard({ set, onRefresh }) {
                 <span className="text-xs text-gray-600">{(file.fileSize / 1024).toFixed(1)} KB</span>
                 <button
                   onClick={() => handlePreview(file)}
-                  className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1"
+                  className="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1"
                   title="Preview file"
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

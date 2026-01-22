@@ -64,9 +64,9 @@ function CreateProjectForm({ onProjectCreated }) {
   }
 
   return (
-    <div className="bg-linear-to-br from-indigo-50 to-blue-50 rounded-xl shadow-lg p-8 mb-10 border border-indigo-100">
+    <div className="bg-linear-to-br from-amber-50 to-orange-50 rounded-xl shadow-lg p-8 mb-10 border border-amber-100">
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-indigo-600 text-white rounded-lg p-2">
+        <div className="bg-amber-600 text-white rounded-lg p-2">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
@@ -99,7 +99,7 @@ function CreateProjectForm({ onProjectCreated }) {
             value={formData.name}
             onChange={handleChange}
             placeholder="e.g., Wiekevorst Office Building"
-            className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
             disabled={loading}
           />
         </div>
@@ -117,7 +117,7 @@ function CreateProjectForm({ onProjectCreated }) {
               value={formData.projectNumber}
               onChange={handleChange}
               placeholder="e.g., 2025001"
-              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
               disabled={loading}
             />
           </div>
@@ -133,7 +133,7 @@ function CreateProjectForm({ onProjectCreated }) {
               value={formData.projectName}
               onChange={handleChange}
               placeholder="e.g., Wiekevorst"
-              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
               disabled={loading}
             />
           </div>
@@ -151,7 +151,7 @@ function CreateProjectForm({ onProjectCreated }) {
             onChange={handleChange}
             placeholder="Brief description of the project..."
             rows="3"
-            className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+            className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none"
             disabled={loading}
           />
         </div>
@@ -159,7 +159,7 @@ function CreateProjectForm({ onProjectCreated }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:transform-none"
+          className="w-full bg-linear-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:transform-none"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">

@@ -6,20 +6,20 @@ function ProjectCard({ project }) {
   return (
     <Link
       to={`/projects/${id}`}
-      className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-indigo-200 transform hover:-translate-y-1 block cursor-pointer"
+      className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-amber-200 transform hover:-translate-y-1 block cursor-pointer"
     >
-      <div className="bg-linear-to-r from-indigo-500 to-blue-500 h-2"></div>
+      <div className="bg-linear-to-r from-amber-500 to-orange-500 h-2"></div>
 
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <div className="bg-indigo-100 rounded-lg p-2">
-            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-amber-100 rounded-lg p-2">
+            <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
         </div>
 
-        <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
+        <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-amber-600 transition-colors">
           {name}
         </h3>
 

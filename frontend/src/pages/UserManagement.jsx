@@ -88,7 +88,7 @@ function UserManagement() {
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
           >
             + Add User
           </button>
@@ -137,7 +137,7 @@ function UserManagement() {
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         user.role === 'ADMIN'
-                          ? 'bg-purple-100 text-purple-800'
+                          ? 'bg-amber-100 text-amber-800'
                           : 'bg-blue-100 text-blue-800'
                       }`}
                     >
@@ -189,7 +189,7 @@ function UserManagement() {
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
               </div>
@@ -200,7 +200,7 @@ function UserManagement() {
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
               </div>
@@ -211,7 +211,7 @@ function UserManagement() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
               </div>
@@ -222,7 +222,7 @@ function UserManagement() {
                   type="text"
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
@@ -231,7 +231,7 @@ function UserManagement() {
                 <select
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="USER">Developer (USER)</option>
                   <option value="ADMIN">Administrator (ADMIN)</option>
@@ -242,7 +242,7 @@ function UserManagement() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white py-2 rounded-lg font-medium transition-colors"
+                  className="flex-1 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white py-2 rounded-lg font-medium transition-colors"
                 >
                   {submitting ? 'Creating...' : 'Create User'}
                 </button>

@@ -21,14 +21,16 @@ function Header() {
         <div className="flex items-center justify-between">
           {/* Logo & Brand */}
           <Link to={isAuthenticated() ? "/dashboard" : "/"} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="bg-indigo-600 rounded-lg p-2">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+            <div className="bg-amber-700 rounded-lg p-2">
+              <img
+                src="/LOGO-CLT-XPRT-WIT-RECHTHOOK-1-e1708081916795.png"
+                alt="CLTXPRT Logo"
+                className="h-10"
+              />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">BIM Drawing Manager</h1>
-              <p className="text-xs text-gray-500">Streamline your drawing workflow</p>
+              <h1 className="text-xl font-bold text-gray-900">CLTXPRT</h1>
+              <p className="text-xs text-gray-500">CLT Construction Platform</p>
             </div>
           </Link>
 
@@ -40,7 +42,7 @@ function Header() {
                   to="/dashboard"
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     isActive('/dashboard') || location.pathname.startsWith('/projects')
-                      ? 'bg-indigo-50 text-indigo-700'
+                      ? 'bg-amber-50 text-amber-700'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
@@ -51,7 +53,7 @@ function Header() {
                   to="/tasks"
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     isActive('/tasks')
-                      ? 'bg-indigo-50 text-indigo-700'
+                      ? 'bg-amber-50 text-amber-700'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
@@ -63,7 +65,7 @@ function Header() {
                     to="/users"
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${
                       isActive('/users')
-                        ? 'bg-indigo-50 text-indigo-700'
+                        ? 'bg-amber-50 text-amber-700'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                   >
@@ -90,7 +92,7 @@ function Header() {
             {!isAuthenticated() && (
               <Link
                 to="/login"
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+                className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors"
               >
                 Login
               </Link>
