@@ -17,8 +17,8 @@ function FilePreviewModal({ file, fileUrl, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2">
+      <div className="bg-white rounded-lg shadow-2xl max-w-7xl w-full h-[96vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex-1">

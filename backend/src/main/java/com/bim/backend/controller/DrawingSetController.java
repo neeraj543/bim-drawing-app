@@ -258,45 +258,6 @@ public class DrawingSetController {
         return ResponseEntity.noContent().build();
     }
 
-    // Extract sheet number from filename (e.g., "Sheet_A101.pdf" -> "A101")
-    private String extractSheetNumber(String filename) {
-        Pattern pattern = Pattern.compile("Sheet[_-]?([A-Za-z0-9]+)", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(filename);
-
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        // If no "Sheet_" prefix, try to extract alphanumeric before extension
-        String nameWithoutExt = filename.replaceFirst("[.][^.]+$", "");
-        return nameWithoutExt.replaceAll("[^A-Za-z0-9]", "");
-    }
-
-    // Generate renamed filename: A101_Floor-Plan_RevA_2025-12-09.pdf
-    private String generateRenamedFileName(String sheetNumber, String description, String revisionNumber) {
-        String date = LocalDate.now().toString();
-
-        // Clean description (remove special characters, replace spaces with hyphens)
-        String cleanDescription = description.trim()
-                .replaceAll("[^A-Za-z0-9\\s-]", "")
-                .replaceAll("\\s+", "-");
-
-        // Build filename
-        StringBuilder filename = new StringBuilder(sheetNumber);
-
-        if (!cleanDescription.isEmpty()) {
-            filename.append("_").append(cleanDescription);
-        }
-
-        if (revisionNumber != null && !revisionNumber.isEmpty()) {
-            filename.append("_").append(revisionNumber);
-        }
-
-        filename.append("_").append(date).append(".pdf");
-
-        return filename.toString();
-    }
-
     // Map DrawingSet entity to response DTO
     private DrawingSetResponse mapToResponse(DrawingSet drawingSet) {
         int fileCount = drawingFileRepository.findByDrawingSet(drawingSet).size();

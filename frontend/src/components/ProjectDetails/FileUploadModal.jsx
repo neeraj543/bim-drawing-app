@@ -26,7 +26,13 @@ function FileUploadModal({ onClose, onUpload, loading }) {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files)
     setSelectedFiles(files)
-    setFloors(files.map(() => ''))
+    // Auto-extract floor name from filename (without extension)
+    setFloors(files.map(file => {
+      // Remove file extension properly
+      const lastDotIndex = file.name.lastIndexOf('.')
+      const nameWithoutExt = lastDotIndex > 0 ? file.name.substring(0, lastDotIndex) : file.name
+      return nameWithoutExt
+    }))
     setDesignerInitials(files.map(() => ''))
   }
 
@@ -79,29 +85,20 @@ function FileUploadModal({ onClose, onUpload, loading }) {
 
           {selectedFiles.length > 0 && (
             <div className="space-y-4 mb-6">
-              <h3 className="font-semibold text-gray-700">Files to upload - Enter metadata for each file:</h3>
+              <h3 className="font-semibold text-gray-700">Files to upload - Select designer for each file:</h3>
               {selectedFiles.map((file, index) => (
                 <div key={index} className="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
                   <p className="font-medium text-gray-800 mb-3">{file.name}</p>
 
                   <div className="grid grid-cols-2 gap-3">
-                    {/* Floor Input */}
+                    {/* Floor Display (auto-extracted) */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        Floor <span className="text-red-500">*</span>
+                        Floor (auto-detected)
                       </label>
-                      <input
-                        type="text"
-                        value={floors[index]}
-                        onChange={(e) => {
-                          const newFloors = [...floors]
-                          newFloors[index] = e.target.value
-                          setFloors(newFloors)
-                        }}
-                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        placeholder="e.g., Gelijkvloers, Verdieping1"
-                        disabled={loading}
-                      />
+                      <div className="w-full px-3 py-2 border-2 border-green-200 rounded-lg bg-green-50 text-gray-700">
+                        {floors[index]}
+                      </div>
                     </div>
 
                     {/* Designer Initials Dropdown */}
