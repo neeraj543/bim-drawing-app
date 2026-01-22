@@ -152,13 +152,6 @@ function Login() {
             </p>
           </div>
         </div>
-
-        {/* Demo Note */}
-        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800 text-center">
-            <span className="font-semibold">Default Admin:</span> username: admin, password: admin123
-          </p>
-        </div>
       </div>
     </div>
   )

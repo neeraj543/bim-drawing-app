@@ -37,7 +37,7 @@ public class DataInitializer {
                         .build();
 
                 userRepository.save(adminUser);
-                System.out.println("✓ Admin user created (username: admin, password: admin123)");
+                System.out.println("✓ Admin user created");
             } else {
                 System.out.println("✓ Admin user already exists");
             }
@@ -53,7 +53,7 @@ public class DataInitializer {
                         .build();
 
                 userRepository.save(user1);
-                System.out.println("✓ Test user created (username: john, password: password123)");
+                System.out.println("✓ Test user 'john' created");
             }
 
             // Create test user 2
