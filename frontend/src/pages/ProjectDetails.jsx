@@ -141,19 +141,15 @@ function ProjectDetails() {
       </button>
 
       {/* Project Header */}
-      <div className="bg-white rounded-lg shadow border border-gray-200 mb-6">
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">{project.name}</h1>
-              <p className="text-sm text-gray-500 mt-1">Project ID: #{project.id}</p>
-            </div>
-
-            {/* Action Buttons */}
+      <div className="bg-white rounded-lg shadow border border-gray-200 mb-6 overflow-hidden">
+        {/* Header Section */}
+        <div className="p-6 bg-gray-50 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-3xl font-bold text-gray-800">{project.name}</h1>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowEditModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 text-sm bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-all"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -162,7 +158,7 @@ function ProjectDetails() {
               </button>
               <button
                 onClick={() => setShowDeleteDialog(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -172,24 +168,20 @@ function ProjectDetails() {
             </div>
           </div>
 
-          {/* Project Info - Compact */}
-          <div className="flex flex-wrap gap-6 text-sm text-gray-600 mt-4 pt-4 border-t">
-            <div>
-              <span className="font-medium">Owner:</span> {project.ownerName}
-            </div>
-            <div>
-              <span className="font-medium">Created:</span> {new Date(project.createdAt).toLocaleDateString()}
-            </div>
-            <div>
-              <span className="font-medium">Updated:</span> {new Date(project.updatedAt).toLocaleDateString()}
-            </div>
+          {/* Metadata Row */}
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <span className="font-medium text-amber-700">ID: #{project.id}</span>
+            <span>•</span>
+            <span><span className="font-medium">Owner:</span> {project.ownerName}</span>
+            <span>•</span>
+            <span><span className="font-medium">Created:</span> {new Date(project.createdAt).toLocaleDateString()}</span>
+            <span>•</span>
+            <span><span className="font-medium">Updated:</span> {new Date(project.updatedAt).toLocaleDateString()}</span>
           </div>
 
-          {/* Description Section */}
+          {/* Description */}
           {project.description && (
-            <div className="mt-4">
-              <p className="text-sm text-gray-600">{project.description}</p>
-            </div>
+            <p className="text-sm text-gray-600 mt-3">{project.description}</p>
           )}
         </div>
       </div>
