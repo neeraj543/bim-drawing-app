@@ -40,4 +40,4 @@ databases:
   - name: bim-db
     databaseName: bim_drawing_db
     user: bim_user
-    plan: starter
+    plan: free
