@@ -108,6 +108,11 @@ export const api = {
       throw new Error(errorMessage);
     }
 
+    // 204 No Content - successful delete with no response body
+    if (response.status === 204) {
+      return null;
+    }
+
     // Some delete endpoints return text, some return JSON
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {

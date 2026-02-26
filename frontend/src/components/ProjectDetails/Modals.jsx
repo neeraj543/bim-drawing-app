@@ -273,11 +273,17 @@ export function CreateDrawingSetModal({ onClose, onSave }) {
 
 export function DeleteDialog({ onClose, onConfirm, projectName }) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleConfirm = async () => {
-    setLoading(true)
-    await onConfirm()
-    setLoading(false)
+    try {
+      setLoading(true)
+      setError(null)
+      await onConfirm()
+    } catch (err) {
+      setError(err.message || 'Failed to delete project')
+      setLoading(false)
+    }
   }
 
   return (
@@ -297,6 +303,12 @@ export function DeleteDialog({ onClose, onConfirm, projectName }) {
           <p className="text-gray-600 text-center mb-6">
             Are you sure you want to delete <span className="font-semibold text-gray-900">{projectName}</span>? This action cannot be undone.
           </p>
+
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-4">
+              <p className="font-medium text-sm">{error}</p>
+            </div>
+          )}
 
           <div className="flex gap-3">
             <button

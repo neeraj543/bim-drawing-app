@@ -43,6 +43,10 @@ public class Project {
     @Builder.Default
     private Set<User> members = new HashSet<>();
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<DrawingSet> drawingSets = new HashSet<>();
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

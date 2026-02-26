@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -89,11 +90,15 @@ public class ProjectController {
 
     // Delete a project
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
 
+        // Cascade delete will handle drawing sets, files, and tasks automatically
         projectRepository.delete(project);
+        projectRepository.flush(); // Force immediate deletion
+
         return ResponseEntity.noContent().build();
     }
 
