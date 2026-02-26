@@ -60,6 +60,17 @@ function Header() {
                   Tasks
                 </Link>
 
+                <Link
+                  to="/timesheet"
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    isActive('/timesheet')
+                      ? 'bg-amber-50 text-amber-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  Timesheet
+                </Link>
+
                 {isAdmin() && (
                   <Link
                     to="/users"
