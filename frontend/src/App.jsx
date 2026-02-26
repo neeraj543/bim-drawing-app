@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard'
 import ProjectDetails from './pages/ProjectDetails'
 import Tasks from './pages/Tasks'
 import Timesheet from './pages/Timesheet'
+import CRM from './pages/CRM'
 import Login from './pages/Login'
 import UserManagement from './pages/UserManagement'
 import './App.css'
@@ -49,6 +50,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Timesheet />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/crm"
+              element={
+                <PrivateRoute>
+                  <CRM />
                 </PrivateRoute>
               }
             />

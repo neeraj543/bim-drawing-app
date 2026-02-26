@@ -71,6 +71,17 @@ function Header() {
                   Timesheet
                 </Link>
 
+                <Link
+                  to="/crm"
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    isActive('/crm')
+                      ? 'bg-amber-50 text-amber-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  CRM
+                </Link>
+
                 {isAdmin() && (
                   <Link
                     to="/users"
