@@ -8,18 +8,30 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: DATABASE_URL
+      - key: DB_HOST
         fromDatabase:
           name: bim-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: bim-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: bim-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: bim-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: bim-db
+          property: password
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
         value: https://bim-frontend.onrender.com
-    disk:
-      name: uploads
-      mountPath: /app/uploads
-      sizeGB: 10
 
   # Frontend Service (React/Vite)
   - type: web
