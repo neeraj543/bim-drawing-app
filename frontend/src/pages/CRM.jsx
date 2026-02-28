@@ -232,12 +232,6 @@ function ContactDetailModal({ contact, onClose, onEdit, onDelete }) {
             </DetailSection>
           )}
 
-          {contact.vatNumber && (
-            <DetailSection label="Business">
-              <DetailRow label="VAT" value={contact.vatNumber} />
-            </DetailSection>
-          )}
-
           {contact.notes && (
             <DetailSection label="Notes">
               <p className="text-gray-700 text-sm whitespace-pre-wrap">{contact.notes}</p>
@@ -274,7 +268,6 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
     phone: contact?.phone || '',
     mobile: contact?.mobile || '',
     website: contact?.website || '',
-    vatNumber: contact?.vatNumber || '',
     street: contact?.street || '',
     streetNumber: contact?.streetNumber || '',
     postcode: contact?.postcode || '',
@@ -362,8 +355,6 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
             <FormField label="Mobile" value={form.mobile} onChange={set('mobile')} placeholder="+32 ..." />
             <FormField label="Website" value={form.website} onChange={set('website')} placeholder="https://..." />
           </div>
-
-          <FormField label="VAT Number" value={form.vatNumber} onChange={set('vatNumber')} placeholder="BE 0xxx.xxx.xxx" />
 
           {/* Address */}
           <div>

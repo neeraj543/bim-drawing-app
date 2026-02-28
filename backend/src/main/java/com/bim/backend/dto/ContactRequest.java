@@ -12,7 +12,6 @@ public class ContactRequest {
     private String phone;
     private String mobile;
     private String website;
-    private String vatNumber;
     private String street;
     private String streetNumber;
     private String postcode;

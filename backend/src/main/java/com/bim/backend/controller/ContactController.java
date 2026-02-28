@@ -62,7 +62,6 @@ public class ContactController {
                 .phone(request.getPhone())
                 .mobile(request.getMobile())
                 .website(request.getWebsite())
-                .vatNumber(request.getVatNumber())
                 .street(request.getStreet())
                 .streetNumber(request.getStreetNumber())
                 .postcode(request.getPostcode())
@@ -88,7 +87,6 @@ public class ContactController {
         if (request.getPhone() != null) contact.setPhone(request.getPhone());
         if (request.getMobile() != null) contact.setMobile(request.getMobile());
         if (request.getWebsite() != null) contact.setWebsite(request.getWebsite());
-        if (request.getVatNumber() != null) contact.setVatNumber(request.getVatNumber());
         if (request.getStreet() != null) contact.setStreet(request.getStreet());
         if (request.getStreetNumber() != null) contact.setStreetNumber(request.getStreetNumber());
         if (request.getPostcode() != null) contact.setPostcode(request.getPostcode());
@@ -127,7 +125,6 @@ public class ContactController {
                 .phone(c.getPhone())
                 .mobile(c.getMobile())
                 .website(c.getWebsite())
-                .vatNumber(c.getVatNumber())
                 .street(c.getStreet())
                 .streetNumber(c.getStreetNumber())
                 .postcode(c.getPostcode())

@@ -37,9 +37,6 @@ public class Contact {
     private String mobile;
     private String website;
 
-    @Column(name = "vat_number")
-    private String vatNumber;
-
     private String street;
 
     @Column(name = "street_number")
