@@ -6,6 +6,7 @@ import com.bim.backend.entity.Project;
 import com.bim.backend.entity.User;
 import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.ProjectRepository;
+import com.bim.backend.repository.TimeEntryRepository;
 import com.bim.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,12 @@ public class ProjectController {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final TimeEntryRepository timeEntryRepository;
 
-    public ProjectController(ProjectRepository projectRepository, UserRepository userRepository) {
+    public ProjectController(ProjectRepository projectRepository, UserRepository userRepository, TimeEntryRepository timeEntryRepository) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
+        this.timeEntryRepository = timeEntryRepository;
     }
 
     // Get all projects (all users can see all projects)
@@ -95,9 +98,12 @@ public class ProjectController {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
 
+        // Unlink time entries before deleting (they are kept but no longer linked to this project)
+        timeEntryRepository.clearProjectFromTimeEntries(project);
+
         // Cascade delete will handle drawing sets, files, and tasks automatically
         projectRepository.delete(project);
-        projectRepository.flush(); // Force immediate deletion
+        projectRepository.flush();
 
         return ResponseEntity.noContent().build();
     }
