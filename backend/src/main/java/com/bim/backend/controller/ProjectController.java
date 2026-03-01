@@ -5,7 +5,10 @@ import com.bim.backend.dto.ProjectResponse;
 import com.bim.backend.entity.Project;
 import com.bim.backend.entity.User;
 import com.bim.backend.exception.ResourceNotFoundException;
+import com.bim.backend.repository.DrawingFileRepository;
+import com.bim.backend.repository.DrawingSetRepository;
 import com.bim.backend.repository.ProjectRepository;
+import com.bim.backend.repository.TaskRepository;
 import com.bim.backend.repository.TimeEntryRepository;
 import com.bim.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -24,11 +27,19 @@ public class ProjectController {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TimeEntryRepository timeEntryRepository;
+    private final DrawingSetRepository drawingSetRepository;
+    private final DrawingFileRepository drawingFileRepository;
+    private final TaskRepository taskRepository;
 
-    public ProjectController(ProjectRepository projectRepository, UserRepository userRepository, TimeEntryRepository timeEntryRepository) {
+    public ProjectController(ProjectRepository projectRepository, UserRepository userRepository,
+            TimeEntryRepository timeEntryRepository, DrawingSetRepository drawingSetRepository,
+            DrawingFileRepository drawingFileRepository, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.timeEntryRepository = timeEntryRepository;
+        this.drawingSetRepository = drawingSetRepository;
+        this.drawingFileRepository = drawingFileRepository;
+        this.taskRepository = taskRepository;
     }
 
     // Get all projects (all users can see all projects)
@@ -98,12 +109,19 @@ public class ProjectController {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
 
-        // Unlink time entries before deleting (they are kept but no longer linked to this project)
+        // 1. Unlink time entries (keep them, just remove the project reference)
         timeEntryRepository.clearProjectFromTimeEntries(project);
 
-        // Cascade delete will handle drawing sets, files, and tasks automatically
+        // 2. Manually delete drawing sets and their children (tasks + files)
+        List<com.bim.backend.entity.DrawingSet> drawingSets = drawingSetRepository.findByProject(project);
+        for (com.bim.backend.entity.DrawingSet drawingSet : drawingSets) {
+            taskRepository.deleteAll(taskRepository.findByDrawingSet(drawingSet));
+            drawingFileRepository.deleteAll(drawingFileRepository.findByDrawingSet(drawingSet));
+            drawingSetRepository.delete(drawingSet);
+        }
+
+        // 3. Delete the project
         projectRepository.delete(project);
-        projectRepository.flush();
 
         return ResponseEntity.noContent().build();
     }
