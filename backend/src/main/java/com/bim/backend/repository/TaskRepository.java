@@ -1,14 +1,22 @@
 package com.bim.backend.repository;
 
+import com.bim.backend.entity.Project;
 import com.bim.backend.entity.Task;
 import com.bim.backend.entity.DrawingSet;
 import com.bim.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
+
+    @Modifying
+    @Query("DELETE FROM Task t WHERE t.drawingSet IN (SELECT ds FROM DrawingSet ds WHERE ds.project = :project)")
+    void deleteAllByProject(@Param("project") Project project);
 
     // Find all tasks assigned to a specific user
     List<Task> findByAssignedUser(User assignedUser);
