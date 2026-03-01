@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,7 +114,7 @@ public class ProjectController {
         timeEntryRepository.clearProjectFromTimeEntries(project);
 
         // 2. Manually delete drawing sets and their children (tasks + files)
-        List<com.bim.backend.entity.DrawingSet> drawingSets = drawingSetRepository.findByProject(project);
+        List<com.bim.backend.entity.DrawingSet> drawingSets = new ArrayList<>(drawingSetRepository.findByProject(project));
         for (com.bim.backend.entity.DrawingSet drawingSet : drawingSets) {
             taskRepository.deleteAll(taskRepository.findByDrawingSet(drawingSet));
             drawingFileRepository.deleteAll(drawingFileRepository.findByDrawingSet(drawingSet));
