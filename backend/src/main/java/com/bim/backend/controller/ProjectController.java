@@ -116,13 +116,13 @@ public class ProjectController {
         // 2. Manually delete drawing sets and their children (tasks + files)
         List<com.bim.backend.entity.DrawingSet> drawingSets = new ArrayList<>(drawingSetRepository.findByProject(project));
         for (com.bim.backend.entity.DrawingSet drawingSet : drawingSets) {
-            taskRepository.deleteAll(taskRepository.findByDrawingSet(drawingSet));
-            drawingFileRepository.deleteAll(drawingFileRepository.findByDrawingSet(drawingSet));
-            drawingSetRepository.delete(drawingSet);
+            taskRepository.deleteAllInBatch(taskRepository.findByDrawingSet(drawingSet));
+            drawingFileRepository.deleteAllInBatch(drawingFileRepository.findByDrawingSet(drawingSet));
         }
+        drawingSetRepository.deleteAllInBatch(drawingSets);
 
         // 3. Delete the project
-        projectRepository.delete(project);
+        projectRepository.deleteById(project.getId());
 
         return ResponseEntity.noContent().build();
     }
