@@ -41,7 +41,7 @@ services:
     staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
-        value: https://bim-backend.onrender.com
+        value: https://bim-backend-axd4.onrender.com
     routes:
       - type: rewrite
         source: /*
