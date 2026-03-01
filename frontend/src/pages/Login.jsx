@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { api } from '../utils/api'
 
 function Login() {
   const navigate = useNavigate()
@@ -32,20 +33,7 @@ function Login() {
     setLoading(true)
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(errorText || 'Login failed')
-      }
-
-      const data = await response.json()
+      const data = await api.post('/api/auth/login', formData)
       login(data)
       navigate('/dashboard', { replace: true })
     } catch (err) {
