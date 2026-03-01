@@ -31,7 +31,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
-        value: https://bim-frontend.onrender.com
+        value: https://bim-frontend-f5e4.onrender.com
 
   # Frontend Service (React/Vite)
   - type: web
