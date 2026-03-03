@@ -1,10 +1,15 @@
 package com.bim.backend.controller;
 
+import com.bim.backend.dto.AuthResponse;
+import com.bim.backend.dto.ChangePasswordRequest;
+import com.bim.backend.dto.ChangeUsernameRequest;
 import com.bim.backend.dto.CreateUserRequest;
 import com.bim.backend.dto.UserResponse;
 import com.bim.backend.entity.User;
+import com.bim.backend.exception.BadRequestException;
 import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.UserRepository;
+import com.bim.backend.util.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +31,9 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -93,6 +101,45 @@ public class UserController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new BadRequestException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("Password updated successfully");
+    }
+
+    @PutMapping("/me/username")
+    public ResponseEntity<?> changeUsername(@RequestBody ChangeUsernameRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (userRepository.existsByUsername(request.getNewUsername())) {
+            throw new BadRequestException("Username already taken");
+        }
+
+        user.setUsername(request.getNewUsername());
+        userRepository.save(user);
+
+        String newToken = jwtUtil.generateToken(user.getUsername());
+        AuthResponse response = AuthResponse.builder()
+                .token(newToken)
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
