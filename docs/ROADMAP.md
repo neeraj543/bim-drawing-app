@@ -30,11 +30,13 @@
 - Migrate from H2 to PostgreSQL
 - Deploy backend + frontend + DB on Railway
 
-### 2. Offerte Tracker *(highest priority)*
-- Track offerte status: pending / accepted / rejected
-- Customizable form based on Emiel's Excel template
-- Generate + download PDF offertes
-- Parse incoming emails to pre-fill the form
+### 2. Offerte Tracker *(highest priority — due next week)*
+See [`docs/OFFERTE_SPEC.md`](OFFERTE_SPEC.md) for full technical spec.
+- Track offerte status: draft / sent / pending / accepted / rejected
+- Form based on Emiel's Excel template with auto-calculations (engineering 5%, accessories 12%, montage 22%, CNC fixed rates, transport per truck)
+- Generate + download PDF (iText or PDFBox backend)
+- Parse incoming emails via regex to pre-fill client/project/deadline
+- Optional XLS quantity sheet upload (Apache POI)
 - Link offertes to clients (CRM) and projects
 
 ### 3. Communication / Todo Automation *(second priority)*
