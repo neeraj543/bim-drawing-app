@@ -1,0 +1,122 @@
+package com.bim.backend.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "offertes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Offerte {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // General Info
+    @Column(nullable = false, unique = true)
+    private String offerteNumber; // e.g. 001/2025
+
+    @Column(nullable = false)
+    private LocalDate date;
+
+    private String preparedBy;
+
+    @Column(nullable = false)
+    private String projectDescription;
+
+    private LocalDate submissionDeadline;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private OfferteStatus status = OfferteStatus.DRAFT;
+
+    // Client Info
+    @Column(nullable = false)
+    private String clientName;
+    private String clientStreet;
+    private String clientStreetNumber;
+    private String clientPostcode;
+    private String clientCity;
+    private String clientVatNumber;
+
+    // Construction Site
+    private String siteAddress;
+
+    // Project Details
+    private String finishGrade;
+    private String projectType;
+    private Integer numberOfUnits;
+    private String buildingDimensions;
+    private Integer numberOfFloors;
+    private String roofType;
+    private String roofPitch;
+    private String corniceHeight;
+    private String ridgeHeight;
+
+    // Ceiling heights per floor
+    private String ceilingHeightKelder;
+    private String ceilingHeightGelijkvloers;
+    private String ceilingHeightVerdiep1;
+    private String ceilingHeightZolderverdiep;
+
+    // Structure — CLT
+    private BigDecimal cltM2;
+    private BigDecimal cltPricePerM2;
+
+    // Structure — GL
+    private BigDecimal glColumnsM3;
+    private BigDecimal glColumnsPricePerM3;
+    private BigDecimal glBeamsM3;
+    private BigDecimal glBeamsPricePerM3;
+
+    // Roostering (optional)
+    private Boolean includeRoostring;
+    private BigDecimal roosteringM2;
+    private BigDecimal roosteringPricePerM2;
+
+    // Transport
+    private Integer numberOfTrucks;
+
+    // Overrides (user can override auto-calculated values)
+    private BigDecimal engineeringOverride;
+    private BigDecimal cncCltOverride;
+    private BigDecimal cncGlOverride;
+    private BigDecimal accessoiresOverride;
+    private BigDecimal montageOverride;
+    private BigDecimal transportOverride;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_id")
+    private User createdBy;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public enum OfferteStatus {
+        DRAFT, SENT, PENDING, ACCEPTED, REJECTED
+    }
+}
