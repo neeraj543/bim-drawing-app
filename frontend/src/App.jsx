@@ -11,6 +11,8 @@ import Timesheet from './pages/Timesheet'
 import CRM from './pages/CRM'
 import Login from './pages/Login'
 import UserManagement from './pages/UserManagement'
+import Offertes from './pages/Offertes'
+import OfferteDetail from './pages/OfferteDetail'
 import './App.css'
 
 function App() {
@@ -58,6 +60,30 @@ function App() {
               element={
                 <PrivateRoute>
                   <CRM />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/offertes"
+              element={
+                <PrivateRoute>
+                  <Offertes />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/offertes/new"
+              element={
+                <PrivateRoute>
+                  <div>New Offerte Form (coming soon)</div>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/offertes/:id"
+              element={
+                <PrivateRoute>
+                  <OfferteDetail />
                 </PrivateRoute>
               }
             />

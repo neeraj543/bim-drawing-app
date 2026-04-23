@@ -209,6 +209,17 @@ function Header() {
                   CRM
                 </Link>
 
+                <Link
+                  to="/offertes"
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    location.pathname.startsWith('/offertes')
+                      ? 'bg-amber-50 text-amber-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  Offertes
+                </Link>
+
                 {isAdmin() && (
                   <Link
                     to="/users"
