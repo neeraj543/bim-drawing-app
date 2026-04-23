@@ -13,6 +13,7 @@ import Login from './pages/Login'
 import UserManagement from './pages/UserManagement'
 import Offertes from './pages/Offertes'
 import OfferteDetail from './pages/OfferteDetail'
+import OfferteForm from './pages/OfferteForm'
 import './App.css'
 
 function App() {
@@ -75,7 +76,15 @@ function App() {
               path="/offertes/new"
               element={
                 <PrivateRoute>
-                  <div>New Offerte Form (coming soon)</div>
+                  <OfferteForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/offertes/:id/edit"
+              element={
+                <PrivateRoute>
+                  <OfferteForm />
                 </PrivateRoute>
               }
             />
