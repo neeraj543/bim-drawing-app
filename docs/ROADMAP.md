@@ -1,5 +1,10 @@
 # Roadmap
 
+## Bug Fixes (Do Soon)
+- **Password / username change has a bug** — needs investigation and fix
+
+---
+
 ## What's Built
 
 ### Core App (Internship 1)
@@ -30,8 +35,8 @@
 - Migrate from H2 to PostgreSQL
 - Deploy backend + frontend + DB on Railway
 
-### 2. Offerte Tracker *(highest priority — due next week)*
-See [`docs/OFFERTE_SPEC.md`](OFFERTE_SPEC.md) for full technical spec.
+### 2. Offerte Module *(highest priority)*
+See [OFFERTE_SPEC.md](OFFERTE_SPEC.md) for full technical spec.
 
 **Built:**
 - Offerte entity, service, controller (full CRUD)
@@ -50,19 +55,30 @@ See [`docs/OFFERTE_SPEC.md`](OFFERTE_SPEC.md) for full technical spec.
 - Werkblad rates editable in settings page (currently hardcoded)
 - Auto-increment offerte number per year (001/2026 format)
 
-### 3. Communication / Todo Automation *(second priority)*
+### 3. UI Overhaul
+- General UI cleanup and modernisation across the app
+- **Projects page** — redesign dashboard, move file renaming functionality to a separate tab
+- **Tasks page** — upgrade to a proper task board suitable for voice message todo workflow (Kanban or similar)
+
+### 4. Communication / Todo Automation
 - Upload or record audio in-app
 - Whisper transcribes → AI extracts structured todos
-- Todos saved directly to the task manager
-- Replaces current manual process: someone listens to recordings → transcribes → makes todo list by hand
+- Todos saved directly to task manager
+- Replaces current manual process: Emiel listens to WhatsApp audio → transcribes → builds todo list for Monday meetings
+- Tasks page needs to be upgraded (see above) to support this workflow properly
 
-### 4. CRM Improvements
+### 5. App-Wide Integration
+- Link projects ↔ offertes ↔ tasks ↔ CRM contacts
+- Higher level of integration — e.g. accepting an offerte creates a project, project links to client
+- Unified view across modules
+
+### 6. CRM Improvements
 - Email logging per client
 - Communication history (calls, meetings)
 - Follow-up reminders
 - Mobile-friendly UI
 
-### 5. Finance Module *(if time allows)*
+### 7. Finance Module *(if time allows)*
 - Invoices
 - Budget per project
 - Payment status
