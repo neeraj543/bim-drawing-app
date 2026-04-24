@@ -32,12 +32,23 @@
 
 ### 2. Offerte Tracker *(highest priority — due next week)*
 See [`docs/OFFERTE_SPEC.md`](OFFERTE_SPEC.md) for full technical spec.
-- Track offerte status: draft / sent / pending / accepted / rejected
-- Form based on Emiel's Excel template with auto-calculations (engineering 5%, accessories 12%, montage 22%, CNC fixed rates, transport per truck)
-- Generate + download PDF (iText or PDFBox backend)
-- Parse incoming emails via regex to pre-fill client/project/deadline
-- Optional XLS quantity sheet upload (Apache POI)
-- Link offertes to clients (CRM) and projects
+
+**Built:**
+- Offerte entity, service, controller (full CRUD)
+- Auto-calculations (engineering 5%, CNC fixed rates, accessories 12%, montage 22%, transport per truck, VAT 21%)
+- Override support per line item
+- Overview page with status filter, search, deadline highlighting, quick stats
+- Detail page with price summary
+- Create/edit form
+- Sample data
+
+**Remaining:**
+- PDF generation (iText or PDFBox)
+- XLS quantity sheet upload + parsing (Apache POI)
+- Email integration via Microsoft Graph API (Outlook)
+- AI parsing of email fields + XLS via Gemini Flash API
+- Werkblad rates editable in settings page (currently hardcoded)
+- Auto-increment offerte number per year (001/2026 format)
 
 ### 3. Communication / Todo Automation *(second priority)*
 - Upload or record audio in-app
