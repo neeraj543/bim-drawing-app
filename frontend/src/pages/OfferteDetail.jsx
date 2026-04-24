@@ -95,6 +95,25 @@ export default function OfferteDetail() {
     }
   }
 
+  const handleDownloadPdf = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`/api/offertes/${id}/pdf`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (!response.ok) throw new Error('Failed to generate PDF')
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `offerte-${offerte.offerteNumber.replace('/', '-')}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      alert(err.message)
+    }
+  }
+
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading...</div>
   if (error) return <div className="flex items-center justify-center h-64 text-red-500">{error}</div>
   if (!offerte) return null
@@ -124,6 +143,12 @@ export default function OfferteDetail() {
               <option key={s} value={s}>{STATUS_LABELS[s]}</option>
             ))}
           </select>
+          <button
+            onClick={handleDownloadPdf}
+            className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            Download PDF
+          </button>
           <button
             onClick={() => navigate(`/offertes/${id}/edit`)}
             className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors"
