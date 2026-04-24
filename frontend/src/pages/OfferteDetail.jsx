@@ -104,8 +104,11 @@ export default function OfferteDetail() {
       if (!response.ok) throw new Error('Failed to generate PDF')
       const blob = await response.blob()
       const url = URL.createObjectURL(blob)
-      window.open(url, '_blank')
-      setTimeout(() => URL.revokeObjectURL(url), 10000)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `offerte-${offerte.offerteNumber.replace('/', '-')}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
     } catch (err) {
       alert(err.message)
     }

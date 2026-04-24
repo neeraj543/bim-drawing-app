@@ -238,6 +238,26 @@ public class OffertePdfService {
     }
 
     private String nvl(String s) {
-        return s != null ? s : "";
+        return s != null ? sanitize(s) : "";
+    }
+
+    private String sanitize(String s) {
+        if (s == null) return "";
+        return s
+            .replace("é", "e").replace("è", "e").replace("ê", "e").replace("ë", "e")
+            .replace("à", "a").replace("â", "a").replace("ä", "a")
+            .replace("ù", "u").replace("û", "u").replace("ü", "u")
+            .replace("î", "i").replace("ï", "i")
+            .replace("ô", "o").replace("ö", "o")
+            .replace("ç", "c").replace("ñ", "n")
+            .replace("É", "E").replace("È", "E").replace("Ê", "E")
+            .replace("À", "A").replace("Â", "A")
+            .replace("Ù", "U").replace("Û", "U")
+            .replace("Î", "I").replace("Ô", "O")
+            .replace("Ç", "C")
+            .replace("\u2019", "'").replace("\u2018", "'")
+            .replace("\u201C", "\"").replace("\u201D", "\"")
+            .replace("\u2013", "-").replace("\u2014", "-")
+            .replaceAll("[^\\x20-\\x7E]", "?");
     }
 }
