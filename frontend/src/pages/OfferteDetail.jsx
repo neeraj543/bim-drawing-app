@@ -97,18 +97,13 @@ export default function OfferteDetail() {
 
   const handleDownloadPdf = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch(`/api/offertes/${id}/pdf`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      if (!response.ok) throw new Error('Failed to generate PDF')
-      const blob = await response.blob()
+      const blob = await api.download(`/api/offertes/${id}/pdf`)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
       a.download = `offerte-${offerte.offerteNumber.replace('/', '-')}.pdf`
       a.click()
-      URL.revokeObjectURL(url)
+      setTimeout(() => URL.revokeObjectURL(url), 10000)
     } catch (err) {
       alert(err.message)
     }
