@@ -4,10 +4,12 @@ import com.bim.backend.entity.User;
 import com.bim.backend.entity.Project;
 import com.bim.backend.entity.DrawingSet;
 import com.bim.backend.entity.Task;
+import com.bim.backend.entity.Offerte;
 import com.bim.backend.repository.UserRepository;
 import com.bim.backend.repository.ProjectRepository;
 import com.bim.backend.repository.DrawingSetRepository;
 import com.bim.backend.repository.TaskRepository;
+import com.bim.backend.repository.OfferteRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,7 @@ public class DataInitializer {
             ProjectRepository projectRepository,
             DrawingSetRepository drawingSetRepository,
             TaskRepository taskRepository,
+            OfferteRepository offerteRepository,
             PasswordEncoder passwordEncoder) {
         return args -> {
             // Create default admin user
@@ -249,6 +252,119 @@ public class DataInitializer {
                 System.out.println("✓ Task assigned to Sarah: " + task6.getTitle());
 
                 System.out.println("\n✅ Sample data creation completed!\n");
+            }
+
+            // Sample offertes
+            if (offerteRepository.count() == 0) {
+                User adminUser = userRepository.findByUsername("admin").orElse(null);
+
+                offerteRepository.save(Offerte.builder()
+                        .offerteNumber("001/2025")
+                        .date(LocalDate.of(2025, 3, 10))
+                        .preparedBy("Emiel")
+                        .projectDescription("Woningen Geel")
+                        .submissionDeadline(LocalDate.of(2025, 3, 25))
+                        .status(Offerte.OfferteStatus.ACCEPTED)
+                        .clientName("Bouwbedrijf Janssen NV")
+                        .clientStreet("Industrielaan")
+                        .clientStreetNumber("42")
+                        .clientPostcode("2440")
+                        .clientCity("Geel")
+                        .clientVatNumber("BE0123456789")
+                        .siteAddress("Herentalseweg 12, 2440 Geel")
+                        .finishGrade("Structuur")
+                        .projectType("Particulier")
+                        .numberOfUnits(4)
+                        .buildingDimensions("12m × 9m")
+                        .numberOfFloors(2)
+                        .roofType("Zadeldak")
+                        .roofPitch("35°")
+                        .corniceHeight("5.40m")
+                        .ridgeHeight("8.20m")
+                        .ceilingHeightGelijkvloers("2.60m")
+                        .ceilingHeightVerdiep1("2.40m")
+                        .cltM2(new java.math.BigDecimal("320.00"))
+                        .cltPricePerM2(new java.math.BigDecimal("85.00"))
+                        .glColumnsM3(new java.math.BigDecimal("12.50"))
+                        .glColumnsPricePerM3(new java.math.BigDecimal("1200.00"))
+                        .glBeamsM3(new java.math.BigDecimal("8.20"))
+                        .glBeamsPricePerM3(new java.math.BigDecimal("1100.00"))
+                        .includeRoostring(true)
+                        .roosteringM2(new java.math.BigDecimal("280.00"))
+                        .roosteringPricePerM2(new java.math.BigDecimal("22.00"))
+                        .numberOfTrucks(3)
+                        .createdBy(adminUser)
+                        .build());
+
+                offerteRepository.save(Offerte.builder()
+                        .offerteNumber("002/2025")
+                        .date(LocalDate.of(2025, 5, 2))
+                        .preparedBy("Emiel")
+                        .projectDescription("Kantoorgebouw Antwerpen")
+                        .submissionDeadline(LocalDate.of(2025, 5, 20))
+                        .status(Offerte.OfferteStatus.PENDING)
+                        .clientName("Construx BV")
+                        .clientStreet("Kasteelpleinstraat")
+                        .clientStreetNumber("7")
+                        .clientPostcode("2000")
+                        .clientCity("Antwerpen")
+                        .clientVatNumber("BE0987654321")
+                        .siteAddress("Havenlaan 55, 2030 Antwerpen")
+                        .finishGrade("Structuur")
+                        .projectType("Commercieel")
+                        .numberOfUnits(1)
+                        .buildingDimensions("20m × 15m")
+                        .numberOfFloors(3)
+                        .roofType("Plat dak")
+                        .corniceHeight("9.60m")
+                        .ceilingHeightGelijkvloers("3.20m")
+                        .ceilingHeightVerdiep1("3.00m")
+                        .cltM2(new java.math.BigDecimal("580.00"))
+                        .cltPricePerM2(new java.math.BigDecimal("90.00"))
+                        .glColumnsM3(new java.math.BigDecimal("24.00"))
+                        .glColumnsPricePerM3(new java.math.BigDecimal("1250.00"))
+                        .glBeamsM3(new java.math.BigDecimal("18.50"))
+                        .glBeamsPricePerM3(new java.math.BigDecimal("1150.00"))
+                        .includeRoostring(false)
+                        .numberOfTrucks(5)
+                        .createdBy(adminUser)
+                        .build());
+
+                offerteRepository.save(Offerte.builder()
+                        .offerteNumber("003/2025")
+                        .date(LocalDate.of(2025, 6, 15))
+                        .preparedBy("Emiel")
+                        .projectDescription("Vakantiewoning Ardennes")
+                        .submissionDeadline(LocalDate.of(2025, 7, 1))
+                        .status(Offerte.OfferteStatus.DRAFT)
+                        .clientName("Familie Dubois")
+                        .clientStreet("Rue de la Forêt")
+                        .clientStreetNumber("3")
+                        .clientPostcode("6800")
+                        .clientCity("Libramont")
+                        .siteAddress("Chemin des Bois 8, 6800 Libramont")
+                        .finishGrade("Structuur")
+                        .projectType("Particulier")
+                        .numberOfUnits(1)
+                        .buildingDimensions("10m × 7m")
+                        .numberOfFloors(1)
+                        .roofType("Zadeldak")
+                        .roofPitch("40°")
+                        .corniceHeight("3.20m")
+                        .ridgeHeight("6.10m")
+                        .ceilingHeightGelijkvloers("2.60m")
+                        .cltM2(new java.math.BigDecimal("140.00"))
+                        .cltPricePerM2(new java.math.BigDecimal("88.00"))
+                        .glColumnsM3(new java.math.BigDecimal("4.50"))
+                        .glColumnsPricePerM3(new java.math.BigDecimal("1200.00"))
+                        .glBeamsM3(new java.math.BigDecimal("3.00"))
+                        .glBeamsPricePerM3(new java.math.BigDecimal("1100.00"))
+                        .includeRoostring(false)
+                        .numberOfTrucks(1)
+                        .createdBy(adminUser)
+                        .build());
+
+                System.out.println("✓ Sample offertes created");
             }
         };
     }
