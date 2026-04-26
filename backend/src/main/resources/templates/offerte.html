@@ -6,41 +6,55 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; color: #1a1a1a; }
 
-  /* ── Fixed footer: no background, just a line and text ── */
-  .footer {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    border-top: 1px solid #d0a65d;
-    padding: 5px 25px;
-    font-size: 8pt; color: #555;
-    background: white;
+  /* ── Page margins + footer via @page margin boxes (never overlaps content) ── */
+  @page {
+    margin: 14mm 14mm 22mm 14mm;
   }
-  .footer table { width: 100%; }
-  .footer td.fl { font-weight: bold; color: #1a1a1a; letter-spacing: 1px; }
-  .footer td.fr { text-align: right; }
+  @page {
+    @bottom-left {
+      content: "CLTXPRT";
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      font-size: 8pt;
+      color: #1a1a1a;
+      border-top: 1px solid #d0a65d;
+      padding-top: 5px;
+    }
+    @bottom-right {
+      content: "Pag. " counter(page) " /";
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 8pt;
+      color: #888;
+      border-top: 1px solid #d0a65d;
+      padding-top: 5px;
+    }
+  }
 
-  /* ── Page: narrow margins to use more A4 width ── */
-  .page { margin: 22px 25px 52px 25px; }
+  /* ── Page content ── */
+  .page { margin: 0; }
 
   /* ── Top header ── */
-  .top-header { border-bottom: 2px solid #d0a65d; padding-bottom: 12px; margin-bottom: 18px; }
+  .top-header { border-bottom: 2px solid #d0a65d; padding-bottom: 14px; margin-bottom: 20px; }
   .top-header table { width: 100%; }
   .top-header td.hl { vertical-align: middle; }
-  .top-header td.hr { vertical-align: middle; text-align: right; width: 160px; }
-  .top-header td.hr img { height: 80px; }
-  .betreft-row { font-size: 8.5pt; color: #555; margin-bottom: 6px; }
-  .betreft-row strong { color: #1a1a1a; }
-  .project-row { font-size: 10.5pt; font-weight: bold; color: #1a1a1a; }
+  .top-header td.hr { vertical-align: middle; text-align: right; width: 180px; }
+  .top-header td.hr img { height: 100px; }
+  .betreft-row { font-size: 8pt; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .betreft-row strong { color: #1a1a1a; text-transform: none; letter-spacing: 0; font-size: 9pt; }
+  .project-row { font-size: 13pt; font-weight: bold; color: #1a1a1a; }
 
   /* ── Info block ── */
-  .info-block { border-bottom: 1px solid #ddd; padding-bottom: 16px; margin-bottom: 18px; }
+  .info-block { border-bottom: 1px solid #ddd; padding-bottom: 18px; margin-bottom: 20px; }
   .info-block table { width: 100%; }
-  .info-block td.il { vertical-align: top; width: 52%; padding-right: 16px; }
-  .info-block td.ir { vertical-align: top; width: 48%; text-align: right; border-left: 2px solid #d0a65d; padding-left: 16px; }
-  .info-row { font-size: 9pt; line-height: 1.85; }
-  .info-row .lbl { color: #666; }
-  .info-row .val { font-weight: bold; }
-  .client-name { font-size: 10pt; font-weight: bold; color: #1a1a1a; margin-bottom: 6px; }
-  .company-block { font-size: 8.5pt; color: #555; line-height: 1.85; }
+  .info-block td.il { vertical-align: top; width: 55%; padding-right: 20px; }
+  .info-block td.ir { vertical-align: top; width: 45%; text-align: right; border-left: 2px solid #d0a65d; padding-left: 18px; }
+  .info-row { font-size: 9pt; line-height: 2; }
+  .info-row .lbl { color: #888; }
+  .info-row .val { font-weight: bold; color: #1a1a1a; }
+  .client-name { font-size: 11pt; font-weight: bold; color: #1a1a1a; margin-bottom: 10px; }
+  .offerte-nr { font-size: 10pt; font-weight: bold; color: #d0a65d; }
+  .company-block { font-size: 8.5pt; color: #555; line-height: 2; }
+  .company-block a { color: #d0a65d; }
 
   /* ── Section header (full width via real table) ── */
   .sh { width: 100%; border-collapse: collapse; margin-top: 14px; }
@@ -84,14 +98,6 @@
 </head>
 <body>
 
-<!-- Footer: no background, just CLTXPRT + page number -->
-<div class="footer">
-  <table><tr>
-    <td class="fl">CLTXPRT</td>
-    <td class="fr">Pag. 1 /</td>
-  </tr></table>
-</div>
-
 <div class="page">
 
   <!-- Header -->
@@ -110,7 +116,7 @@
     <table><tr>
       <td class="il">
         <div class="client-name">{{clientName}}</div>
-        <div class="info-row"><span class="lbl">Offerte nr: </span><span class="val">{{offerteNumber}}</span></div>
+        <div class="info-row"><span class="lbl">Offerte nr:&#160;&#160;&#160;</span><span class="offerte-nr">{{offerteNumber}}</span></div>
         <div class="info-row"><span class="lbl">Offerte datum: </span><span class="val">{{date}}</span></div>
         {{#validUntil}}
         <div class="info-row"><span class="lbl">Offerte geldig tot: </span><span class="val">{{validUntil}}</span></div>
@@ -124,8 +130,8 @@
           Frankrijklei 5 - 2000 Antwerpen<br/>
           Belgi&#235;<br/>
           +32 486 915 515<br/>
-          info@cltxprt.be<br/>
-          www.cltxprt.be<br/>
+          <span style="color:#d0a65d;">info@cltxprt.be</span><br/>
+          <span style="color:#d0a65d;">www.cltxprt.be</span><br/>
           BTW BE 0802.871.869
         </div>
       </td>
@@ -265,10 +271,10 @@
     <div class="lci">4de schijf: montage + eventuele overschot na gemaakte afspraken</div>
 
     <div class="lct">Prijsherziening</div>
-    <div class="lcb">5. Zelfs in geval van een absoluut forfait leidt elke wijziging van de lonen, de sociale lasten, de prijzen van de materialen of van hun transport tot een prijsherziening die toegepast wordt op de betrokken facturering van de uitgevoerde werken.</div>
+    <div class="lcb">5. Zelfs in geval van een absoluut forfait leidt elke wijziging van de lonen, de sociale lasten, de prijzen van de materialen of van hun transport tot een prijsherziening die toegepast wordt op de betrokken facturering van de uitgevoerde werken volgens de onderstaande formule:</div>
     <div class="lcb">6. "P" is het bedrag van de uitgevoerde werken en "p" is het herziene bedrag.</div>
-    <div class="lcb">7. "S" is het gemiddelde uurloon bepaald door het Paritair Comit&#233; voor het Bouwbedrijf van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte, en verhoogd met het op die datum door de FOD Economie aanvaarde totaalpercentage van de sociale lasten en verzekeringen.</div>
-    <div class="lcb">8. "I" is het maandelijkse indexcijfer bepaald door de Commissie van de Prijslijst der Bouwmaterialen, zoals van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte.</div>
+    <div class="lcb">7. "S" is het gemiddelde uurloon bepaald door het Paritair Comit&#233; voor het Bouwbedrijf van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte, en verhoogd met het op die datum door de FOD Economie aanvaarde totaalpercentage van de sociale lasten en verzekeringen; "s" is dit uurloon zoals het werd opgenomen v&#243;&#243;r de aanvang van de werken waarvoor gedeeltelijke betaling wordt gevraagd, verhoogd met het hiervoor vermelde totaalpercentage dat in die periode aangenomen was.</div>
+    <div class="lcb">8. "I" is het maandelijkse indexcijfer bepaald door de Commissie van de Prijslijst der Bouwmaterialen, zoals van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte. i is ditzelfde indexcijfer zoals het werd opgenomen v&#243;&#243;r de aanvang van de werken waarvoor gedeeltelijke betaling wordt gevraagd.</div>
     <div class="lcb">9. Voorzieningen opgelegd door de veiligheidsco&#246;rdinator zijn niet in onze offerte inbegrepen, tenzij anders vermeld.</div>
 
     <div class="lct">Uitvoeringsmodaliteiten</div>
@@ -281,35 +287,35 @@
     <div class="lcb">14. Elke termijn van levering van arbeid en uitvoering van werken, indien deze vermeld wordt, wordt slechts op indicatieve wijze aangeduid, en laattijdigheid in de levering of uitvoering laat aan de klant niet toe de bestelling af te zeggen of schadevergoeding te vorderen, evenmin om zijn betalingsverplichtingen op te schorten.</div>
 
     <div class="lct">Onvoorziene omstandigheden</div>
-    <div class="lcb">15. Alle omstandigheden die bij het indienen van de bestelbon, offerte of overeenkomst redelijkerwijze onvoorzienbaar waren en onvermijdbaar zijn, en die de uitvoering van de overeenkomst financieel of op een andere manier zwaarder of moeilijker zouden maken dan normaal voorzien is, zullen worden beschouwd als gevallen van overmacht: voorbeelden (niet-limitatief): ongevallen, oorlogen en hun gevolgen, slechte weersomstandigheden, stakingen, lock-out, tekort aan werkkrachten en materiaal, storingen en moeilijkheden inzake transport, enz... die zich bij onszelf of bij onze leveranciers voordoen.</div>
+    <div class="lcb">15. Alle omstandigheden die bij het indienen van de bestelbon, offerte of overeenkomst redelijkerwijze onvoorzienbaar waren en onvermijdbaar zijn, en die de uitvoering van de overeenkomst financieel of op een andere manier zwaarder of moeilijker zouden maken dan normaal voorzien is, zullen worden beschouwd als gevallen van overmacht: voorbeelden (niet-limitatief): ongevallen, oorlogen en hun gevolgen, slechte weersomstandigheden, stakingen, lock-out, tekort aan werkkrachten en materiaal, storingen en moeilijkheden inzake transport, enz... die zich bij onszelf of bij onze leveranciers voordoen. Gevallen van overmacht geven ons het recht om de herziening of ontbinding van de overeenkomst aan te vragen. Wanneer deze omstandigheden een onderbreking van de werken tot gevolg hebben, wordt de uitvoeringstermijn van rechtswege geschorst voor de duur van de onderbreking, vermeerderd met de tijd die nodig is om de werf terug op te starten.</div>
     <div class="lcb">16. Een tenietgaan of beschadiging door toeval of overmacht van de geleverde zaak of het uitgevoerde werk, of nog ingevolge de eigen fout van de klant of van personen voor wie hij instaat, is steeds en integraal ten laste van de klant.</div>
 
     <div class="lct">Wijzigingen en bijkomende werken</div>
-    <div class="lcb">17. Elke door de klant bestelde wijziging of bijkomend werk alsook de vaststelling van de prijs vereist een voorafgaand akkoord van beide partijen.</div>
-    <div class="lcb">18. Elke wijziging, toevoeging of weglating met betrekking tot de werkzaamheden zoals omschreven in de bestelbon, offerte of de overeenkomst, moet het voorwerp uitmaken van een aanhangsel. Bij ontstentenis daarvan, zal er steeds en onherroepelijk van worden uitgegaan dat deze werken conform de verbale instructies van de klant werden uitgevoerd.</div>
+    <div class="lcb">17. Elke door de klant bestelde wijziging of bijkomend werk alsook de vaststelling van de prijs vereist een voorafgaand akkoord van beide partijen. Wijzigingen of bijkomend werk mogen met alle middelen van recht bewezen worden.</div>
+    <div class="lcb">18. Elke wijziging, toevoeging of weglating met betrekking tot de werkzaamheden zoals omschreven in de bestelbon, offerte of de overeenkomst, moet het voorwerp uitmaken van een aanhangsel bij de bestelbon, offerte of de overeenkomst. Bij ontstentenis daarvan, zal er steeds en onherroepelijk van worden uitgegaan dat deze werken conform de verbale instructies van de klant werden uitgevoerd. Elke door ons gebeurlijke schriftelijke bevestiging of melding inzake een wijziging, toevoeging of weglating van de werkzaamheden zoals omschreven in de bestelbon, offerte of de overeenkomst, zal in hoofde van de klant onweerlegbaar, aanvaard en onherroepelijk zijn bij gebrek aan diens schriftelijke opmerkingen binnen de 48 uren vanaf de verzending van onze mededeling of bevestiging.</div>
 
     <div class="lct">Verbreking</div>
-    <div class="lcb">19. Indien de klant geheel of gedeeltelijk afziet van de overeengekomen werken, dan is deze conform art. 1794 BW gehouden ons schadeloos te stellen voor al onze uitgaven, al onze arbeid, en alles wat wij bij die werken hadden kunnen winnen, hetgeen forfaitair wordt begroot op 20% van de niet uitgevoerde werken.</div>
+    <div class="lcb">19. Indien de klant geheel of gedeeltelijk afziet van de overeengekomen werken, dan is deze conform art. 1794 BW gehouden ons schadeloos te stellen voor al onze uitgaven, al onze arbeid, en alles wat wij bij die werken hadden kunnen winnen, hetgeen forfaitair wordt begroot op 20% van de niet uitgevoerde werken, onverminderd ons recht om onze werkelijke schade aan te tonen indien deze hoger zou liggen.</div>
 
     <div class="lct">Eenzijdige be&#235;indiging in gevolge wanprestatie</div>
-    <div class="lcb">20. Indien &#233;&#233;n van beide partijen enige wettelijke dan wel contractuele verplichting niet nakomt, kan de andere partij vanaf de 10e dag na het verzenden van een ingebrekestelling waarop geen reactie werd ontvangen, eenzijdig overgaan tot de ontbinding van het contract, waarop deze recht heeft vanwege de in gebreke blijvende partij op betaling van een forfaitaire schadevergoeding ten belope van 50% van het totale factuurbedrag.</div>
+    <div class="lcb">20. Indien &#233;&#233;n van beide partijen enige wettelijke dan wel contractuele verplichting niet nakomt, kan de andere partij vanaf de 10e dag na het verzenden van een ingebrekestelling waarop geen reactie werd ontvangen, eenzijdig overgaan tot de ontbinding van het contract, waarop deze recht heeft vanwege de in gebreke blijvende partij op betaling van een forfaitaire schadevergoeding ten belope van 50% van het totale factuurbedrag, tenzij de werkelijk gedane uitgaven dit percentage overstijgen.</div>
 
     <div class="lct">Oplevering</div>
-    <div class="lcb">21. Zodra de werken be&#235;indigd zijn, dient de klant over te gaan tot de oplevering van de werken. Kleine onvolkomenheden of onafgewerktheden, waarvan de waarde minder dan 10% van de aannemingssom beloopt, kunnen geenszins worden ingeroepen om de oplevering te weigeren.</div>
+    <div class="lcb">21. Zodra de werken be&#235;indigd zijn, dient de klant over te gaan tot de oplevering van de werken. Kleine onvolkomenheden of onafgewerktheden, waarvan de waarde minder dan 10% van de aannemingssom beloopt, kunnen geenszins worden ingeroepen om de oplevering te weigeren. In voorkomend geval dient de klant slechts te betalen ten belope van wat voor aanvaarding in aanmerking is genomen en zullen de eventuele gebreken binnen de maand worden verholpen. Als de klant nalaat aan deze oplevering deel te nemen, of er zich geldig te laten vertegenwoordigen binnen 15 dagen na hierom verzocht te zijn, wordt de oplevering als verkregen beschouwd vanaf het einde van deze periode van 15 dagen. De oplevering houdt de goedkeuring in door de klant en sluit voor hem elk beroep wegens zichtbare gebreken uit. De datum van de oplevering bepaalt het vertrekpunt van de tienjarige aansprakelijkheid. De werken die in staat zijn bevonden worden vermoed, tot bewijs van het tegendeel, zo te zijn geweest op de datum van de voltooiing van de werken.</div>
     <div class="lcb">22. Een bestelling is klaar voor Oplevering als alle onderdelen (goederen en/of diensten) van die bestelling geleverd zijn en klaar zijn voor Oplevering.</div>
     <div class="lcb">23. Zodra CLTxPRT oordeelt dat alle goederen klaar zijn voor Oplevering en als alle dienstenprestaties zijn uitgevoerd zonder dat de Klant hieromtrent tijdig voorbehoud heeft aangetekend, zal CLTxPRT de Klant per post of per mail een 'Oplevering' toesturen.</div>
     <div class="lcb">24. De Klant heeft vervolgens 10 werkdagen de tijd om na te gaan of de geleverde goederen fundamentele tekorten vertonen die de operationele werking redelijkerwijze onmogelijk maken.</div>
-    <div class="lcb">25. In het geval CLTxPRT de gemotiveerde weigering ontvankelijk acht, zal CLTxPRT vooreerst en zo spoedig mogelijk de fundamentele tekorten herstellen. Indien CLTxPRT de weigering niet ontvankelijk acht, zullen beide partijen in overleg treden om te streven naar een aanvaardbare regeling.</div>
+    <div class="lcb">25. In het geval CLTxPRT de gemotiveerde weigering, conform de in paragraaf xx gespecificeerde Opleveringscriteria ontvankelijk acht, zal CLTxPRT vooreerst en zo spoedig mogelijk de fundamentele tekorten die de operationele werking van de goederen verhinderen, herstellen. Indien CLTxPRT de weigering niet ontvankelijk acht, zullen beide partijen in overleg treden om te streven naar een aanvaardbare regeling.</div>
     <div class="lcb">26. Vervolgens zal CLTxPRT een nieuwe Opleveringsprocedure starten.</div>
 
     <div class="lct">Lichte verborgen gebreken</div>
-    <div class="lcb">27. Gedurende een periode van een jaar na de oplevering is de aannemer aansprakelijk voor de lichte verborgen gebreken die niet gedekt zijn door de artikelen 1792 en 2270 van het Burgerlijk Wetboek. Op straffe van verval van de aansprakelijkheid van de aannemer moet het gebrek door de klant worden aangeklaagd binnen 6 maanden vanaf de ontdekking ervan.</div>
+    <div class="lcb">27. Gedurende een periode van een jaar na de oplevering is de aannemer aansprakelijk voor de lichte verborgen gebreken die niet gedekt zijn door de artikelen 1792 en 2270 van het Burgerlijk Wetboek. Op straffe van verval van de aansprakelijkheid van de aannemer moet het gebrek door de klant worden aangeklaagd binnen 6 maanden vanaf de ontdekking ervan of vanaf de dag waarop het bekend had moeten zijn. Elke rechtsvordering op die grond is maar ontvankelijk als ze ingesteld wordt binnen de termijn van jaar na de oplevering van de werken.</div>
 
     <div class="lct">Overdracht van risico's</div>
     <div class="lcb">28. De door de artikelen 1788 en 1789 van het Burgerlijk Wetboek beoogde overdracht van risico's vindt plaats naarmate de uitvoering van de werken of de levering van de materialen, goederen of installaties vordert.</div>
 
     <div class="lct">Eigendomsvoorbehoud</div>
-    <div class="lcb">29. Zelfs na hun incorporatie blijven de materialen die geleverd werden in het kader van deze overeenkomst onze eigendom en is de klant er slechts de houder van. Wij mogen zonder toestemming van de klant de materialen weer losmaken en terugnemen. Dit recht vervalt en de eigendom gaat over zodra de klant al zijn schulden aan ons gedelgd heeft.</div>
+    <div class="lcb">29. Zelfs na hun incorporatie blijven de materialen die geleverd werden in het kader van deze overeenkomst onze eigendom en is de klant er slechts de houder van. Wij mogen zonder toestemming van de klant de materialen weer losmaken en terugnemen. Dit recht vervalt en de eigendom gaat over zodra de klant al zijn schulden aan ons gedelgd heeft. Bij een beroep op het recht op terugneming mogen wij de betaalde voorschotten houden ter vergoeding van zijn schade. Wanneer wij dit recht uitoefenen, brengen wij de klant hiervan bij aangetekende brief op de hoogte en wordt die geacht hiervan kennis te hebben op de tweede werkdag na de verzending ervan.</div>
 
     <div class="lct">Geschillen</div>
     <div class="lcb">30. Bij geschil over de geldigheid, de uitvoering of de interpretatie van deze overeenkomst zijn enkel de rechtbanken van de woonplaats van onze maatschappelijke zetel bevoegd.</div>
@@ -318,7 +324,7 @@
     <div class="lcb">31. De eventuele nietigheid of ongeldigheid van &#233;&#233;n van de voornoemde algemene en/of bijzondere voorwaarden heeft geen invloed op de geldigheid van de andere voorwaarden en/of de overeenkomst.</div>
 
     <div class="lct">Algemene bepalingen</div>
-    <div class="lcb">32. Indien &#233;&#233;n of meerdere bepalingen van deze Algemene Voorwaarden nietig of onuitvoerbaar worden verklaard, zullen partijen deze bepalingen vervangen door een geldige en uitvoerbare bepaling die, in de mate van het mogelijke, het economische, zakelijke of andere doel van genoemde nietige of onuitvoerbare bepaling zal bereiken en blijven de overige bepalingen van de Algemene Voorwaarden van kracht.</div>
+    <div class="lcb">32. of meerdere bepalingen van deze Algemene Voorwaarden nietig of onuitvoerbaar worden verklaard, zullen partijen deze bepalingen vervangen door een geldige en uitvoerbare bepaling die, in de mate van het mogelijke, het economische, zakelijke of andere doel van genoemde nietige of onuitvoerbare bepaling zal bereiken en blijven de overige bepalingen van de Algemene Voorwaarden van kracht.</div>
     <div class="lcb">33. Het loutere feit dat een partij niet aandringt op de strikte naleving van enige bepaling van de Algemene Voorwaarden of dit niet afdwingt, kan niet worden ge&#239;nterpreteerd als een verzaking aan of afstand van de rechten van deze partij, tenzij dit schriftelijk wordt bevestigd.</div>
     <div class="lcb">34. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
     <div class="lcb">35. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
