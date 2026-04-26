@@ -16,15 +16,37 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored token on mount
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
 
     if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      fetch(`${apiBase}/api/auth/me`, {
+        headers: { 'Authorization': `Bearer ${storedToken}` }
+      })
+        .then(res => {
+          if (res.ok) {
+            setToken(storedToken);
+            setUser(JSON.parse(storedUser));
+          } else if (res.status === 401 || res.status === 403) {
+            // Token is expired or invalid — force re-login
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          } else {
+            // Other server error — keep session, let page-level requests handle it
+            setToken(storedToken);
+            setUser(JSON.parse(storedUser));
+          }
+        })
+        .catch(() => {
+          // Network error — backend may not be running yet, keep session
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = (authData) => {
