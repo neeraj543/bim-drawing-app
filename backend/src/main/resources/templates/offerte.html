@@ -6,127 +6,134 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; color: #1a1a1a; }
 
-  /* ── Fixed footer ── */
+  /* ── Fixed footer: no background, just a line and text ── */
   .footer {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background-color: #d0a65d; color: white; font-size: 8pt;
-    padding: 6px 35px; display: table; width: 100%;
+    border-top: 1px solid #d0a65d;
+    padding: 5px 25px;
+    font-size: 8pt; color: #555;
+    background: white;
   }
-  .footer-left  { display: table-cell; font-weight: bold; letter-spacing: 1px; }
-  .footer-right { display: table-cell; text-align: right; }
+  .footer table { width: 100%; }
+  .footer td.fl { font-weight: bold; color: #1a1a1a; letter-spacing: 1px; }
+  .footer td.fr { text-align: right; }
 
-  /* ── Page: generous bottom margin so content never hides under footer ── */
-  .page { margin: 28px 40px 55px 40px; }
+  /* ── Page: narrow margins to use more A4 width ── */
+  .page { margin: 22px 25px 52px 25px; }
 
   /* ── Top header ── */
-  .top-header { display: table; width: 100%; padding-bottom: 14px; border-bottom: 2px solid #d0a65d; margin-bottom: 20px; }
-  .top-header-left  { display: table-cell; vertical-align: middle; }
-  .top-header-right { display: table-cell; text-align: right; vertical-align: middle; width: 150px; }
-  .top-header-right img { height: 70px; }
-  .betreft-row { font-size: 8.5pt; color: #555; margin-bottom: 5px; }
+  .top-header { border-bottom: 2px solid #d0a65d; padding-bottom: 12px; margin-bottom: 18px; }
+  .top-header table { width: 100%; }
+  .top-header td.hl { vertical-align: middle; }
+  .top-header td.hr { vertical-align: middle; text-align: right; width: 160px; }
+  .top-header td.hr img { height: 80px; }
+  .betreft-row { font-size: 8.5pt; color: #555; margin-bottom: 6px; }
   .betreft-row strong { color: #1a1a1a; }
-  .project-row { font-size: 10pt; color: #1a1a1a; }
-  .project-row strong { font-weight: bold; }
+  .project-row { font-size: 10.5pt; font-weight: bold; color: #1a1a1a; }
 
   /* ── Info block ── */
-  .info-block { display: table; width: 100%; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid #ddd; }
-  .info-left  { display: table-cell; width: 55%; vertical-align: top; }
-  .info-right { display: table-cell; width: 45%; vertical-align: top; text-align: right; }
-  .info-row { font-size: 9pt; line-height: 1.9; }
-  .info-row .lbl { color: #555; }
-  .info-row .val { font-weight: bold; color: #1a1a1a; }
-  .company-contact { font-size: 8.5pt; color: #555; line-height: 2; }
+  .info-block { border-bottom: 1px solid #ddd; padding-bottom: 16px; margin-bottom: 18px; }
+  .info-block table { width: 100%; }
+  .info-block td.il { vertical-align: top; width: 52%; padding-right: 16px; }
+  .info-block td.ir { vertical-align: top; width: 48%; text-align: right; border-left: 2px solid #d0a65d; padding-left: 16px; }
+  .info-row { font-size: 9pt; line-height: 1.85; }
+  .info-row .lbl { color: #666; }
+  .info-row .val { font-weight: bold; }
+  .client-name { font-size: 10pt; font-weight: bold; color: #1a1a1a; margin-bottom: 6px; }
+  .company-block { font-size: 8.5pt; color: #555; line-height: 1.85; }
 
-  /* ── Section header ── */
-  .section-header { display: table; width: 100%; background-color: #d0a65d; color: white; padding: 7px 12px; margin-top: 16px; margin-bottom: 0; }
-  .sh-left  { display: table-cell; font-weight: bold; font-size: 9.5pt; }
-  .sh-right { display: table-cell; text-align: right; font-weight: bold; font-size: 9.5pt; white-space: nowrap; }
+  /* ── Section header (full width via real table) ── */
+  .sh { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  .sh td { background-color: #d0a65d; color: white; font-weight: bold; font-size: 9.5pt; padding: 7px 12px; }
+  .sh td.sr { text-align: right; white-space: nowrap; }
 
-  /* ── Sub-section label ── */
-  .sub-label { display: table; width: 100%; padding: 7px 12px 3px 12px; }
-  .subl-left  { display: table-cell; font-weight: bold; font-size: 9pt; color: #1a1a1a; }
-  .subl-right { display: table-cell; text-align: right; font-weight: bold; font-size: 9pt; color: #1a1a1a; white-space: nowrap; }
+  /* ── Sub-label (no background) ── */
+  .subl { width: 100%; border-collapse: collapse; }
+  .subl td { padding: 7px 12px 3px 12px; font-weight: bold; font-size: 9pt; color: #1a1a1a; }
+  .subl td.sr { text-align: right; white-space: nowrap; }
 
-  /* ── Line items ── */
-  .line-item { display: table; width: 100%; padding: 4px 12px 4px 20px; border-bottom: 1px solid #f0f0f0; }
-  .li-desc  { display: table-cell; font-size: 8.5pt; color: #1a1a1a; width: 46%; }
-  .li-qty   { display: table-cell; font-size: 8.5pt; color: #555; width: 16%; }
-  .li-rate  { display: table-cell; font-size: 8.5pt; color: #555; width: 20%; }
-  .li-total { display: table-cell; font-size: 8.5pt; font-weight: bold; text-align: right; color: #1a1a1a; width: 18%; white-space: nowrap; }
+  /* ── Line item rows ── */
+  .li { width: 100%; border-collapse: collapse; }
+  .li td { padding: 4px 12px 4px 22px; font-size: 8.5pt; border-bottom: 1px solid #f2f2f2; }
+  .li td.desc { color: #1a1a1a; width: 46%; }
+  .li td.qty  { color: #666; width: 16%; }
+  .li td.rate { color: #666; width: 20%; }
+  .li td.tot  { text-align: right; font-weight: bold; color: #1a1a1a; width: 18%; white-space: nowrap; }
 
-  /* ── Bullet items ── */
-  .bullet { padding: 3px 12px 3px 24px; font-size: 8.5pt; color: #555; }
+  /* ── Bullet ── */
+  .bullet { padding: 3px 12px 3px 26px; font-size: 8.5pt; color: #666; }
 
   /* ── Totals ── */
-  .totals-wrap { margin-top: 20px; width: 50%; margin-left: 50%; }
-  .total-row { display: table; width: 100%; padding: 5px 12px; }
-  .tr-label { display: table-cell; font-size: 9pt; color: #555; }
-  .tr-value { display: table-cell; text-align: right; font-size: 9pt; font-weight: bold; color: #1a1a1a; white-space: nowrap; }
-  .total-divider { border-top: 1px solid #d0a65d; margin: 4px 12px; }
-  .total-row.grand .tr-label { font-size: 10pt; font-weight: bold; color: #1a1a1a; }
-  .total-row.grand .tr-value { font-size: 10pt; font-weight: bold; color: #d0a65d; }
+  .totals-outer { margin-top: 18px; }
+  .totals { width: 48%; border-collapse: collapse; margin-left: auto; }
+  .totals td { padding: 5px 12px; font-size: 9pt; }
+  .totals td.tl { color: #555; }
+  .totals td.tv { text-align: right; font-weight: bold; white-space: nowrap; }
+  .totals tr.grand td { font-size: 10pt; font-weight: bold; border-top: 2px solid #d0a65d; padding-top: 7px; }
+  .totals tr.grand td.tv { color: #d0a65d; }
 
   /* ── Notes ── */
-  .notes-box { margin-top: 16px; padding: 8px 12px; font-size: 8.5pt; color: #555; border-left: 3px solid #d0a65d; }
+  .notes-box { margin-top: 14px; padding: 8px 12px; font-size: 8.5pt; color: #555; border-left: 3px solid #d0a65d; background: #fafafa; }
 
   /* ── Legal ── */
-  .legal-section { margin-top: 24px; padding-top: 16px; border-top: 1px solid #ddd; }
-  .legal-clause-title { font-weight: bold; font-size: 8.5pt; color: #1a1a1a; margin-top: 10px; margin-bottom: 2px; }
-  .legal-clause-body  { font-size: 7.5pt; color: #555; line-height: 1.6; padding-left: 14px; }
-  .legal-indent       { font-size: 7.5pt; color: #555; line-height: 1.6; padding-left: 28px; }
+  .legal-section { margin-top: 26px; padding-top: 14px; border-top: 1px solid #ddd; }
+  .lct { font-weight: bold; font-size: 8.5pt; color: #1a1a1a; margin-top: 10px; margin-bottom: 2px; }
+  .lcb { font-size: 7.5pt; color: #555; line-height: 1.6; padding-left: 14px; }
+  .lci { font-size: 7.5pt; color: #555; line-height: 1.6; padding-left: 28px; }
 </style>
 </head>
 <body>
 
+<!-- Footer: no background, just CLTXPRT + page number -->
 <div class="footer">
-  <span class="footer-left">CLTXPRT</span>
-  <span class="footer-right">info@cltxprt.be &#160;|&#160; www.cltxprt.be &#160;|&#160; BTW BE 0802.871.869</span>
+  <table><tr>
+    <td class="fl">CLTXPRT</td>
+    <td class="fr">Pag. 1 /</td>
+  </tr></table>
 </div>
 
 <div class="page">
 
   <!-- Header -->
   <div class="top-header">
-    <div class="top-header-left">
-      <div class="betreft-row">Betreft: <strong>Offerte</strong></div>
-      <div class="project-row">Project: <strong>{{projectDescription}}</strong></div>
-    </div>
-    <div class="top-header-right">
-      <img src="{{logoBase64}}" alt="CLTxPRT"/>
-    </div>
+    <table><tr>
+      <td class="hl">
+        <div class="betreft-row">Betreft: <strong>Offerte</strong></div>
+        <div class="project-row">{{projectDescription}}</div>
+      </td>
+      <td class="hr"><img src="{{logoBase64}}" alt="CLTxPRT"/></td>
+    </tr></table>
   </div>
 
   <!-- Info block -->
   <div class="info-block">
-    <div class="info-left">
-      <div class="info-row"><span class="lbl">Cli&#235;nt: </span><span class="val">{{clientName}}</span></div>
-      <div style="height:10px;"></div>
-      <div class="info-row"><span class="lbl">Offerte nr: </span><span class="val">{{offerteNumber}}</span></div>
-      <div class="info-row"><span class="lbl">Offerte datum: </span><span class="val">{{date}}</span></div>
-      {{#validUntil}}
-      <div class="info-row"><span class="lbl">Offerte geldig tot: </span><span class="val">{{validUntil}}</span></div>
-      {{/validUntil}}
-      {{#deliveryQuarter}}
-      <div class="info-row"><span class="lbl">Levering: </span><span class="val">{{deliveryQuarter}}</span></div>
-      {{/deliveryQuarter}}
-    </div>
-    <div class="info-right">
-      <div class="company-contact">
-        Frankrijklei 5 - 2000 Antwerpen<br/>
-        Belgi&#235;<br/>
-        +32 486 915 515<br/>
-        info@cltxprt.be<br/>
-        www.cltxprt.be<br/>
-        BTW BE 0802.871.869
-      </div>
-    </div>
+    <table><tr>
+      <td class="il">
+        <div class="client-name">{{clientName}}</div>
+        <div class="info-row"><span class="lbl">Offerte nr: </span><span class="val">{{offerteNumber}}</span></div>
+        <div class="info-row"><span class="lbl">Offerte datum: </span><span class="val">{{date}}</span></div>
+        {{#validUntil}}
+        <div class="info-row"><span class="lbl">Offerte geldig tot: </span><span class="val">{{validUntil}}</span></div>
+        {{/validUntil}}
+        {{#deliveryQuarter}}
+        <div class="info-row"><span class="lbl">Levering: </span><span class="val">{{deliveryQuarter}}</span></div>
+        {{/deliveryQuarter}}
+      </td>
+      <td class="ir">
+        <div class="company-block">
+          Frankrijklei 5 - 2000 Antwerpen<br/>
+          Belgi&#235;<br/>
+          +32 486 915 515<br/>
+          info@cltxprt.be<br/>
+          www.cltxprt.be<br/>
+          BTW BE 0802.871.869
+        </div>
+      </td>
+    </tr></table>
   </div>
 
   <!-- 1. Engineering -->
-  <div class="section-header">
-    <span class="sh-left">Engineering</span>
-    <span class="sh-right">&#8364; {{engineeringCost}}</span>
-  </div>
+  <table class="sh"><tr><td>Engineering</td><td class="sr">&#8364; {{engineeringCost}}</td></tr></table>
   <div class="bullet">Voorstudie</div>
   <div class="bullet">Stabiliteitsstudie - aanleveren studies bevestigingsmaterialen</div>
   <div class="bullet">3D-model</div>
@@ -135,76 +142,61 @@
   <div class="bullet">Opvolging project - oplevering</div>
 
   <!-- 2. Structuur -->
-  <div class="section-header">
-    <span class="sh-left">Structuur</span>
-    <span class="sh-right">&#8364; {{structuurTotal}}</span>
-  </div>
+  <table class="sh"><tr><td>Structuur</td><td class="sr">&#8364; {{structuurTotal}}</td></tr></table>
 
   {{#hasClt}}
-  <div class="sub-label">
-    <span class="subl-left">CLT-e</span>
-    <span class="subl-right">&#8364; {{cltLineTotal}}</span>
-  </div>
-  <div class="line-item">
-    <span class="li-desc">CLT elementen</span>
-    <span class="li-qty">{{cltM2}} m&#178;</span>
-    <span class="li-rate"></span>
-    <span class="li-total">&#8364; {{cltLineTotal}}</span>
-  </div>
+  <table class="subl"><tr><td>CLT-e</td><td class="sr">&#8364; {{cltLineTotal}}</td></tr></table>
+  <table class="li"><tr>
+    <td class="desc">CLT elementen</td>
+    <td class="qty">{{cltM2}} m&#178;</td>
+    <td class="rate"></td>
+    <td class="tot">&#8364; {{cltLineTotal}}</td>
+  </tr></table>
   {{/hasClt}}
 
   {{#hasGl}}
-  <div class="sub-label">
-    <span class="subl-left">GL-el</span>
-    <span class="subl-right">&#8364; {{glTotal}}</span>
-  </div>
+  <table class="subl"><tr><td>GL-el</td><td class="sr">&#8364; {{glTotal}}</td></tr></table>
   {{#hasGlColumns}}
-  <div class="line-item">
-    <span class="li-desc">Kolommen</span>
-    <span class="li-qty">{{glColumnsM3}} m&#179;</span>
-    <span class="li-rate">&#8364; {{glColumnsPricePerM3}}</span>
-    <span class="li-total">&#8364; {{glColumnsTotal}}</span>
-  </div>
+  <table class="li"><tr>
+    <td class="desc">Kolommen</td>
+    <td class="qty">{{glColumnsM3}} m&#179;</td>
+    <td class="rate">&#8364; {{glColumnsPricePerM3}}</td>
+    <td class="tot">&#8364; {{glColumnsTotal}}</td>
+  </tr></table>
   {{/hasGlColumns}}
   {{#hasGlBeams}}
-  <div class="line-item">
-    <span class="li-desc">Balken</span>
-    <span class="li-qty">{{glBeamsM3}} m&#179;</span>
-    <span class="li-rate">&#8364; {{glBeamsPricePerM3}}</span>
-    <span class="li-total">&#8364; {{glBeamsTotal}}</span>
-  </div>
+  <table class="li"><tr>
+    <td class="desc">Balken</td>
+    <td class="qty">{{glBeamsM3}} m&#179;</td>
+    <td class="rate">&#8364; {{glBeamsPricePerM3}}</td>
+    <td class="tot">&#8364; {{glBeamsTotal}}</td>
+  </tr></table>
   {{/hasGlBeams}}
   {{/hasGl}}
 
   <!-- 3. CNC bewerking -->
-  <div class="section-header">
-    <span class="sh-left">CNC bewerking</span>
-    <span class="sh-right">&#8364; {{cncTotal}}</span>
-  </div>
+  <table class="sh"><tr><td>CNC bewerking</td><td class="sr">&#8364; {{cncTotal}}</td></tr></table>
   {{#hasClt}}
-  <div class="line-item">
-    <span class="li-desc">CLT: Dimensioneren en zagen van elementen</span>
-    <span class="li-qty">{{cltM2}} m&#178;</span>
-    <span class="li-rate">11,00 euro/m&#178;</span>
-    <span class="li-total">&#8364; {{cncCltCost}}</span>
-  </div>
+  <table class="li"><tr>
+    <td class="desc">CLT: Dimensioneren en zagen van elementen</td>
+    <td class="qty">{{cltM2}} m&#178;</td>
+    <td class="rate">11,00 euro/m&#178;</td>
+    <td class="tot">&#8364; {{cncCltCost}}</td>
+  </tr></table>
   <div class="bullet">Inclusief uitsparingen voor technieken</div>
   {{/hasClt}}
   {{#hasGlCnc}}
-  <div class="line-item">
-    <span class="li-desc">GL: Dimensioneren en zagen van elementen</span>
-    <span class="li-qty">{{glTotalM3}} m&#179;</span>
-    <span class="li-rate">260,00 euro/m&#179;</span>
-    <span class="li-total">&#8364; {{cncGlCost}}</span>
-  </div>
+  <table class="li"><tr>
+    <td class="desc">GL: Dimensioneren en zagen van elementen</td>
+    <td class="qty">{{glTotalM3}} m&#179;</td>
+    <td class="rate">260,00 euro/m&#179;</td>
+    <td class="tot">&#8364; {{cncGlCost}}</td>
+  </tr></table>
   <div class="bullet">Inclusief uitsparingen voor verbindingsmaterialen</div>
   {{/hasGlCnc}}
 
   <!-- 4. Accessoires -->
-  <div class="section-header">
-    <span class="sh-left">Accessoires</span>
-    <span class="sh-right">&#8364; {{accessoiresCost}}</span>
-  </div>
+  <table class="sh"><tr><td>Accessoires</td><td class="sr">&#8364; {{accessoiresCost}}</td></tr></table>
   <div class="bullet">Verbindingsmaterialen</div>
   <div class="bullet">Schroeven</div>
   <div class="bullet">Verbindingsmaterialen Rothoblaas</div>
@@ -212,37 +204,28 @@
 
   <!-- 5. Roostering (optional) -->
   {{#includeRoostring}}
-  <div class="section-header">
-    <span class="sh-left">Roostering met beplating</span>
-    <span class="sh-right">&#8364; {{roosteringTotal}}</span>
-  </div>
-  <div class="line-item">
-    <span class="li-desc">OSB 22mm - tand en groef</span>
-    <span class="li-qty">{{roosteringM2}} m&#178;</span>
-    <span class="li-rate">{{roosteringPricePerM2}} euro/m&#178;</span>
-    <span class="li-total">&#8364; {{roosteringTotal}}</span>
-  </div>
+  <table class="sh"><tr><td>Roostering met beplating</td><td class="sr">&#8364; {{roosteringTotal}}</td></tr></table>
+  <table class="li"><tr>
+    <td class="desc">OSB 22mm - tand en groef</td>
+    <td class="qty">{{roosteringM2}} m&#178;</td>
+    <td class="rate">{{roosteringPricePerM2}} euro/m&#178;</td>
+    <td class="tot">&#8364; {{roosteringTotal}}</td>
+  </tr></table>
   {{/includeRoostring}}
 
   <!-- 6. Transport -->
-  <div class="section-header">
-    <span class="sh-left">Transport</span>
-    <span class="sh-right">&#8364; {{transportCost}}</span>
-  </div>
+  <table class="sh"><tr><td>Transport</td><td class="sr">&#8364; {{transportCost}}</td></tr></table>
   {{#hasTransport}}
-  <div class="line-item">
-    <span class="li-desc">Transport per 40m&#179; - lengte 14m - breedte 2,45m</span>
-    <span class="li-qty">{{numberOfTrucks}} st</span>
-    <span class="li-rate"></span>
-    <span class="li-total">&#8364; {{transportCost}}</span>
-  </div>
+  <table class="li"><tr>
+    <td class="desc">Transport per 40m&#179; - lengte 14m - breedte 2,45m</td>
+    <td class="qty">{{numberOfTrucks}} st</td>
+    <td class="rate"></td>
+    <td class="tot">&#8364; {{transportCost}}</td>
+  </tr></table>
   {{/hasTransport}}
 
   <!-- 7. Montage -->
-  <div class="section-header">
-    <span class="sh-left">Montage</span>
-    <span class="sh-right">&#8364; {{montageCost}}</span>
-  </div>
+  <table class="sh"><tr><td>Montage</td><td class="sr">&#8364; {{montageCost}}</td></tr></table>
   <div class="bullet">Monteren van CLT</div>
   <div class="bullet">Monteren van glulam</div>
   <div class="bullet">Kraan geleverd door CLTxPRT</div>
@@ -250,20 +233,12 @@
   <div class="bullet">Gereedschap geleverd door CLTxPRT</div>
 
   <!-- Totals -->
-  <div class="totals-wrap">
-    <div class="total-row">
-      <span class="tr-label">Totaal excl. BTW</span>
-      <span class="tr-value">&#8364; {{subtotalExclVat}}</span>
-    </div>
-    <div class="total-row">
-      <span class="tr-label">BTW: 21%</span>
-      <span class="tr-value">&#8364; {{vat}}</span>
-    </div>
-    <div class="total-divider"></div>
-    <div class="total-row grand">
-      <span class="tr-label">Totaal incl. BTW</span>
-      <span class="tr-value">&#8364; {{totalInclVat}}</span>
-    </div>
+  <div class="totals-outer">
+    <table class="totals">
+      <tr><td class="tl">Totaal excl. BTW</td><td class="tv">&#8364; {{subtotalExclVat}}</td></tr>
+      <tr><td class="tl">BTW: 21%</td><td class="tv">&#8364; {{vat}}</td></tr>
+      <tr class="grand"><td class="tl">Totaal incl. BTW</td><td class="tv">&#8364; {{totalInclVat}}</td></tr>
+    </table>
   </div>
 
   {{#notes}}
@@ -273,84 +248,83 @@
   <!-- Algemene Voorwaarden -->
   <div class="legal-section">
 
-    <div class="legal-clause-title">Bindende kracht</div>
-    <div class="legal-clause-body">1. Behalve bijzondere voorwaarden, vermeld op de voorzijde van de bestelbon, offerte of overeenkomst en ondertekend voor akkoord door beide partijen, zijn enkel en bij uitsluiting van alle andere, de voorwaarden van toepassing dewelke hieronder zijn gemeld. Indien enige bepaling van deze Algemene Voorwaarden nietig is of vernietigd wordt, zullen de overige bepalingen van deze Algemene Voorwaarden volledig van kracht blijven en zullen CLTxPRT en de Klant in overleg treden teneinde nieuwe bepalingen ter vervanging van de nietige of vernietigde bepalingen overeen te komen.</div>
+    <div class="lct">Bindende kracht</div>
+    <div class="lcb">1. Behalve bijzondere voorwaarden, vermeld op de voorzijde van de bestelbon, offerte of overeenkomst en ondertekend voor akkoord door beide partijen, zijn enkel en bij uitsluiting van alle andere, de voorwaarden van toepassing dewelke hieronder zijn gemeld. Indien enige bepaling van deze Algemene Voorwaarden nietig is of vernietigd wordt, zullen de overige bepalingen van deze Algemene Voorwaarden volledig van kracht blijven en zullen CLTxPRT en de Klant in overleg treden teneinde nieuwe bepalingen ter vervanging van de nietige of vernietigde bepalingen overeen te komen.</div>
 
-    <div class="legal-clause-title">Geldigheidsduur van de offertes</div>
-    <div class="legal-clause-body">2. Tenzij anders bepaald zijn onze offertes slechts geldig tijdens een periode van 30 kalenderdagen vanaf de datum van verzending. Wij zijn enkel gehouden door onze offertes indien de aanvaarding door de klant ons binnen deze termijn bereikt.</div>
+    <div class="lct">Geldigheidsduur van de offertes</div>
+    <div class="lcb">2. Tenzij anders bepaald zijn onze offertes slechts geldig tijdens een periode van 30 kalenderdagen vanaf de datum van verzending. Wij zijn enkel gehouden door onze offertes indien de aanvaarding door de klant ons binnen deze termijn bereikt.</div>
 
-    <div class="legal-clause-title">Prijzen</div>
-    <div class="legal-clause-body">3. De prijzen zijn bepaald in een van CLTxPRT uitgaande offerte. Enig ander aanbod, alsook informatie, kladversies, presentaties, berekeningen edm. uitgaande van CLTxPRT, mogen enkel als informatie worden beschouwd en kunnen CLTxPRT in geen geval binden.</div>
+    <div class="lct">Prijzen</div>
+    <div class="lcb">3. De prijzen zijn bepaald in een van CLTxPRT uitgaande offerte. Enig ander aanbod, alsook informatie, kladversies, presentaties, berekeningen edm. uitgaande van CLTxPRT, mogen enkel als informatie worden beschouwd en kunnen CLTxPRT in geen geval binden.</div>
 
-    <div class="legal-clause-title">Betaling</div>
-    <div class="legal-clause-body">4. Bij goedkeuring van de productieplannen dient 50% van het bedrag van het materiaal betaalt te worden. De overige 50% dient betaalt te worden voor het laden van het transport. Betalingen kunnen ook in de vorm van een bankgarantie gebeuren. Voorstudie dient vooraf betaald te worden.</div>
-    <div class="legal-indent">1ste schijf: 100% voorstudie</div>
-    <div class="legal-indent">2de schijf: 50% materialen (bij goedkeuring voorstudie)</div>
-    <div class="legal-indent">3de schijf: 50% materialen 2 weken voor levering</div>
-    <div class="legal-indent">4de schijf: montage + eventuele overschot na gemaakte afspraken</div>
+    <div class="lct">Betaling</div>
+    <div class="lcb">4. Bij goedkeuring van de productieplannen dient 50% van het bedrag van het materiaal betaalt te worden. De overige 50% dient betaalt te worden voor het laden van het transport. Betalingen kunnen ook in de vorm van een bankgarantie gebeuren. Voorstudie dient vooraf betaald te worden.</div>
+    <div class="lci">1ste schijf: 100% voorstudie</div>
+    <div class="lci">2de schijf: 50% materialen (bij goedkeuring voorstudie)</div>
+    <div class="lci">3de schijf: 50% materialen 2 weken voor levering</div>
+    <div class="lci">4de schijf: montage + eventuele overschot na gemaakte afspraken</div>
 
-    <div class="legal-clause-title">Prijsherziening</div>
-    <div class="legal-clause-body">5. Zelfs in geval van een absoluut forfait leidt elke wijziging van de lonen, de sociale lasten, de prijzen van de materialen of van hun transport tot een prijsherziening die toegepast wordt op de betrokken facturering van de uitgevoerde werken volgens de onderstaande formule:</div>
-    <div class="legal-clause-body">6. "P" is het bedrag van de uitgevoerde werken en "p" is het herziene bedrag.</div>
-    <div class="legal-clause-body">7. "S" is het gemiddelde uurloon bepaald door het Paritair Comit&#233; voor het Bouwbedrijf van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte, en verhoogd met het op die datum door de FOD Economie aanvaarde totaalpercentage van de sociale lasten en verzekeringen; "s" is dit uurloon zoals het werd opgenomen v&#243;&#243;r de aanvang van de werken waarvoor gedeeltelijke betaling wordt gevraagd.</div>
-    <div class="legal-clause-body">8. "I" is het maandelijkse indexcijfer bepaald door de Commissie van de Prijslijst der Bouwmaterialen, zoals van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte. i is ditzelfde indexcijfer zoals het werd opgenomen v&#243;&#243;r de aanvang van de werken waarvoor gedeeltelijke betaling wordt gevraagd.</div>
-    <div class="legal-clause-body">9. Voorzieningen opgelegd door de veiligheidsco&#246;rdinator zijn niet in onze offerte inbegrepen, tenzij anders vermeld.</div>
+    <div class="lct">Prijsherziening</div>
+    <div class="lcb">5. Zelfs in geval van een absoluut forfait leidt elke wijziging van de lonen, de sociale lasten, de prijzen van de materialen of van hun transport tot een prijsherziening die toegepast wordt op de betrokken facturering van de uitgevoerde werken.</div>
+    <div class="lcb">6. "P" is het bedrag van de uitgevoerde werken en "p" is het herziene bedrag.</div>
+    <div class="lcb">7. "S" is het gemiddelde uurloon bepaald door het Paritair Comit&#233; voor het Bouwbedrijf van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte, en verhoogd met het op die datum door de FOD Economie aanvaarde totaalpercentage van de sociale lasten en verzekeringen.</div>
+    <div class="lcb">8. "I" is het maandelijkse indexcijfer bepaald door de Commissie van de Prijslijst der Bouwmaterialen, zoals van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte.</div>
+    <div class="lcb">9. Voorzieningen opgelegd door de veiligheidsco&#246;rdinator zijn niet in onze offerte inbegrepen, tenzij anders vermeld.</div>
 
-    <div class="legal-clause-title">Uitvoeringsmodaliteiten</div>
-    <div class="legal-clause-body">10. De klant dient ervoor te zorgen dat de werken onmiddellijk kunnen worden aangevat. Bij gebreke daaraan, zullen de rechtstreekse en onrechtstreekse kosten welke voortvloeien uit het tijdsverlies ten laste van de klant worden gelegd, zonder voorafgaande ingebrekestelling. De werf dient door de klant in ons voordeel gratis voorzien te worden van elektriciteit en water. De klant zorgt voor een zorgvuldige stockering van de op de werf geleverde goederen en voor de beveiliging daarvan.</div>
-    <div class="legal-clause-body">11. Wij voeren elke opdracht uit volgens de regels van de kunst zonder dat dit evenwel enige resultaatsverbintenis inhoudt met betrekking tot de materialen, diensten of uitvoeringstermijnen.</div>
-    <div class="legal-clause-body">12. Bij opdrachten waarbij administratieve vergunningen te pas komen, dragen wij geen enkele verantwoordelijkheid wat de administratieve vergunningen betreft. Eventuele daaruit voortvloeiende schade en boetes vallen integraal ten laste van de klant.</div>
-    <div class="legal-clause-body">13. De (diensten)prestaties zijn berekend in de veronderstelling dat er ononderbroken kan doorgewerkt worden, indien anders vermeld.</div>
+    <div class="lct">Uitvoeringsmodaliteiten</div>
+    <div class="lcb">10. De klant dient ervoor te zorgen dat de werken onmiddellijk kunnen worden aangevat. Bij gebreke daaraan, zullen de rechtstreekse en onrechtstreekse kosten welke voortvloeien uit het tijdsverlies ten laste van de klant worden gelegd, zonder voorafgaande ingebrekestelling. De werf dient door de klant in ons voordeel gratis voorzien te worden van elektriciteit en water. De klant zorgt voor een zorgvuldige stockering van de op de werf geleverde goederen en voor de beveiliging daarvan.</div>
+    <div class="lcb">11. Wij voeren elke opdracht uit volgens de regels van de kunst zonder dat dit evenwel enige resultaatsverbintenis inhoudt met betrekking tot de materialen, diensten of uitvoeringstermijnen.</div>
+    <div class="lcb">12. Bij opdrachten waarbij administratieve vergunningen te pas komen, dragen wij geen enkele verantwoordelijkheid wat de administratieve vergunningen betreft. Eventuele daaruit voortvloeiende schade en boetes vallen integraal ten laste van de klant.</div>
+    <div class="lcb">13. De (diensten)prestaties zijn berekend in de veronderstelling dat er ononderbroken kan doorgewerkt worden, indien anders vermeld.</div>
 
-    <div class="legal-clause-title">Levering en termijnen</div>
-    <div class="legal-clause-body">14. Elke termijn van levering van arbeid en uitvoering van werken, indien deze vermeld wordt, wordt slechts op indicatieve wijze aangeduid, en laattijdigheid in de levering of uitvoering laat aan de klant niet toe de bestelling af te zeggen of schadevergoeding te vorderen, evenmin om zijn betalingsverplichtingen op te schorten.</div>
+    <div class="lct">Levering en termijnen</div>
+    <div class="lcb">14. Elke termijn van levering van arbeid en uitvoering van werken, indien deze vermeld wordt, wordt slechts op indicatieve wijze aangeduid, en laattijdigheid in de levering of uitvoering laat aan de klant niet toe de bestelling af te zeggen of schadevergoeding te vorderen, evenmin om zijn betalingsverplichtingen op te schorten.</div>
 
-    <div class="legal-clause-title">Onvoorziene omstandigheden</div>
-    <div class="legal-clause-body">15. Alle omstandigheden die bij het indienen van de bestelbon, offerte of overeenkomst redelijkerwijze onvoorzienbaar waren en onvermijdbaar zijn, en die de uitvoering van de overeenkomst financieel of op een andere manier zwaarder of moeilijker zouden maken dan normaal voorzien is, zullen worden beschouwd als gevallen van overmacht: voorbeelden (niet-limitatief): ongevallen, oorlogen en hun gevolgen, slechte weersomstandigheden, stakingen, lock-out, tekort aan werkkrachten en materiaal, storingen en moeilijkheden inzake transport, enz... die zich bij onszelf of bij onze leveranciers voordoen. Gevallen van overmacht geven ons het recht om de herziening of ontbinding van de overeenkomst aan te vragen. Wanneer deze omstandigheden een onderbreking van de werken tot gevolg hebben, wordt de uitvoeringstermijn van rechtswege geschorst voor de duur van de onderbreking, vermeerderd met de tijd die nodig is om de werf terug op te starten.</div>
-    <div class="legal-clause-body">16. Een tenietgaan of beschadiging door toeval of overmacht van de geleverde zaak of het uitgevoerde werk, of nog ingevolge de eigen fout van de klant of van personen voor wie hij instaat, is steeds en integraal ten laste van de klant.</div>
+    <div class="lct">Onvoorziene omstandigheden</div>
+    <div class="lcb">15. Alle omstandigheden die bij het indienen van de bestelbon, offerte of overeenkomst redelijkerwijze onvoorzienbaar waren en onvermijdbaar zijn, en die de uitvoering van de overeenkomst financieel of op een andere manier zwaarder of moeilijker zouden maken dan normaal voorzien is, zullen worden beschouwd als gevallen van overmacht: voorbeelden (niet-limitatief): ongevallen, oorlogen en hun gevolgen, slechte weersomstandigheden, stakingen, lock-out, tekort aan werkkrachten en materiaal, storingen en moeilijkheden inzake transport, enz... die zich bij onszelf of bij onze leveranciers voordoen.</div>
+    <div class="lcb">16. Een tenietgaan of beschadiging door toeval of overmacht van de geleverde zaak of het uitgevoerde werk, of nog ingevolge de eigen fout van de klant of van personen voor wie hij instaat, is steeds en integraal ten laste van de klant.</div>
 
-    <div class="legal-clause-title">Wijzigingen en bijkomende werken</div>
-    <div class="legal-clause-body">17. Elke door de klant bestelde wijziging of bijkomend werk alsook de vaststelling van de prijs vereist een voorafgaand akkoord van beide partijen. Wijzigingen of bijkomend werk mogen met alle middelen van recht bewezen worden.</div>
-    <div class="legal-clause-body">18. Elke wijziging, toevoeging of weglating met betrekking tot de werkzaamheden zoals omschreven in de bestelbon, offerte of de overeenkomst, moet het voorwerp uitmaken van een aanhangsel bij de bestelbon, offerte of de overeenkomst. Bij ontstentenis daarvan, zal er steeds en onherroepelijk van worden uitgegaan dat deze werken conform de verbale instructies van de klant werden uitgevoerd. Elke door ons gebeurlijke schriftelijke bevestiging of melding inzake een wijziging zal in hoofde van de klant onweerlegbaar, aanvaard en onherroepelijk zijn bij gebrek aan diens schriftelijke opmerkingen binnen de 48 uren vanaf de verzending van onze mededeling of bevestiging.</div>
+    <div class="lct">Wijzigingen en bijkomende werken</div>
+    <div class="lcb">17. Elke door de klant bestelde wijziging of bijkomend werk alsook de vaststelling van de prijs vereist een voorafgaand akkoord van beide partijen.</div>
+    <div class="lcb">18. Elke wijziging, toevoeging of weglating met betrekking tot de werkzaamheden zoals omschreven in de bestelbon, offerte of de overeenkomst, moet het voorwerp uitmaken van een aanhangsel. Bij ontstentenis daarvan, zal er steeds en onherroepelijk van worden uitgegaan dat deze werken conform de verbale instructies van de klant werden uitgevoerd.</div>
 
-    <div class="legal-clause-title">Verbreking</div>
-    <div class="legal-clause-body">19. Indien de klant geheel of gedeeltelijk afziet van de overeengekomen werken, dan is deze conform art. 1794 BW gehouden ons schadeloos te stellen voor al onze uitgaven, al onze arbeid, en alles wat wij bij die werken hadden kunnen winnen, hetgeen forfaitair wordt begroot op 20% van de niet uitgevoerde werken, onverminderd ons recht om onze werkelijke schade aan te tonen indien deze hoger zou liggen.</div>
+    <div class="lct">Verbreking</div>
+    <div class="lcb">19. Indien de klant geheel of gedeeltelijk afziet van de overeengekomen werken, dan is deze conform art. 1794 BW gehouden ons schadeloos te stellen voor al onze uitgaven, al onze arbeid, en alles wat wij bij die werken hadden kunnen winnen, hetgeen forfaitair wordt begroot op 20% van de niet uitgevoerde werken.</div>
 
-    <div class="legal-clause-title">Eenzijdige be&#235;indiging in gevolge wanprestatie</div>
-    <div class="legal-clause-body">20. Indien &#233;&#233;n van beide partijen enige wettelijke dan wel contractuele verplichting niet nakomt, kan de andere partij vanaf de 10e dag na het verzenden van een ingebrekestelling waarop geen reactie werd ontvangen, eenzijdig overgaan tot de ontbinding van het contract, waarop deze recht heeft vanwege de in gebreke blijvende partij op betaling van een forfaitaire schadevergoeding ten belope van 50% van het totale factuurbedrag, tenzij de werkelijk gedane uitgaven dit percentage overstijgen.</div>
+    <div class="lct">Eenzijdige be&#235;indiging in gevolge wanprestatie</div>
+    <div class="lcb">20. Indien &#233;&#233;n van beide partijen enige wettelijke dan wel contractuele verplichting niet nakomt, kan de andere partij vanaf de 10e dag na het verzenden van een ingebrekestelling waarop geen reactie werd ontvangen, eenzijdig overgaan tot de ontbinding van het contract, waarop deze recht heeft vanwege de in gebreke blijvende partij op betaling van een forfaitaire schadevergoeding ten belope van 50% van het totale factuurbedrag.</div>
 
-    <div class="legal-clause-title">Oplevering</div>
-    <div class="legal-clause-body">21. Zodra de werken be&#235;indigd zijn, dient de klant over te gaan tot de oplevering van de werken. Kleine onvolkomenheden of onafgewerktheden, waarvan de waarde minder dan 10% van de aannemingssom beloopt, kunnen geenszins worden ingeroepen om de oplevering te weigeren. In voorkomend geval dient de klant slechts te betalen ten belope van wat voor aanvaarding in aanmerking is genomen en zullen de eventuele gebreken binnen de maand worden verholpen. Als de klant nalaat aan deze oplevering deel te nemen, of er zich geldig te laten vertegenwoordigen binnen 15 dagen na hierom verzocht te zijn, wordt de oplevering als verkregen beschouwd vanaf het einde van deze periode van 15 dagen.</div>
-    <div class="legal-clause-body">22. Een bestelling is klaar voor Oplevering als alle onderdelen (goederen en/of diensten) van die bestelling geleverd zijn en klaar zijn voor Oplevering.</div>
-    <div class="legal-clause-body">23. Zodra CLTxPRT oordeelt dat alle goederen klaar zijn voor Oplevering en als alle dienstenprestaties zijn uitgevoerd zonder dat de Klant hieromtrent tijdig voorbehoud heeft aangetekend, zal CLTxPRT de Klant per post of per mail een 'Oplevering' toesturen.</div>
-    <div class="legal-clause-body">24. De Klant heeft vervolgens 10 werkdagen de tijd om na te gaan of de geleverde goederen fundamentele tekorten vertonen die de operationele werking redelijkerwijze onmogelijk maken.</div>
-    <div class="legal-clause-body">25. In het geval CLTxPRT de gemotiveerde weigering ontvankelijk acht, zal CLTxPRT vooreerst en zo spoedig mogelijk de fundamentele tekorten die de operationele werking van de goederen verhinderen, herstellen. Indien CLTxPRT de weigering niet ontvankelijk acht, zullen beide partijen in overleg treden om te streven naar een aanvaardbare regeling.</div>
-    <div class="legal-clause-body">26. Vervolgens zal CLTxPRT een nieuwe Opleveringsprocedure starten.</div>
+    <div class="lct">Oplevering</div>
+    <div class="lcb">21. Zodra de werken be&#235;indigd zijn, dient de klant over te gaan tot de oplevering van de werken. Kleine onvolkomenheden of onafgewerktheden, waarvan de waarde minder dan 10% van de aannemingssom beloopt, kunnen geenszins worden ingeroepen om de oplevering te weigeren.</div>
+    <div class="lcb">22. Een bestelling is klaar voor Oplevering als alle onderdelen (goederen en/of diensten) van die bestelling geleverd zijn en klaar zijn voor Oplevering.</div>
+    <div class="lcb">23. Zodra CLTxPRT oordeelt dat alle goederen klaar zijn voor Oplevering en als alle dienstenprestaties zijn uitgevoerd zonder dat de Klant hieromtrent tijdig voorbehoud heeft aangetekend, zal CLTxPRT de Klant per post of per mail een 'Oplevering' toesturen.</div>
+    <div class="lcb">24. De Klant heeft vervolgens 10 werkdagen de tijd om na te gaan of de geleverde goederen fundamentele tekorten vertonen die de operationele werking redelijkerwijze onmogelijk maken.</div>
+    <div class="lcb">25. In het geval CLTxPRT de gemotiveerde weigering ontvankelijk acht, zal CLTxPRT vooreerst en zo spoedig mogelijk de fundamentele tekorten herstellen. Indien CLTxPRT de weigering niet ontvankelijk acht, zullen beide partijen in overleg treden om te streven naar een aanvaardbare regeling.</div>
+    <div class="lcb">26. Vervolgens zal CLTxPRT een nieuwe Opleveringsprocedure starten.</div>
 
-    <div class="legal-clause-title">Lichte verborgen gebreken</div>
-    <div class="legal-clause-body">27. Gedurende een periode van een jaar na de oplevering is de aannemer aansprakelijk voor de lichte verborgen gebreken die niet gedekt zijn door de artikelen 1792 en 2270 van het Burgerlijk Wetboek. Op straffe van verval van de aansprakelijkheid van de aannemer moet het gebrek door de klant worden aangeklaagd binnen 6 maanden vanaf de ontdekking ervan of vanaf de dag waarop het bekend had moeten zijn.</div>
+    <div class="lct">Lichte verborgen gebreken</div>
+    <div class="lcb">27. Gedurende een periode van een jaar na de oplevering is de aannemer aansprakelijk voor de lichte verborgen gebreken die niet gedekt zijn door de artikelen 1792 en 2270 van het Burgerlijk Wetboek. Op straffe van verval van de aansprakelijkheid van de aannemer moet het gebrek door de klant worden aangeklaagd binnen 6 maanden vanaf de ontdekking ervan.</div>
 
-    <div class="legal-clause-title">Overdracht van risico's</div>
-    <div class="legal-clause-body">28. De door de artikelen 1788 en 1789 van het Burgerlijk Wetboek beoogde overdracht van risico's vindt plaats naarmate de uitvoering van de werken of de levering van de materialen, goederen of installaties vordert.</div>
+    <div class="lct">Overdracht van risico's</div>
+    <div class="lcb">28. De door de artikelen 1788 en 1789 van het Burgerlijk Wetboek beoogde overdracht van risico's vindt plaats naarmate de uitvoering van de werken of de levering van de materialen, goederen of installaties vordert.</div>
 
-    <div class="legal-clause-title">Eigendomsvoorbehoud</div>
-    <div class="legal-clause-body">29. Zelfs na hun incorporatie blijven de materialen die geleverd werden in het kader van deze overeenkomst onze eigendom en is de klant er slechts de houder van. Wij mogen zonder toestemming van de klant de materialen weer losmaken en terugnemen. Dit recht vervalt en de eigendom gaat over zodra de klant al zijn schulden aan ons gedelgd heeft. Bij een beroep op het recht op terugneming mogen wij de betaalde voorschotten houden ter vergoeding van zijn schade.</div>
+    <div class="lct">Eigendomsvoorbehoud</div>
+    <div class="lcb">29. Zelfs na hun incorporatie blijven de materialen die geleverd werden in het kader van deze overeenkomst onze eigendom en is de klant er slechts de houder van. Wij mogen zonder toestemming van de klant de materialen weer losmaken en terugnemen. Dit recht vervalt en de eigendom gaat over zodra de klant al zijn schulden aan ons gedelgd heeft.</div>
 
-    <div class="legal-clause-title">Geschillen</div>
-    <div class="legal-clause-body">30. Bij geschil over de geldigheid, de uitvoering of de interpretatie van deze overeenkomst zijn enkel de rechtbanken van de woonplaats van onze maatschappelijke zetel bevoegd.</div>
+    <div class="lct">Geschillen</div>
+    <div class="lcb">30. Bij geschil over de geldigheid, de uitvoering of de interpretatie van deze overeenkomst zijn enkel de rechtbanken van de woonplaats van onze maatschappelijke zetel bevoegd.</div>
 
-    <div class="legal-clause-title">Geldigheid</div>
-    <div class="legal-clause-body">31. De eventuele nietigheid of ongeldigheid van &#233;&#233;n van de voornoemde algemene en/of bijzondere voorwaarden heeft geen invloed op de geldigheid van de andere voorwaarden en/of de overeenkomst.</div>
+    <div class="lct">Geldigheid</div>
+    <div class="lcb">31. De eventuele nietigheid of ongeldigheid van &#233;&#233;n van de voornoemde algemene en/of bijzondere voorwaarden heeft geen invloed op de geldigheid van de andere voorwaarden en/of de overeenkomst.</div>
 
-    <div class="legal-clause-title">Algemene bepalingen</div>
-    <div class="legal-clause-body">32. Indien &#233;&#233;n of meerdere bepalingen van deze Algemene Voorwaarden nietig of onuitvoerbaar worden verklaard, zullen partijen deze bepalingen vervangen door een geldige en uitvoerbare bepaling die, in de mate van het mogelijke, het economische, zakelijke of andere doel van genoemde nietige of onuitvoerbare bepaling zal bereiken en blijven de overige bepalingen van de Algemene Voorwaarden van kracht.</div>
-    <div class="legal-clause-body">33. Het loutere feit dat een partij niet aandringt op de strikte naleving van enige bepaling van de Algemene Voorwaarden of dit niet afdwingt, kan niet worden ge&#239;nterpreteerd als een verzaking aan of afstand van de rechten van deze partij, tenzij dit schriftelijk wordt bevestigd.</div>
-    <div class="legal-clause-body">34. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
-    <div class="legal-clause-body">35. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
-    <div class="legal-clause-body">36. Alle kennisgevingen tussen CLTxPRT en de Klant zullen schriftelijk, daarbij inbegrepen per e-mail, gebeuren. Kennisgevingen per e-mail worden geacht te zijn gedaan op de eerste werkdag na verzending per e-mail.</div>
+    <div class="lct">Algemene bepalingen</div>
+    <div class="lcb">32. Indien &#233;&#233;n of meerdere bepalingen van deze Algemene Voorwaarden nietig of onuitvoerbaar worden verklaard, zullen partijen deze bepalingen vervangen door een geldige en uitvoerbare bepaling die, in de mate van het mogelijke, het economische, zakelijke of andere doel van genoemde nietige of onuitvoerbare bepaling zal bereiken en blijven de overige bepalingen van de Algemene Voorwaarden van kracht.</div>
+    <div class="lcb">33. Het loutere feit dat een partij niet aandringt op de strikte naleving van enige bepaling van de Algemene Voorwaarden of dit niet afdwingt, kan niet worden ge&#239;nterpreteerd als een verzaking aan of afstand van de rechten van deze partij, tenzij dit schriftelijk wordt bevestigd.</div>
+    <div class="lcb">34. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
+    <div class="lcb">35. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
+    <div class="lcb">36. Alle kennisgevingen tussen CLTxPRT en de Klant zullen schriftelijk, daarbij inbegrepen per e-mail, gebeuren. Kennisgevingen per e-mail worden geacht te zijn gedaan op de eerste werkdag na verzending per e-mail.</div>
 
   </div>
-
 </div>
 </body>
 </html>
