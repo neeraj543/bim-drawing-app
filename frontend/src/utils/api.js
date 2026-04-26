@@ -90,6 +90,27 @@ export const api = {
     return response.json();
   },
 
+  async patch(endpoint) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders()
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+      return;
+    }
+
+    if (!response.ok) {
+      const errorMessage = await getErrorMessage(response);
+      throw new Error(errorMessage);
+    }
+
+    return response.json();
+  },
+
   async delete(endpoint) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
