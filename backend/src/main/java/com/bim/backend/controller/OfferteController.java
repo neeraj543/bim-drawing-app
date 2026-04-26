@@ -64,7 +64,7 @@ public class OfferteController {
     }
 
     @GetMapping("/{id}/pdf")
-    public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) throws IOException {
+    public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) throws Exception {
         OfferteResponse offerte = offerteService.getOfferte(id);
         byte[] pdf = offertePdfService.generate(offerte);
         String filename = "offerte-" + offerte.getOfferteNumber().replace("/", "-") + ".pdf";
