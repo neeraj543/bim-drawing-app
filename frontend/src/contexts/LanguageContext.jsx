@@ -1,0 +1,114 @@
+import { createContext, useContext, useState } from 'react'
+
+const translations = {
+  en: {
+    // Shared
+    status: { DRAFT: 'Draft', SENT: 'Sent', PENDING: 'Pending', ACCEPTED: 'Accepted', REJECTED: 'Rejected' },
+    back: '← Back to Offertes',
+    loading: 'Loading...',
+    // List page
+    newOfferte: '+ New Offerte',
+    totalOffertes: 'Total Offertes',
+    valuePending: 'Value Pending',
+    acceptedThisMonth: 'Accepted This Month',
+    searchPlaceholder: 'Search by client, project or number...',
+    allStatuses: 'All Statuses',
+    colNumber: 'Number', colClient: 'Client', colProject: 'Project',
+    colDate: 'Date', colDeadline: 'Deadline', colStatus: 'Status',
+    colTotal: 'Total (incl. VAT)',
+    noOffertes: 'No offertes found',
+    // Detail page
+    generalInfo: 'General Info',
+    clientSection: 'Client',
+    structureSection: 'Structure',
+    notesSection: 'Notes',
+    priceSummary: 'Price Summary',
+    downloadPdf: 'Download PDF',
+    edit: 'Edit', duplicate: 'Duplicate', delete: 'Delete',
+    deleteConfirm: 'Delete this offerte?',
+    offerteNumber: 'Offerte Number', date: 'Date', preparedBy: 'Prepared By',
+    submissionDeadline: 'Submission Deadline', validUntil: 'Valid Until', delivery: 'Delivery',
+    clientName: 'Name', vatNumber: 'VAT Number', address: 'Address', constructionSite: 'Construction Site',
+    subtotalExclVat: 'Subtotal excl. VAT', vat: 'VAT (21%)', totalInclVat: 'Total incl. VAT',
+    trucks: (n) => `Transport (${n} ${n === 1 ? 'truck' : 'trucks'})`,
+    numberOfTrucks: 'Number of Trucks',
+    // Form page
+    editTitle: 'Edit Offerte', newTitle: 'New Offerte',
+    offerteNumberLabel: 'Offerte Number *', dateLabel: 'Date *',
+    projectDescLabel: 'Project Description *',
+    generalInfoSection: 'General Info', clientSectionForm: 'Client',
+    structurePricingSection: 'Structure & Pricing',
+    overrideSection: 'Override Auto-Calculations (optional)',
+    overrideHint: 'Leave blank to use auto-calculated values.',
+    notesSectionForm: 'Notes',
+    cancel: 'Cancel', saveChanges: 'Save Changes', createOfferte: 'Create Offerte', saving: 'Saving...',
+    includeRoostring: 'Include Roostering met Beplating (OSB 22mm)',
+    notesPlaceholder: 'Additional notes...',
+    streetLabel: 'Street', numberLabel: 'Number', postcodeLabel: 'Postcode', cityLabel: 'City',
+    vatNumberLabel: 'VAT Number', constructionSiteLabel: 'Construction Site Address',
+    clientNameLabel: 'Client Name *',
+  },
+  nl: {
+    status: { DRAFT: 'Concept', SENT: 'Verstuurd', PENDING: 'In behandeling', ACCEPTED: 'Aanvaard', REJECTED: 'Geweigerd' },
+    back: '← Terug naar offertes',
+    loading: 'Laden...',
+    newOfferte: '+ Nieuwe offerte',
+    totalOffertes: 'Totaal offertes',
+    valuePending: 'Openstaande waarde',
+    acceptedThisMonth: 'Aanvaard deze maand',
+    searchPlaceholder: 'Zoek op klant, project of nummer...',
+    allStatuses: 'Alle statussen',
+    colNumber: 'Nummer', colClient: 'Klant', colProject: 'Project',
+    colDate: 'Datum', colDeadline: 'Deadline', colStatus: 'Status',
+    colTotal: 'Totaal (incl. BTW)',
+    noOffertes: 'Geen offertes gevonden',
+    generalInfo: 'Algemene info',
+    clientSection: 'Klant',
+    structureSection: 'Structuur',
+    notesSection: 'Opmerkingen',
+    priceSummary: 'Prijsoverzicht',
+    downloadPdf: 'Download PDF',
+    edit: 'Bewerken', duplicate: 'Dupliceer', delete: 'Verwijder',
+    deleteConfirm: 'Offerte verwijderen?',
+    offerteNumber: 'Offerte nummer', date: 'Datum', preparedBy: 'Opgesteld door',
+    submissionDeadline: 'Indieningsdeadline', validUntil: 'Geldig tot', delivery: 'Levering',
+    clientName: 'Naam', vatNumber: 'BTW nummer', address: 'Adres', constructionSite: 'Werf adres',
+    subtotalExclVat: 'Subtotaal excl. BTW', vat: 'BTW (21%)', totalInclVat: 'Totaal incl. BTW',
+    trucks: (n) => `Transport (${n} ${n === 1 ? 'vrachtwagen' : 'vrachtwagens'})`,
+    numberOfTrucks: 'Aantal vrachtwagens',
+    editTitle: 'Offerte bewerken', newTitle: 'Nieuwe offerte',
+    offerteNumberLabel: 'Offerte nummer *', dateLabel: 'Datum *',
+    projectDescLabel: 'Projectomschrijving *',
+    generalInfoSection: 'Algemene info', clientSectionForm: 'Klant',
+    structurePricingSection: 'Structuur & Prijzen',
+    overrideSection: 'Standaardberekeningen overschrijven (optioneel)',
+    overrideHint: 'Leeg laten om automatisch berekende waarden te gebruiken.',
+    notesSectionForm: 'Opmerkingen',
+    cancel: 'Annuleer', saveChanges: 'Wijzigingen opslaan', createOfferte: 'Offerte aanmaken', saving: 'Opslaan...',
+    includeRoostring: 'Roostering met beplating toevoegen (OSB 22mm)',
+    notesPlaceholder: 'Extra opmerkingen...',
+    streetLabel: 'Straat', numberLabel: 'Nummer', postcodeLabel: 'Postcode', cityLabel: 'Gemeente',
+    vatNumberLabel: 'BTW nummer', constructionSiteLabel: 'Werf adres',
+    clientNameLabel: 'Klantnaam *',
+  }
+}
+
+const LanguageContext = createContext()
+
+export function LanguageProvider({ children }) {
+  const [lang, setLang] = useState(() => localStorage.getItem('offerteLang') || 'nl')
+
+  const toggle = () => setLang(l => {
+    const next = l === 'nl' ? 'en' : 'nl'
+    localStorage.setItem('offerteLang', next)
+    return next
+  })
+
+  return (
+    <LanguageContext.Provider value={{ lang, toggle, t: translations[lang] }}>
+      {children}
+    </LanguageContext.Provider>
+  )
+}
+
+export const useLang = () => useContext(LanguageContext)

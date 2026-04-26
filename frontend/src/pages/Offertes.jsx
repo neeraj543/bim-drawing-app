@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
+import { useLang } from '../contexts/LanguageContext'
 
 const STATUS_COLORS = {
   DRAFT:    'bg-gray-100 text-gray-600',
@@ -8,10 +9,6 @@ const STATUS_COLORS = {
   PENDING:  'bg-yellow-100 text-yellow-700',
   ACCEPTED: 'bg-green-100 text-green-700',
   REJECTED: 'bg-red-100 text-red-700',
-}
-
-const STATUS_LABELS = {
-  DRAFT: 'Draft', SENT: 'Sent', PENDING: 'Pending', ACCEPTED: 'Accepted', REJECTED: 'Rejected'
 }
 
 function isDeadlineSoon(deadline) {
@@ -27,6 +24,7 @@ function isDeadlinePassed(deadline) {
 
 export default function Offertes() {
   const navigate = useNavigate()
+  const { lang, toggle, t } = useLang()
   const [offertes, setOffertes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -68,7 +66,7 @@ export default function Offertes() {
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   }).length
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading...</div>
+  if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">{t.loading}</div>
   if (error) return <div className="flex items-center justify-center h-64 text-red-500">{error}</div>
 
   return (
@@ -77,28 +75,36 @@ export default function Offertes() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Offertes</h1>
-          <p className="text-sm text-gray-500 mt-1">{offertes.length} total</p>
+          <p className="text-sm text-gray-500 mt-1">{offertes.length} {lang === 'nl' ? 'totaal' : 'total'}</p>
         </div>
-        <button
-          onClick={() => navigate('/offertes/new')}
-          className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors"
-        >
-          + New Offerte
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={toggle}
+            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {lang === 'nl' ? 'NL' : 'EN'}
+          </button>
+          <button
+            onClick={() => navigate('/offertes/new')}
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors"
+          >
+            {t.newOfferte}
+          </button>
+        </div>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-sm text-gray-500">Total Offertes</p>
+          <p className="text-sm text-gray-500">{t.totalOffertes}</p>
           <p className="text-2xl font-bold text-gray-900">{offertes.length}</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-sm text-gray-500">Value Pending</p>
+          <p className="text-sm text-gray-500">{t.valuePending}</p>
           <p className="text-2xl font-bold text-yellow-600">€{totalPending.toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-sm text-gray-500">Accepted This Month</p>
+          <p className="text-sm text-gray-500">{t.acceptedThisMonth}</p>
           <p className="text-2xl font-bold text-green-600">{acceptedThisMonth}</p>
         </div>
       </div>
@@ -107,7 +113,7 @@ export default function Offertes() {
       <div className="flex gap-3 mb-4">
         <input
           type="text"
-          placeholder="Search by client, project or number..."
+          placeholder={t.searchPlaceholder}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -117,9 +123,9 @@ export default function Offertes() {
           onChange={e => setStatusFilter(e.target.value)}
           className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
-          <option value="ALL">All Statuses</option>
-          {Object.keys(STATUS_LABELS).map(s => (
-            <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+          <option value="ALL">{t.allStatuses}</option>
+          {Object.keys(t.status).map(s => (
+            <option key={s} value={s}>{t.status[s]}</option>
           ))}
         </select>
       </div>
@@ -130,19 +136,19 @@ export default function Offertes() {
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="text-left px-4 py-3 font-semibold text-gray-600">#</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Number</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Client</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Project</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Date</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Deadline</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Status</th>
-              <th className="text-right px-4 py-3 font-semibold text-gray-600">Total (incl. VAT)</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">{t.colNumber}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">{t.colClient}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">{t.colProject}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">{t.colDate}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">{t.colDeadline}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">{t.colStatus}</th>
+              <th className="text-right px-4 py-3 font-semibold text-gray-600">{t.colTotal}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center py-12 text-gray-400">No offertes found</td>
+                <td colSpan={8} className="text-center py-12 text-gray-400">{t.noOffertes}</td>
               </tr>
             )}
             {filtered.map((o, index) => {
@@ -170,7 +176,7 @@ export default function Offertes() {
                   </td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[o.status]}`}>
-                      {STATUS_LABELS[o.status]}
+                      {t.status[o.status]}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right font-medium text-gray-900">

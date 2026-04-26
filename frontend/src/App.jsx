@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { LanguageProvider } from './contexts/LanguageContext'
 import { PrivateRoute } from './components/PrivateRoute'
 import { AdminRoute } from './components/AdminRoute'
 import Layout from './components/layout/Layout'
@@ -20,6 +21,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <LanguageProvider>
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -106,6 +108,7 @@ function App() {
             />
           </Routes>
         </Layout>
+        </LanguageProvider>
       </AuthProvider>
     </Router>
   )

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../utils/api'
+import { useLang } from '../contexts/LanguageContext'
 
 const EMPTY_FORM = {
   offerteNumber: '',
@@ -60,6 +61,7 @@ const inputClass = "w-full px-3 py-2 border border-gray-200 rounded-lg text-sm f
 export default function OfferteForm() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { lang, toggle, t } = useLang()
   const isEdit = Boolean(id)
 
   const [form, setForm] = useState(EMPTY_FORM)
@@ -107,17 +109,23 @@ export default function OfferteForm() {
     }
   }
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading...</div>
+  if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">{t.loading}</div>
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <button onClick={() => navigate('/offertes')} className="text-sm text-gray-400 hover:text-gray-600 mb-2 flex items-center gap-1">
-            ← Back to Offertes
+            {t.back}
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">{isEdit ? 'Edit Offerte' : 'New Offerte'}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{isEdit ? t.editTitle : t.newTitle}</h1>
         </div>
+        <button
+          onClick={toggle}
+          className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+        >
+          {lang === 'nl' ? 'NL' : 'EN'}
+        </button>
       </div>
 
       {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>}
@@ -125,70 +133,68 @@ export default function OfferteForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
 
         {/* General Info */}
-        <FormSection title="General Info">
+        <FormSection title={t.generalInfoSection}>
           <div className="grid grid-cols-3 gap-4">
-            <Field label="Offerte Number *">
+            <Field label={t.offerteNumberLabel}>
               <input className={inputClass} value={form.offerteNumber} onChange={set('offerteNumber')} required placeholder="001/2025" />
             </Field>
-            <Field label="Date *">
+            <Field label={t.dateLabel}>
               <input type="date" className={inputClass} value={form.date} onChange={set('date')} required />
             </Field>
-            <Field label="Prepared By">
+            <Field label={t.preparedBy}>
               <input className={inputClass} value={form.preparedBy} onChange={set('preparedBy')} />
             </Field>
-            <Field label="Project Description *">
+            <Field label={t.projectDescLabel}>
               <input className={inputClass} value={form.projectDescription} onChange={set('projectDescription')} required />
             </Field>
-            <Field label="Submission Deadline">
+            <Field label={t.submissionDeadline}>
               <input type="date" className={inputClass} value={form.submissionDeadline} onChange={set('submissionDeadline')} />
             </Field>
-            <Field label="Geldig tot">
+            <Field label={t.validUntil}>
               <input type="date" className={inputClass} value={form.validUntil} onChange={set('validUntil')} />
             </Field>
-            <Field label="Levering (kwartaal)">
+            <Field label={t.delivery}>
               <input className={inputClass} value={form.deliveryQuarter} onChange={set('deliveryQuarter')} placeholder="Q2 2026" />
             </Field>
-            <Field label="Status">
+            <Field label={t.colStatus}>
               <select className={inputClass} value={form.status} onChange={set('status')}>
-                <option value="DRAFT">Draft</option>
-                <option value="SENT">Sent</option>
-                <option value="PENDING">Pending</option>
-                <option value="ACCEPTED">Accepted</option>
-                <option value="REJECTED">Rejected</option>
+                {Object.keys(t.status).map(s => (
+                  <option key={s} value={s}>{t.status[s]}</option>
+                ))}
               </select>
             </Field>
           </div>
         </FormSection>
 
         {/* Client */}
-        <FormSection title="Client">
+        <FormSection title={t.clientSectionForm}>
           <div className="grid grid-cols-3 gap-4">
-            <Field label="Client Name *">
+            <Field label={t.clientNameLabel}>
               <input className={inputClass} value={form.clientName} onChange={set('clientName')} required />
             </Field>
-            <Field label="VAT Number">
+            <Field label={t.vatNumberLabel}>
               <input className={inputClass} value={form.clientVatNumber} onChange={set('clientVatNumber')} />
             </Field>
-            <Field label="Construction Site Address">
+            <Field label={t.constructionSiteLabel}>
               <input className={inputClass} value={form.siteAddress} onChange={set('siteAddress')} />
             </Field>
-            <Field label="Street">
+            <Field label={t.streetLabel}>
               <input className={inputClass} value={form.clientStreet} onChange={set('clientStreet')} />
             </Field>
-            <Field label="Number">
+            <Field label={t.numberLabel}>
               <input className={inputClass} value={form.clientStreetNumber} onChange={set('clientStreetNumber')} />
             </Field>
-            <Field label="Postcode">
+            <Field label={t.postcodeLabel}>
               <input className={inputClass} value={form.clientPostcode} onChange={set('clientPostcode')} />
             </Field>
-            <Field label="City">
+            <Field label={t.cityLabel}>
               <input className={inputClass} value={form.clientCity} onChange={set('clientCity')} />
             </Field>
           </div>
         </FormSection>
 
         {/* Structure & Pricing */}
-        <FormSection title="Structure & Pricing">
+        <FormSection title={t.structurePricingSection}>
           <div className="grid grid-cols-2 gap-6">
             <div>
               <p className="text-xs text-gray-400 mb-3 font-medium">CLT</p>
@@ -225,7 +231,7 @@ export default function OfferteForm() {
             </div>
             <div>
               <p className="text-xs text-gray-400 mb-3 font-medium">Transport</p>
-              <Field label="Number of Trucks">
+              <Field label={t.numberOfTrucks}>
                 <input type="number" className={inputClass} value={form.numberOfTrucks} onChange={set('numberOfTrucks')} />
               </Field>
             </div>
@@ -235,7 +241,7 @@ export default function OfferteForm() {
           <div className="mt-4 pt-4 border-t border-gray-100">
             <label className="flex items-center gap-2 text-sm text-gray-700 mb-3 cursor-pointer">
               <input type="checkbox" checked={form.includeRoostring} onChange={set('includeRoostring')} className="rounded" />
-              Include Roostering met Beplating (OSB 22mm)
+              {t.includeRoostring}
             </label>
             {form.includeRoostring && (
               <div className="grid grid-cols-2 gap-3 ml-6">
@@ -251,8 +257,8 @@ export default function OfferteForm() {
         </FormSection>
 
         {/* Overrides */}
-        <FormSection title="Override Auto-Calculations (optional)">
-          <p className="text-xs text-gray-400 mb-4">Leave blank to use auto-calculated values.</p>
+        <FormSection title={t.overrideSection}>
+          <p className="text-xs text-gray-400 mb-4">{t.overrideHint}</p>
           <div className="grid grid-cols-3 gap-4">
             <Field label="Engineering (€)">
               <input type="number" step="0.01" className={inputClass} value={form.engineeringOverride} onChange={set('engineeringOverride')} placeholder="Auto (5%)" />
@@ -276,12 +282,12 @@ export default function OfferteForm() {
         </FormSection>
 
         {/* Notes */}
-        <FormSection title="Notes">
+        <FormSection title={t.notesSectionForm}>
           <textarea
             className={`${inputClass} h-24 resize-none`}
             value={form.notes}
             onChange={set('notes')}
-            placeholder="Additional notes..."
+            placeholder={t.notesPlaceholder}
           />
         </FormSection>
 
@@ -292,14 +298,14 @@ export default function OfferteForm() {
             onClick={() => navigate('/offertes')}
             className="px-6 py-2 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             type="submit"
             disabled={saving}
             className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors disabled:bg-gray-300"
           >
-            {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Offerte'}
+            {saving ? t.saving : isEdit ? t.saveChanges : t.createOfferte}
           </button>
         </div>
       </form>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
+import { useLang } from '../contexts/LanguageContext'
 
 const STATUS_COLORS = {
   DRAFT:    'bg-gray-100 text-gray-600',
@@ -8,10 +9,6 @@ const STATUS_COLORS = {
   PENDING:  'bg-yellow-100 text-yellow-700',
   ACCEPTED: 'bg-green-100 text-green-700',
   REJECTED: 'bg-red-100 text-red-700',
-}
-
-const STATUS_LABELS = {
-  DRAFT: 'Draft', SENT: 'Sent', PENDING: 'Pending', ACCEPTED: 'Accepted', REJECTED: 'Rejected'
 }
 
 function Section({ title, children }) {
@@ -44,6 +41,7 @@ function MoneyRow({ label, value, highlight }) {
 export default function OfferteDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { lang, toggle, t } = useLang()
   const [offerte, setOfferte] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -86,7 +84,7 @@ export default function OfferteDetail() {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Delete this offerte?')) return
+    if (!confirm(t.deleteConfirm)) return
     try {
       await api.delete(`/api/offertes/${id}`)
       navigate('/offertes')
@@ -109,7 +107,7 @@ export default function OfferteDetail() {
     }
   }
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading...</div>
+  if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">{t.loading}</div>
   if (error) return <div className="flex items-center justify-center h-64 text-red-500">{error}</div>
   if (!offerte) return null
 
@@ -119,14 +117,20 @@ export default function OfferteDetail() {
       <div className="flex items-start justify-between mb-6">
         <div>
           <button onClick={() => navigate('/offertes')} className="text-sm text-gray-400 hover:text-gray-600 mb-2 flex items-center gap-1">
-            ← Back to Offertes
+            {t.back}
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{offerte.offerteNumber}</h1>
           <p className="text-gray-500 mt-1">{offerte.projectDescription}</p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={toggle}
+            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {lang === 'nl' ? 'NL' : 'EN'}
+          </button>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[offerte.status]}`}>
-            {STATUS_LABELS[offerte.status]}
+            {t.status[offerte.status]}
           </span>
           <select
             onChange={e => handleStatusChange(e.target.value)}
@@ -134,33 +138,21 @@ export default function OfferteDetail() {
             value={offerte.status}
             className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
-            {Object.keys(STATUS_LABELS).map(s => (
-              <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+            {Object.keys(t.status).map(s => (
+              <option key={s} value={s}>{t.status[s]}</option>
             ))}
           </select>
-          <button
-            onClick={handleDownloadPdf}
-            className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
-          >
-            Download PDF
+          <button onClick={handleDownloadPdf} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors">
+            {t.downloadPdf}
           </button>
-          <button
-            onClick={() => navigate(`/offertes/${id}/edit`)}
-            className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors"
-          >
-            Edit
+          <button onClick={() => navigate(`/offertes/${id}/edit`)} className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors">
+            {t.edit}
           </button>
-          <button
-            onClick={handleDuplicate}
-            className="px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors"
-          >
-            Duplicate
+          <button onClick={handleDuplicate} className="px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+            {t.duplicate}
           </button>
-          <button
-            onClick={handleDelete}
-            className="px-3 py-1.5 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm font-medium transition-colors"
-          >
-            Delete
+          <button onClick={handleDelete} className="px-3 py-1.5 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm font-medium transition-colors">
+            {t.delete}
           </button>
         </div>
       </div>
@@ -168,29 +160,29 @@ export default function OfferteDetail() {
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2 space-y-4">
           {/* General Info */}
-          <Section title="General Info">
+          <Section title={t.generalInfo}>
             <div className="grid grid-cols-3 gap-4">
-              <Field label="Offerte Number" value={offerte.offerteNumber} />
-              <Field label="Date" value={offerte.date} />
-              <Field label="Prepared By" value={offerte.preparedBy} />
-              <Field label="Submission Deadline" value={offerte.submissionDeadline} />
-              <Field label="Geldig tot" value={offerte.validUntil} />
-              <Field label="Levering" value={offerte.deliveryQuarter} />
+              <Field label={t.offerteNumber} value={offerte.offerteNumber} />
+              <Field label={t.date} value={offerte.date} />
+              <Field label={t.preparedBy} value={offerte.preparedBy} />
+              <Field label={t.submissionDeadline} value={offerte.submissionDeadline} />
+              <Field label={t.validUntil} value={offerte.validUntil} />
+              <Field label={t.delivery} value={offerte.deliveryQuarter} />
             </div>
           </Section>
 
           {/* Client */}
-          <Section title="Client">
+          <Section title={t.clientSection}>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Name" value={offerte.clientName} />
-              <Field label="VAT Number" value={offerte.clientVatNumber} />
-              <Field label="Address" value={[offerte.clientStreet, offerte.clientStreetNumber, offerte.clientPostcode, offerte.clientCity].filter(Boolean).join(' ')} />
-              <Field label="Construction Site" value={offerte.siteAddress} />
+              <Field label={t.clientName} value={offerte.clientName} />
+              <Field label={t.vatNumber} value={offerte.clientVatNumber} />
+              <Field label={t.address} value={[offerte.clientStreet, offerte.clientStreetNumber, offerte.clientPostcode, offerte.clientCity].filter(Boolean).join(' ')} />
+              <Field label={t.constructionSite} value={offerte.siteAddress} />
             </div>
           </Section>
 
           {/* Structure */}
-          <Section title="Structure">
+          <Section title={t.structureSection}>
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-xs text-gray-400 mb-2">CLT</p>
@@ -224,12 +216,12 @@ export default function OfferteDetail() {
               )}
             </div>
             <div className="mt-4 pt-4 border-t border-gray-100">
-              <Field label="Number of Trucks" value={offerte.numberOfTrucks} />
+              <Field label={t.numberOfTrucks} value={offerte.numberOfTrucks} />
             </div>
           </Section>
 
           {offerte.notes && (
-            <Section title="Notes">
+            <Section title={t.notesSection}>
               <p className="text-sm text-gray-700 whitespace-pre-wrap">{offerte.notes}</p>
             </Section>
           )}
@@ -238,18 +230,18 @@ export default function OfferteDetail() {
         {/* Price Summary */}
         <div className="col-span-1">
           <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Price Summary</h3>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t.priceSummary}</h3>
             <MoneyRow label="Structuur (CLT + GL)" value={offerte.structuurTotal} />
             <MoneyRow label="Engineering (5%)" value={offerte.engineeringCost} />
             <MoneyRow label="CNC — CLT" value={offerte.cncCltCost} />
             <MoneyRow label="CNC — GL" value={offerte.cncGlCost} />
             <MoneyRow label="Accessoires (12%)" value={offerte.accessoiresCost} />
             {offerte.includeRoostring && <MoneyRow label="Roostering" value={offerte.roosteringTotal} />}
-            <MoneyRow label={`Transport (${offerte.numberOfTrucks || 0} trucks)`} value={offerte.transportCost} />
+            <MoneyRow label={t.trucks(offerte.numberOfTrucks || 0)} value={offerte.transportCost} />
             <MoneyRow label="Montage (22%)" value={offerte.montageCost} />
-            <MoneyRow label="Subtotal excl. VAT" value={offerte.subtotalExclVat} highlight />
-            <MoneyRow label="VAT (21%)" value={offerte.vat} />
-            <MoneyRow label="Total incl. VAT" value={offerte.totalInclVat} highlight />
+            <MoneyRow label={t.subtotalExclVat} value={offerte.subtotalExclVat} highlight />
+            <MoneyRow label={t.vat} value={offerte.vat} />
+            <MoneyRow label={t.totalInclVat} value={offerte.totalInclVat} highlight />
           </div>
         </div>
       </div>
