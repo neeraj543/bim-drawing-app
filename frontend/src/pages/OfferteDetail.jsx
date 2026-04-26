@@ -107,6 +107,17 @@ export default function OfferteDetail() {
     }
   }
 
+  const handlePreviewPdf = async () => {
+    try {
+      const blob = await api.download(`/api/offertes/${id}/pdf`)
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      setTimeout(() => URL.revokeObjectURL(url), 60000)
+    } catch (err) {
+      alert(err.message)
+    }
+  }
+
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">{t.loading}</div>
   if (error) return <div className="flex items-center justify-center h-64 text-red-500">{error}</div>
   if (!offerte) return null
@@ -142,6 +153,9 @@ export default function OfferteDetail() {
               <option key={s} value={s}>{t.status[s]}</option>
             ))}
           </select>
+          <button onClick={handlePreviewPdf} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+            {t.previewPdf}
+          </button>
           <button onClick={handleDownloadPdf} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors">
             {t.downloadPdf}
           </button>
