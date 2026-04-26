@@ -35,7 +35,7 @@ public class OffertePdfService {
         // Logo as base64 data URI so it works without a file URL
         String logoSrc = "";
         try {
-            ClassPathResource logo = new ClassPathResource("images/logo.png");
+            ClassPathResource logo = new ClassPathResource("images/bold_cltxprt_logo.png");
             byte[] logoBytes = logo.getInputStream().readAllBytes();
             logoSrc = "data:image/png;base64," + Base64.getEncoder().encodeToString(logoBytes);
         } catch (Exception ignored) {}
