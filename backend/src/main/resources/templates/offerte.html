@@ -8,7 +8,7 @@
 
   /* ── Page margins + footer via @page margin boxes (never overlaps content) ── */
   @page {
-    margin: 14mm 14mm 22mm 14mm;
+    margin: 14mm 14mm 30mm 14mm;
   }
   @page {
     @bottom-left {
@@ -63,8 +63,8 @@
 
   /* ── Sub-label (no background) ── */
   .subl { width: 100%; border-collapse: collapse; }
-  .subl td { padding: 7px 12px 3px 12px; font-weight: bold; font-size: 9pt; color: #1a1a1a; }
-  .subl td.sr { text-align: right; white-space: nowrap; }
+  .subl td { padding: 7px 12px 3px 15px; font-weight: bold; font-size: 9pt; color: #1a1a1a; border-left: 3px solid #d0a65d; }
+  .subl td.sr { text-align: right; white-space: nowrap; border-left: none; }
 
   /* ── Line item rows ── */
   .li { width: 100%; border-collapse: collapse; }
@@ -78,8 +78,8 @@
   .bullet { padding: 3px 12px 3px 26px; font-size: 8.5pt; color: #666; }
 
   /* ── Totals ── */
-  .totals-outer { margin-top: 18px; }
-  .totals { width: 48%; border-collapse: collapse; margin-left: auto; }
+  .totals-outer { margin-top: 18px; width: 48%; margin-left: auto; border: 1px solid #e8d5a3; border-radius: 8px; padding: 6px 4px; background: #fffdf7; }
+  .totals { width: 100%; border-collapse: collapse; }
   .totals td { padding: 5px 12px; font-size: 9pt; }
   .totals td.tl { color: #555; }
   .totals td.tv { text-align: right; font-weight: bold; white-space: nowrap; }
@@ -87,7 +87,7 @@
   .totals tr.grand td.tv { color: #d0a65d; }
 
   /* ── Notes ── */
-  .notes-box { margin-top: 14px; padding: 8px 12px; font-size: 8.5pt; color: #555; border-left: 3px solid #d0a65d; background: #fafafa; }
+  .notes-box { margin-top: 14px; padding: 8px 12px; font-size: 8.5pt; color: #555; border-left: 3px solid #d0a65d; background: #fafafa; border-radius: 6px; }
 
   /* ── Legal ── */
   .legal-section { margin-top: 26px; padding-top: 14px; border-top: 1px solid #ddd; }
