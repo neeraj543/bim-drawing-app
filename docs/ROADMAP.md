@@ -2,6 +2,7 @@
 
 ## Bug Fixes (Do Soon)
 - **Password / username change has a bug** — needs investigation and fix
+- **App language** — UI needs to be in Dutch throughout
 
 ---
 

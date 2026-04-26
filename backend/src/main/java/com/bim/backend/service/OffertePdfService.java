@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -55,44 +56,32 @@ public class OffertePdfService {
 
     private float drawHeader(PDDocument doc, PDPageContentStream cs, OfferteResponse o, float y,
                              PDType1Font font, PDType1Font fontBold) throws IOException {
+        float headerHeight = 70;
+        float headerTop = y + 10;
+
+        // Dark background bar
+        cs.setNonStrokingColor(new Color(30, 40, 55));
+        cs.addRect(0, headerTop - headerHeight, PAGE_WIDTH, headerHeight);
+        cs.fill();
+        cs.setNonStrokingColor(Color.BLACK);
+
+        // White logo on dark background
         try {
             ClassPathResource logoResource = new ClassPathResource("logo.png");
             PDImageXObject logo = PDImageXObject.createFromByteArray(doc, logoResource.getInputStream().readAllBytes(), "logo");
-            float logoHeight = 50;
+            float logoHeight = 45;
             float logoWidth = logo.getWidth() * (logoHeight / logo.getHeight());
-            cs.drawImage(logo, MARGIN, y - logoHeight, logoWidth, logoHeight);
-        } catch (Exception ignored) {
-            // logo missing — skip silently
-        }
+            cs.drawImage(logo, MARGIN, headerTop - headerHeight + 12, logoWidth, logoHeight);
+        } catch (Exception ignored) {}
 
-        float rightCol = PAGE_WIDTH - MARGIN - 200;
-        drawText(cs, fontBold, 9, "CLT XPRT", rightCol, y, font, fontBold);
-        drawText(cs, font, 8, "info@clt-xprt.be", rightCol, y - 12, font, fontBold);
-        drawText(cs, font, 8, "www.clt-xprt.be", rightCol, y - 24, font, fontBold);
-
-        y -= 60;
-
-        drawLine(cs, MARGIN, y, PAGE_WIDTH - MARGIN, y);
-        y -= 15;
-
-        drawText(cs, fontBold, 16, "OFFERTE", MARGIN, y, font, fontBold);
+        // OFFERTE title + number on dark background (white text)
+        cs.setNonStrokingColor(Color.WHITE);
+        drawText(cs, fontBold, 20, "OFFERTE", PAGE_WIDTH - MARGIN - 160, headerTop - 25, font, fontBold);
         String offerteNum = o.getOfferteNumber() != null ? o.getOfferteNumber() : "";
-        drawTextRight(cs, fontBold, 14, offerteNum, PAGE_WIDTH - MARGIN, y);
+        drawText(cs, font, 11, offerteNum, PAGE_WIDTH - MARGIN - 160, headerTop - 42, font, fontBold);
+        cs.setNonStrokingColor(Color.BLACK);
 
-        y -= 18;
-
-        String date = o.getDate() != null ? o.getDate().format(DATE_FMT) : "";
-        drawText(cs, font, 9, "Datum: " + date, MARGIN, y, font, fontBold);
-        if (o.getPreparedBy() != null && !o.getPreparedBy().isBlank()) {
-            drawText(cs, font, 9, "Opgesteld door: " + o.getPreparedBy(), MARGIN + 200, y, font, fontBold);
-        }
-        if (o.getSubmissionDeadline() != null) {
-            drawTextRight(cs, font, 9, "Deadline: " + o.getSubmissionDeadline().format(DATE_FMT), PAGE_WIDTH - MARGIN, y);
-        }
-
-        y -= 5;
-        drawLine(cs, MARGIN, y, PAGE_WIDTH - MARGIN, y);
-
+        y = headerTop - headerHeight - 15;
         return y;
     }
 
