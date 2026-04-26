@@ -8,6 +8,8 @@ const EMPTY_FORM = {
   preparedBy: '',
   projectDescription: '',
   submissionDeadline: '',
+  validUntil: '',
+  deliveryQuarter: '',
   status: 'DRAFT',
   clientName: '',
   clientStreet: '',
@@ -152,6 +154,12 @@ export default function OfferteForm() {
             </Field>
             <Field label="Submission Deadline">
               <input type="date" className={inputClass} value={form.submissionDeadline} onChange={set('submissionDeadline')} />
+            </Field>
+            <Field label="Geldig tot">
+              <input type="date" className={inputClass} value={form.validUntil} onChange={set('validUntil')} />
+            </Field>
+            <Field label="Levering (kwartaal)">
+              <input className={inputClass} value={form.deliveryQuarter} onChange={set('deliveryQuarter')} placeholder="Q2 2026" />
             </Field>
             <Field label="Status">
               <select className={inputClass} value={form.status} onChange={set('status')}>
