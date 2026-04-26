@@ -1,4 +1,4 @@
-﻿package com.bim.backend.dto;
+package com.bim.backend.dto;
 
 import lombok.Builder;
 import lombok.Data;

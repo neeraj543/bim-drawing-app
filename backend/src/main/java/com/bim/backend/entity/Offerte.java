@@ -1,4 +1,4 @@
-﻿package com.bim.backend.entity;
+package com.bim.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
