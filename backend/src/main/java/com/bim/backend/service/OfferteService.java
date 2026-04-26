@@ -1,4 +1,4 @@
-package com.bim.backend.service;
+﻿package com.bim.backend.service;
 
 import com.bim.backend.dto.OfferteRequest;
 import com.bim.backend.dto.OfferteResponse;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class OfferteService {
 
-    private static final BigDecimal CNC_CLT_RATE = new BigDecimal("11.00");   // €8 + 12% markup
+    private static final BigDecimal CNC_CLT_RATE = new BigDecimal("11.00");   // â‚¬8 + 12% markup
     private static final BigDecimal CNC_GL_RATE = new BigDecimal("260.00");
     private static final BigDecimal TRANSPORT_RATE = new BigDecimal("2250.00");
     private static final BigDecimal ENGINEERING_RATE = new BigDecimal("0.05");
@@ -140,6 +140,8 @@ public class OfferteService {
         offerte.setPreparedBy(req.getPreparedBy());
         offerte.setProjectDescription(req.getProjectDescription());
         offerte.setSubmissionDeadline(req.getSubmissionDeadline());
+        offerte.setValidUntil(req.getValidUntil());
+        offerte.setDeliveryQuarter(req.getDeliveryQuarter());
         if (req.getStatus() != null) offerte.setStatus(Offerte.OfferteStatus.valueOf(req.getStatus()));
         offerte.setClientName(req.getClientName());
         offerte.setClientStreet(req.getClientStreet());
@@ -224,6 +226,8 @@ public class OfferteService {
                 .preparedBy(o.getPreparedBy())
                 .projectDescription(o.getProjectDescription())
                 .submissionDeadline(o.getSubmissionDeadline())
+                .validUntil(o.getValidUntil())
+                .deliveryQuarter(o.getDeliveryQuarter())
                 .status(o.getStatus().name())
                 .clientName(o.getClientName())
                 .clientStreet(o.getClientStreet())

@@ -2,15 +2,15 @@
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Backend | Spring Boot 3.4 (Java 21) |
-| Security | Spring Security + JWT |
-| Database | H2 file-based (local) → PostgreSQL (production) |
-| File storage | Local filesystem (`backend/uploads/`) |
-| Frontend | React 19 + Vite |
-| Styling | Tailwind CSS v4 |
-| Routing | React Router v7 |
+| Layer        | Technology                                      |
+| ------------ | ----------------------------------------------- |
+| Backend      | Spring Boot 3.4 (Java 21)                       |
+| Security     | Spring Security + JWT                           |
+| Database     | H2 file-based (local) → PostgreSQL (production) |
+| File storage | Local filesystem (`backend/uploads/`)           |
+| Frontend     | React 19 + Vite                                 |
+| Styling      | Tailwind CSS v4                                 |
+| Routing      | React Router v7                                 |
 
 ---
 
@@ -110,14 +110,14 @@ frontend/src/
 
 All in `backend/src/main/resources/application.properties`:
 
-| Key | Value |
-|---|---|
-| Database | `jdbc:h2:file:./data/bimdb` (relative path — always run from `backend/`) |
-| JWT secret | Hardcoded (needs env var before production) |
-| JWT expiry | 86400000ms (24 hours) |
-| Max file size | 100MB per file, 500MB per request |
-| Upload dir | `uploads/` |
-| CORS origins | localhost:5173, 5174, 5175 |
+| Key           | Value                                                                    |
+| ------------- | ------------------------------------------------------------------------ |
+| Database      | `jdbc:h2:file:./data/bimdb` (relative path — always run from `backend/`) |
+| JWT secret    | Hardcoded (needs env var before production)                              |
+| JWT expiry    | 86400000ms (24 hours)                                                    |
+| Max file size | 100MB per file, 500MB per request                                        |
+| Upload dir    | `uploads/`                                                               |
+| CORS origins  | localhost:5173, 5174, 5175                                               |
 
 ---
 

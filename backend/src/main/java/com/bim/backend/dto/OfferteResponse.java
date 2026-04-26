@@ -1,4 +1,4 @@
-package com.bim.backend.dto;
+﻿package com.bim.backend.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +16,8 @@ public class OfferteResponse {
     private String preparedBy;
     private String projectDescription;
     private LocalDate submissionDeadline;
+    private LocalDate validUntil;
+    private String deliveryQuarter;
     private String status;
 
     // Client

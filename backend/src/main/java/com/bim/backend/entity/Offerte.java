@@ -1,4 +1,4 @@
-package com.bim.backend.entity;
+﻿package com.bim.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,6 +31,8 @@ public class Offerte {
     private String projectDescription;
 
     private LocalDate submissionDeadline;
+    private LocalDate validUntil;
+    private String deliveryQuarter;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -66,11 +68,11 @@ public class Offerte {
     private String ceilingHeightVerdiep1;
     private String ceilingHeightZolderverdiep;
 
-    // Structure — CLT
+    // Structure â€” CLT
     private BigDecimal cltM2;
     private BigDecimal cltPricePerM2;
 
-    // Structure — GL
+    // Structure â€” GL
     private BigDecimal glColumnsM3;
     private BigDecimal glColumnsPricePerM3;
     private BigDecimal glBeamsM3;

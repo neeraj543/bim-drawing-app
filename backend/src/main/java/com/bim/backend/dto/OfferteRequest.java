@@ -1,4 +1,4 @@
-package com.bim.backend.dto;
+﻿package com.bim.backend.dto;
 
 import lombok.Data;
 import java.math.BigDecimal;
@@ -12,6 +12,8 @@ public class OfferteRequest {
     private String preparedBy;
     private String projectDescription;
     private LocalDate submissionDeadline;
+    private LocalDate validUntil;
+    private String deliveryQuarter;
     private String status;
 
     // Client
