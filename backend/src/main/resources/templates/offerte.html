@@ -6,103 +6,101 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; color: #1a1a1a; }
 
-  /* ── Fixed footer on every page ── */
+  /* ── Fixed footer ── */
   .footer {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background-color: #d0a65d;
-    color: white; font-size: 7.5pt;
-    padding: 5px 35px;
-    display: table; width: 100%;
+    background-color: #d0a65d; color: white; font-size: 8pt;
+    padding: 6px 35px; display: table; width: 100%;
   }
   .footer-left  { display: table-cell; font-weight: bold; letter-spacing: 1px; }
   .footer-right { display: table-cell; text-align: right; }
 
-  /* ── Page content (leaves room for footer) ── */
-  .page { margin: 25px 35px 40px 35px; }
+  /* ── Page: generous bottom margin so content never hides under footer ── */
+  .page { margin: 28px 40px 55px 40px; }
 
   /* ── Top header ── */
-  .top-header { display: table; width: 100%; padding-bottom: 12px; border-bottom: 1px solid #ccc; margin-bottom: 16px; }
-  .top-header-left  { display: table-cell; vertical-align: bottom; }
-  .top-header-right { display: table-cell; text-align: right; vertical-align: top; width: 120px; }
-  .top-header-right img { height: 52px; }
-  .betreft-row { font-size: 8.5pt; color: #333; margin-bottom: 4px; }
-  .betreft-row span { font-weight: bold; }
-  .project-row { font-size: 9.5pt; color: #1a1a1a; }
-  .project-row span { font-weight: bold; }
+  .top-header { display: table; width: 100%; padding-bottom: 14px; border-bottom: 2px solid #d0a65d; margin-bottom: 20px; }
+  .top-header-left  { display: table-cell; vertical-align: middle; }
+  .top-header-right { display: table-cell; text-align: right; vertical-align: middle; width: 150px; }
+  .top-header-right img { height: 70px; }
+  .betreft-row { font-size: 8.5pt; color: #555; margin-bottom: 5px; }
+  .betreft-row strong { color: #1a1a1a; }
+  .project-row { font-size: 10pt; color: #1a1a1a; }
+  .project-row strong { font-weight: bold; }
 
   /* ── Info block ── */
-  .info-block { display: table; width: 100%; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #ccc; }
-  .info-left  { display: table-cell; width: 52%; vertical-align: top; }
-  .info-right { display: table-cell; width: 48%; vertical-align: top; padding-left: 10px; }
-  .info-row { margin-bottom: 3px; font-size: 8.5pt; }
-  .info-row .lbl { color: #333; }
+  .info-block { display: table; width: 100%; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid #ddd; }
+  .info-left  { display: table-cell; width: 55%; vertical-align: top; }
+  .info-right { display: table-cell; width: 45%; vertical-align: top; text-align: right; }
+  .info-row { font-size: 9pt; line-height: 1.9; }
+  .info-row .lbl { color: #555; }
   .info-row .val { font-weight: bold; color: #1a1a1a; }
-  .contact-right { font-size: 8.5pt; color: #333; text-align: right; line-height: 1.7; }
+  .company-contact { font-size: 8.5pt; color: #555; line-height: 2; }
 
   /* ── Section header ── */
-  .section-header { display: table; width: 100%; background-color: #d0a65d; color: white; padding: 6px 10px; margin-top: 14px; margin-bottom: 4px; }
-  .sh-left  { display: table-cell; font-weight: bold; font-size: 9pt; letter-spacing: 0.3px; }
-  .sh-right { display: table-cell; text-align: right; font-weight: bold; font-size: 9pt; }
+  .section-header { display: table; width: 100%; background-color: #d0a65d; color: white; padding: 7px 12px; margin-top: 16px; margin-bottom: 0; }
+  .sh-left  { display: table-cell; font-weight: bold; font-size: 9.5pt; }
+  .sh-right { display: table-cell; text-align: right; font-weight: bold; font-size: 9.5pt; white-space: nowrap; }
 
-  /* ── Sub-section label (no background) ── */
-  .sub-label { display: table; width: 100%; padding: 6px 10px 2px 10px; }
-  .subl-left  { display: table-cell; font-weight: bold; font-size: 8.5pt; color: #333; }
-  .subl-right { display: table-cell; text-align: right; font-size: 8.5pt; color: #333; }
+  /* ── Sub-section label ── */
+  .sub-label { display: table; width: 100%; padding: 7px 12px 3px 12px; }
+  .subl-left  { display: table-cell; font-weight: bold; font-size: 9pt; color: #1a1a1a; }
+  .subl-right { display: table-cell; text-align: right; font-weight: bold; font-size: 9pt; color: #1a1a1a; white-space: nowrap; }
 
   /* ── Line items ── */
-  .line-item { display: table; width: 100%; padding: 3px 10px 3px 18px; }
-  .li-desc  { display: table-cell; font-size: 8.5pt; color: #1a1a1a; width: 48%; }
-  .li-qty   { display: table-cell; font-size: 8.5pt; color: #555; width: 18%; }
+  .line-item { display: table; width: 100%; padding: 4px 12px 4px 20px; border-bottom: 1px solid #f0f0f0; }
+  .li-desc  { display: table-cell; font-size: 8.5pt; color: #1a1a1a; width: 46%; }
+  .li-qty   { display: table-cell; font-size: 8.5pt; color: #555; width: 16%; }
   .li-rate  { display: table-cell; font-size: 8.5pt; color: #555; width: 20%; }
-  .li-total { display: table-cell; font-size: 8.5pt; text-align: right; color: #1a1a1a; width: 14%; }
+  .li-total { display: table-cell; font-size: 8.5pt; font-weight: bold; text-align: right; color: #1a1a1a; width: 18%; white-space: nowrap; }
 
   /* ── Bullet items ── */
-  .bullet { padding: 2px 10px 2px 22px; font-size: 8.5pt; color: #444; }
+  .bullet { padding: 3px 12px 3px 24px; font-size: 8.5pt; color: #555; }
 
   /* ── Totals ── */
-  .totals-wrap { margin-top: 16px; }
-  .total-row { display: table; width: 100%; padding: 4px 10px; }
-  .tr-label { display: table-cell; font-size: 9pt; color: #333; }
-  .tr-value { display: table-cell; text-align: right; font-size: 9pt; color: #1a1a1a; }
-  .total-divider { border-top: 1px solid #ccc; margin: 4px 10px; }
-  .total-row.grand .tr-label,
-  .total-row.grand .tr-value { font-weight: bold; font-size: 10pt; color: #1a1a1a; }
+  .totals-wrap { margin-top: 20px; width: 50%; margin-left: 50%; }
+  .total-row { display: table; width: 100%; padding: 5px 12px; }
+  .tr-label { display: table-cell; font-size: 9pt; color: #555; }
+  .tr-value { display: table-cell; text-align: right; font-size: 9pt; font-weight: bold; color: #1a1a1a; white-space: nowrap; }
+  .total-divider { border-top: 1px solid #d0a65d; margin: 4px 12px; }
+  .total-row.grand .tr-label { font-size: 10pt; font-weight: bold; color: #1a1a1a; }
+  .total-row.grand .tr-value { font-size: 10pt; font-weight: bold; color: #d0a65d; }
 
   /* ── Notes ── */
-  .notes-box { margin-top: 14px; padding: 8px 12px; font-size: 8.5pt; color: #444; border-top: 1px solid #eee; }
+  .notes-box { margin-top: 16px; padding: 8px 12px; font-size: 8.5pt; color: #555; border-left: 3px solid #d0a65d; }
 
   /* ── Legal ── */
-  .legal-section { margin-top: 22px; padding-top: 14px; border-top: 1px solid #ccc; }
-  .legal-clause-title { font-weight: bold; font-size: 8.5pt; color: #1a1a1a; margin-top: 10px; margin-bottom: 1px; }
-  .legal-clause-body  { font-size: 7.5pt; color: #444; line-height: 1.55; padding-left: 14px; margin-bottom: 1px; }
-  .legal-indent       { font-size: 7.5pt; color: #444; line-height: 1.55; padding-left: 28px; }
+  .legal-section { margin-top: 24px; padding-top: 16px; border-top: 1px solid #ddd; }
+  .legal-clause-title { font-weight: bold; font-size: 8.5pt; color: #1a1a1a; margin-top: 10px; margin-bottom: 2px; }
+  .legal-clause-body  { font-size: 7.5pt; color: #555; line-height: 1.6; padding-left: 14px; }
+  .legal-indent       { font-size: 7.5pt; color: #555; line-height: 1.6; padding-left: 28px; }
 </style>
 </head>
 <body>
 
 <div class="footer">
   <span class="footer-left">CLTXPRT</span>
-  <span class="footer-right">Pag. 1 /</span>
+  <span class="footer-right">info@cltxprt.be &#160;|&#160; www.cltxprt.be &#160;|&#160; BTW BE 0802.871.869</span>
 </div>
 
 <div class="page">
 
-  <!-- Top: Betreft / Project / Logo -->
+  <!-- Header -->
   <div class="top-header">
     <div class="top-header-left">
-      <div class="betreft-row">Betreft: <span>Offerte</span></div>
-      <div class="project-row">Project: <span>{{projectDescription}}</span></div>
+      <div class="betreft-row">Betreft: <strong>Offerte</strong></div>
+      <div class="project-row">Project: <strong>{{projectDescription}}</strong></div>
     </div>
     <div class="top-header-right">
       <img src="{{logoBase64}}" alt="CLTxPRT"/>
     </div>
   </div>
 
-  <!-- Info block: left = client + offerte details, right = address + company contact -->
+  <!-- Info block -->
   <div class="info-block">
     <div class="info-left">
       <div class="info-row"><span class="lbl">Cli&#235;nt: </span><span class="val">{{clientName}}</span></div>
-      <div style="height:6px;"></div>
+      <div style="height:10px;"></div>
       <div class="info-row"><span class="lbl">Offerte nr: </span><span class="val">{{offerteNumber}}</span></div>
       <div class="info-row"><span class="lbl">Offerte datum: </span><span class="val">{{date}}</span></div>
       {{#validUntil}}
@@ -113,13 +111,10 @@
       {{/deliveryQuarter}}
     </div>
     <div class="info-right">
-      <div class="contact-right">
-        {{clientStreet}} {{clientStreetNumber}}<br/>
-        {{clientPostcode}} {{clientCity}}<br/>
-        {{#clientVatNumber}}BTW: {{clientVatNumber}}<br/>{{/clientVatNumber}}
-      </div>
-      <div style="height:8px;"></div>
-      <div class="contact-right">
+      <div class="company-contact">
+        Frankrijklei 5 - 2000 Antwerpen<br/>
+        Belgi&#235;<br/>
+        +32 486 915 515<br/>
         info@cltxprt.be<br/>
         www.cltxprt.be<br/>
         BTW BE 0802.871.869
