@@ -4,338 +4,380 @@
 <meta charset="UTF-8"/>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; color: #1a1a1a; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 8.5pt; color: #1a1a1a; margin: 0 30px; }
 
-  /* ── Header ── */
-  .header { display: table; width: 100%; margin-bottom: 20px; }
-  .header-left { display: table-cell; vertical-align: middle; }
-  .header-right { display: table-cell; text-align: right; vertical-align: middle; width: 160px; }
-  .header-right img { height: 55px; }
-  .header-title { font-size: 22pt; font-weight: bold; color: #2d3748; }
-  .header-subtitle { font-size: 10pt; color: #718096; margin-top: 2px; }
-
-  /* ── Info block ── */
-  .info-block { display: table; width: 100%; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; }
-  .info-left  { display: table-cell; width: 55%; vertical-align: top; }
-  .info-right { display: table-cell; width: 45%; vertical-align: top; text-align: right; }
-  .label { font-size: 7.5pt; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1px; }
-  .value { font-size: 9pt; color: #1a1a1a; margin-bottom: 6px; }
-  .value-bold { font-weight: bold; font-size: 10pt; color: #2d3748; margin-bottom: 4px; }
-  .company-name { font-size: 13pt; font-weight: bold; color: #2d3748; margin-bottom: 3px; }
-  .company-sub { font-size: 8.5pt; color: #4a5568; line-height: 1.5; }
-
-  /* ── Section header ── */
-  .section-header { background-color: #2d3748; color: white; display: table; width: 100%; padding: 6px 10px; margin-top: 10px; margin-bottom: 0; }
-  .section-header-left  { display: table-cell; font-weight: bold; font-size: 9.5pt; }
-  .section-header-right { display: table-cell; text-align: right; font-weight: bold; font-size: 9.5pt; }
-
-  /* ── Sub-section header ── */
-  .sub-header { background-color: #4a5568; color: white; display: table; width: 100%; padding: 4px 10px 4px 20px; }
-  .sub-header-left  { display: table-cell; font-size: 9pt; }
-  .sub-header-right { display: table-cell; text-align: right; font-size: 9pt; }
-
-  /* ── Line items ── */
-  .line-item { display: table; width: 100%; padding: 3px 10px 3px 20px; border-bottom: 1px solid #f0f0f0; }
-  .line-item-desc { display: table-cell; font-size: 8.5pt; color: #2d3748; width: 55%; }
-  .line-item-qty  { display: table-cell; font-size: 8.5pt; color: #4a5568; width: 20%; }
-  .line-item-rate { display: table-cell; font-size: 8.5pt; color: #4a5568; width: 15%; }
-  .line-item-total{ display: table-cell; font-size: 8.5pt; text-align: right; font-weight: bold; width: 10%; }
-
-  /* ── Bullet items ── */
-  .bullet { padding: 2px 10px 2px 28px; font-size: 8.5pt; color: #4a5568; }
-
-  /* ── Totals ── */
-  .totals-table { width: 55%; margin-left: 45%; margin-top: 16px; border-top: 2px solid #2d3748; }
-  .total-row { display: table; width: 100%; padding: 4px 0; }
-  .total-label { display: table-cell; font-size: 9pt; color: #4a5568; }
-  .total-value { display: table-cell; text-align: right; font-size: 9pt; font-weight: bold; color: #2d3748; }
-  .total-row.grand .total-label,
-  .total-row.grand .total-value { font-size: 11pt; color: #2d3748; border-top: 1px solid #2d3748; padding-top: 6px; margin-top: 4px; }
-
-  /* ── Notes ── */
-  .notes-box { margin-top: 16px; background: #f8f9fa; border-left: 3px solid #2d3748; padding: 8px 12px; font-size: 8.5pt; color: #4a5568; }
-
-  /* ── Footer ── */
-  .footer { position: fixed; bottom: 0; left: 0; right: 0; background-color: #2d3748; color: white; padding: 5px 30px; font-size: 8pt; display: table; width: 100%; }
+  /* ── Footer (repeats on every page) ── */
+  .footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background-color: #b45309;
+    color: white; font-size: 7.5pt;
+    padding: 4px 30px;
+    display: table; width: 100%;
+  }
   .footer-left  { display: table-cell; font-weight: bold; }
   .footer-right { display: table-cell; text-align: right; }
 
-  /* ── Legal page ── */
+  /* ── Top header ── */
+  .top-header { display: table; width: 100%; padding-top: 20px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; margin-bottom: 12px; }
+  .top-header-left  { display: table-cell; vertical-align: middle; }
+  .top-header-right { display: table-cell; text-align: right; vertical-align: middle; width: 130px; }
+  .top-header-right img { height: 50px; }
+  .betreft-label { font-size: 8pt; color: #718096; }
+  .betreft-value { font-size: 8.5pt; font-weight: bold; color: #1a1a1a; }
+  .project-label { font-size: 8pt; color: #718096; margin-top: 3px; }
+  .project-value { font-size: 9pt; font-weight: bold; color: #1a1a1a; }
+
+  /* ── Info block ── */
+  .info-block { display: table; width: 100%; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
+  .info-left  { display: table-cell; width: 50%; vertical-align: top; }
+  .info-right { display: table-cell; width: 50%; vertical-align: top; padding-left: 20px; }
+  .info-label { font-size: 7.5pt; color: #718096; margin-top: 4px; }
+  .info-value { font-size: 8.5pt; color: #1a1a1a; }
+  .info-value-bold { font-size: 9pt; font-weight: bold; color: #1a1a1a; }
+  .client-contact { font-size: 8pt; color: #4a5568; line-height: 1.6; text-align: right; }
+
+  /* ── Section header (orange) ── */
+  .section-header { display: table; width: 100%; background-color: #d97706; color: white; padding: 5px 8px; margin-top: 8px; }
+  .sh-left  { display: table-cell; font-weight: bold; font-size: 9pt; }
+  .sh-right { display: table-cell; text-align: right; font-weight: bold; font-size: 9pt; }
+
+  /* ── Sub-section header (darker orange) ── */
+  .sub-header { display: table; width: 100%; background-color: #b45309; color: white; padding: 3px 8px 3px 16px; }
+  .subh-left  { display: table-cell; font-size: 8.5pt; }
+  .subh-right { display: table-cell; text-align: right; font-size: 8.5pt; }
+
+  /* ── Line items ── */
+  .line-item { display: table; width: 100%; padding: 2px 8px 2px 16px; border-bottom: 1px solid #f0f0f0; }
+  .li-desc  { display: table-cell; font-size: 8pt; color: #1a1a1a; width: 50%; }
+  .li-qty   { display: table-cell; font-size: 8pt; color: #4a5568; width: 18%; }
+  .li-rate  { display: table-cell; font-size: 8pt; color: #4a5568; width: 18%; }
+  .li-total { display: table-cell; font-size: 8pt; text-align: right; font-weight: bold; color: #1a1a1a; width: 14%; }
+
+  /* ── Bullet ── */
+  .bullet { padding: 2px 8px 2px 24px; font-size: 8pt; color: #4a5568; }
+
+  /* ── Totals ── */
+  .totals-wrap { margin-top: 14px; border-top: 1px solid #d97706; }
+  .total-row { display: table; width: 100%; padding: 3px 8px; }
+  .tr-label { display: table-cell; font-size: 8.5pt; color: #4a5568; width: 80%; }
+  .tr-value { display: table-cell; text-align: right; font-size: 8.5pt; font-weight: bold; color: #1a1a1a; width: 20%; }
+  .total-row.grand { background-color: #fef3c7; }
+  .total-row.grand .tr-label,
+  .total-row.grand .tr-value { font-size: 9.5pt; font-weight: bold; color: #92400e; }
+
+  /* ── Notes ── */
+  .notes-box { margin-top: 12px; border-left: 3px solid #d97706; padding: 6px 10px; font-size: 8pt; color: #4a5568; background: #fffbeb; }
+
+  /* ── Legal section ── */
+  .legal-section { margin-top: 18px; padding-top: 12px; border-top: 2px solid #d97706; }
+  .legal-clause-title { font-weight: bold; font-size: 8.5pt; color: #1a1a1a; margin-top: 8px; margin-bottom: 2px; }
+  .legal-clause-body { font-size: 7.5pt; color: #4a5568; line-height: 1.55; margin-bottom: 2px; padding-left: 12px; }
+  .legal-indent { padding-left: 24px; font-size: 7.5pt; color: #4a5568; line-height: 1.55; }
+
+  /* Page break */
   .page-break { page-break-before: always; }
-  .legal-title { font-size: 14pt; font-weight: bold; color: #2d3748; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 2px solid #2d3748; }
-  .legal-clause { margin-bottom: 10px; }
-  .legal-clause-title { font-weight: bold; font-size: 9pt; color: #2d3748; margin-bottom: 3px; }
-  .legal-clause-body { font-size: 8.5pt; color: #4a5568; line-height: 1.5; }
-  .legal-clause-body ul { padding-left: 16px; }
-  .legal-clause-body li { margin-bottom: 2px; }
+
+  /* Spacer above footer */
+  .page-content { margin-bottom: 30px; }
 </style>
 </head>
 <body>
 
-<!-- FOOTER (fixed, appears on every page) -->
+<!-- Fixed footer on every page -->
 <div class="footer">
-  <span class="footer-left">CLTxPRT</span>
+  <span class="footer-left">CLTXPRT</span>
   <span class="footer-right">info@cltxprt.be &#160;|&#160; www.cltxprt.be &#160;|&#160; BTW BE 0802.871.869</span>
 </div>
 
-<!-- ── PAGE 1 ── -->
-<div style="margin-bottom: 80px;">
+<div class="page-content">
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-left">
-      <div class="header-title">OFFERTE</div>
-      <div class="header-subtitle">{{offerteNumber}}</div>
+  <!-- Top header: Betreft/Project left, logo right -->
+  <div class="top-header">
+    <div class="top-header-left">
+      <div>
+        <span class="betreft-label">Betreft: </span><span class="betreft-value">Offerte</span>
+      </div>
+      <div style="margin-top:4px;">
+        <span class="project-label">Project: </span><span class="project-value">{{projectDescription}}</span>
+      </div>
     </div>
-    <div class="header-right">
+    <div class="top-header-right">
       <img src="{{logoBase64}}" alt="CLTxPRT"/>
     </div>
   </div>
 
-  <!-- Info block: client left, company right -->
+  <!-- Info block -->
   <div class="info-block">
     <div class="info-left">
-      <div class="label">Klant</div>
-      <div class="value-bold">{{clientName}}</div>
-      <div class="value">{{clientStreet}} {{clientStreetNumber}}</div>
-      <div class="value">{{clientPostcode}} {{clientCity}}</div>
-      {{#clientVatNumber}}<div class="value">BTW: {{clientVatNumber}}</div>{{/clientVatNumber}}
-      <br/>
-      <div class="label">Project</div>
-      <div class="value-bold">{{projectDescription}}</div>
-      {{#siteAddress}}<div class="value">Werf: {{siteAddress}}</div>{{/siteAddress}}
+      <div class="info-label">Cli&#235;nt:</div>
+      <div class="info-value-bold">{{clientName}}</div>
+      <div class="info-value">{{clientStreet}} {{clientStreetNumber}}</div>
+      <div class="info-value">{{clientPostcode}} {{clientCity}}</div>
+      {{#clientVatNumber}}<div class="info-value">BTW: {{clientVatNumber}}</div>{{/clientVatNumber}}
+      <div style="margin-top:8px;">
+        <div class="info-label">Offerte nr:</div>
+        <div class="info-value-bold">{{offerteNumber}}</div>
+        <div class="info-label">Offerte datum:</div>
+        <div class="info-value">{{date}}</div>
+        {{#validUntil}}
+        <div class="info-label">Offerte geldig tot:</div>
+        <div class="info-value">{{validUntil}}</div>
+        {{/validUntil}}
+        {{#deliveryQuarter}}
+        <div class="info-label">Levering:</div>
+        <div class="info-value">{{deliveryQuarter}}</div>
+        {{/deliveryQuarter}}
+      </div>
     </div>
     <div class="info-right">
-      <div class="company-name">CLTxPRT</div>
-      <div class="company-sub">
+      <div class="client-contact">
         info@cltxprt.be<br/>
         www.cltxprt.be<br/>
         BTW BE 0802.871.869
       </div>
-      <br/>
-      <div class="label">Offerte nr.</div>
-      <div class="value-bold">{{offerteNumber}}</div>
-      <div class="label">Datum</div>
-      <div class="value">{{date}}</div>
-      {{#validUntil}}<div class="label">Geldig tot</div><div class="value">{{validUntil}}</div>{{/validUntil}}
-      {{#deliveryQuarter}}<div class="label">Levering</div><div class="value">{{deliveryQuarter}}</div>{{/deliveryQuarter}}
-      {{#preparedBy}}<div class="label">Opgesteld door</div><div class="value">{{preparedBy}}</div>{{/preparedBy}}
+      {{#preparedBy}}
+      <div style="margin-top:8px; text-align:right;">
+        <div class="info-label">Opgesteld door:</div>
+        <div class="info-value">{{preparedBy}}</div>
+      </div>
+      {{/preparedBy}}
+      {{#siteAddress}}
+      <div style="margin-top:8px; text-align:right;">
+        <div class="info-label">Werf:</div>
+        <div class="info-value">{{siteAddress}}</div>
+      </div>
+      {{/siteAddress}}
     </div>
   </div>
 
   <!-- 1. Engineering -->
   <div class="section-header">
-    <span class="section-header-left">Engineering</span>
-    <span class="section-header-right">EUR {{engineeringCost}}</span>
+    <span class="sh-left">Engineering</span>
+    <span class="sh-right">&#8364; {{engineeringCost}}</span>
   </div>
-  <div class="bullet">- Voorstudie</div>
-  <div class="bullet">- Stabiliteitsstudie &amp; aanleveren studies bevestigingsmaterialen</div>
-  <div class="bullet">- 3D-model</div>
-  <div class="bullet">- Productieplannen</div>
-  <div class="bullet">- Montageplannen</div>
-  <div class="bullet">- Opvolging project &amp; oplevering</div>
+  <div class="bullet">Voorstudie</div>
+  <div class="bullet">Stabiliteitsstudie - aanleveren studies bevestigingsmaterialen</div>
+  <div class="bullet">3D-model</div>
+  <div class="bullet">Productieplannen</div>
+  <div class="bullet">Montageplannen</div>
+  <div class="bullet">Opvolging project - oplevering</div>
 
   <!-- 2. Structuur -->
   <div class="section-header">
-    <span class="section-header-left">Structuur</span>
-    <span class="section-header-right">EUR {{structuurTotal}}</span>
+    <span class="sh-left">Structuur</span>
+    <span class="sh-right">&#8364; {{structuurTotal}}</span>
   </div>
 
   {{#hasClt}}
   <div class="sub-header">
-    <span class="sub-header-left">CLT-elementen</span>
-    <span class="sub-header-right">EUR {{cltLineTotal}}</span>
+    <span class="subh-left">CLT-elementen:</span>
+    <span class="subh-right">&#8364; {{cltLineTotal}}</span>
   </div>
   <div class="line-item">
-    <span class="line-item-desc">CLT elementen</span>
-    <span class="line-item-qty">{{cltM2}} m&#178;</span>
-    <span class="line-item-rate">{{cltPricePerM2}} EUR/m&#178;</span>
-    <span class="line-item-total">EUR {{cltLineTotal}}</span>
+    <span class="li-desc">CLT elementen</span>
+    <span class="li-qty">{{cltM2}} m&#178;</span>
+    <span class="li-rate">{{cltPricePerM2}} euro/m&#178;</span>
+    <span class="li-total">&#8364; {{cltLineTotal}}</span>
   </div>
   {{/hasClt}}
 
   {{#hasGl}}
   <div class="sub-header">
-    <span class="sub-header-left">GL-elementen</span>
-    <span class="sub-header-right">EUR {{glTotal}}</span>
+    <span class="subh-left">GL-elementen:</span>
+    <span class="subh-right">&#8364; {{glTotal}}</span>
   </div>
   {{#hasGlColumns}}
   <div class="line-item">
-    <span class="line-item-desc">Kolommen</span>
-    <span class="line-item-qty">{{glColumnsM3}} m&#179;</span>
-    <span class="line-item-rate">{{glColumnsPricePerM3}} EUR/m&#179;</span>
-    <span class="line-item-total">EUR {{glColumnsTotal}}</span>
+    <span class="li-desc">Kolommen</span>
+    <span class="li-qty">{{glColumnsM3}} m&#179;</span>
+    <span class="li-rate">{{glColumnsPricePerM3}} euro/m&#179;</span>
+    <span class="li-total">&#8364; {{glColumnsTotal}}</span>
   </div>
   {{/hasGlColumns}}
   {{#hasGlBeams}}
   <div class="line-item">
-    <span class="line-item-desc">Balken</span>
-    <span class="line-item-qty">{{glBeamsM3}} m&#179;</span>
-    <span class="line-item-rate">{{glBeamsPricePerM3}} EUR/m&#179;</span>
-    <span class="line-item-total">EUR {{glBeamsTotal}}</span>
+    <span class="li-desc">Balken</span>
+    <span class="li-qty">{{glBeamsM3}} m&#179;</span>
+    <span class="li-rate">{{glBeamsPricePerM3}} euro/m&#179;</span>
+    <span class="li-total">&#8364; {{glBeamsTotal}}</span>
   </div>
   {{/hasGlBeams}}
   {{/hasGl}}
 
   <!-- 3. CNC bewerking -->
   <div class="section-header">
-    <span class="section-header-left">CNC bewerking</span>
-    <span class="section-header-right">EUR {{cncTotal}}</span>
+    <span class="sh-left">CNC bewerking</span>
+    <span class="sh-right">&#8364; {{cncTotal}}</span>
   </div>
   {{#hasClt}}
   <div class="line-item">
-    <span class="line-item-desc">CLT: Dimensioneren en zagen van elementen</span>
-    <span class="line-item-qty">{{cltM2}} m&#178;</span>
-    <span class="line-item-rate">11,00 EUR/m&#178;</span>
-    <span class="line-item-total">EUR {{cncCltCost}}</span>
+    <span class="li-desc">CLT: Dimensioneren en zagen van elementen</span>
+    <span class="li-qty">{{cltM2}} m&#178;</span>
+    <span class="li-rate">11,00 euro/m&#178;</span>
+    <span class="li-total">&#8364; {{cncCltCost}}</span>
   </div>
-  <div class="bullet">- Inclusief uitsparingen voor technieken</div>
+  <div class="bullet">Inclusief uitsparingen voor technieken</div>
   {{/hasClt}}
   {{#hasGlCnc}}
   <div class="line-item">
-    <span class="line-item-desc">GL: Dimensioneren en zagen van elementen</span>
-    <span class="line-item-qty">{{glTotalM3}} m&#179;</span>
-    <span class="line-item-rate">260,00 EUR/m&#179;</span>
-    <span class="line-item-total">EUR {{cncGlCost}}</span>
+    <span class="li-desc">GL: Dimensioneren en zagen van elementen</span>
+    <span class="li-qty">{{glTotalM3}} m&#179;</span>
+    <span class="li-rate">260,00 euro/m&#179;</span>
+    <span class="li-total">&#8364; {{cncGlCost}}</span>
   </div>
-  <div class="bullet">- Inclusief uitsparingen voor verbindingsmaterialen</div>
+  <div class="bullet">Inclusief uitsparingen voor verbindingsmaterialen</div>
   {{/hasGlCnc}}
 
   <!-- 4. Accessoires -->
   <div class="section-header">
-    <span class="section-header-left">Accessoires</span>
-    <span class="section-header-right">EUR {{accessoiresCost}}</span>
+    <span class="sh-left">Accessoires</span>
+    <span class="sh-right">&#8364; {{accessoiresCost}}</span>
   </div>
-  <div class="bullet">- Verbindingsmaterialen</div>
-  <div class="bullet">- Schroeven</div>
-  <div class="bullet">- Verbindingsmaterialen Rothoblaas</div>
-  <div class="bullet">- Luchtdichtheidstape</div>
+  <div class="bullet">Verbindingsmaterialen</div>
+  <div class="bullet">Schroeven</div>
+  <div class="bullet">Verbindingsmaterialen Rothoblaas</div>
+  <div class="bullet">Luchtdichtheidstape</div>
 
   <!-- 5. Roostering (optional) -->
   {{#includeRoostring}}
   <div class="section-header">
-    <span class="section-header-left">Roostering met beplating</span>
-    <span class="section-header-right">EUR {{roosteringTotal}}</span>
+    <span class="sh-left">Roostering met beplating</span>
+    <span class="sh-right">&#8364; {{roosteringTotal}}</span>
   </div>
   <div class="line-item">
-    <span class="line-item-desc">OSB 22mm - tand en groef</span>
-    <span class="line-item-qty">{{roosteringM2}} m&#178;</span>
-    <span class="line-item-rate">{{roosteringPricePerM2}} EUR/m&#178;</span>
-    <span class="line-item-total">EUR {{roosteringTotal}}</span>
+    <span class="li-desc">OSB 22mm - tand en groef</span>
+    <span class="li-qty">{{roosteringM2}} m&#178;</span>
+    <span class="li-rate">{{roosteringPricePerM2}} euro/m&#178;</span>
+    <span class="li-total">&#8364; {{roosteringTotal}}</span>
   </div>
   {{/includeRoostring}}
 
   <!-- 6. Transport -->
   <div class="section-header">
-    <span class="section-header-left">Transport</span>
-    <span class="section-header-right">EUR {{transportCost}}</span>
+    <span class="sh-left">Transport</span>
+    <span class="sh-right">&#8364; {{transportCost}}</span>
   </div>
   {{#hasTransport}}
   <div class="line-item">
-    <span class="line-item-desc">Transport per 40m&#179; - lengte 14m - breedte 2,45m</span>
-    <span class="line-item-qty">{{numberOfTrucks}} st.</span>
-    <span class="line-item-rate">2.250,00 EUR/st.</span>
-    <span class="line-item-total">EUR {{transportCost}}</span>
+    <span class="li-desc">Transport per 40m&#179; - lengte 14m - breedte 2,45m</span>
+    <span class="li-qty">{{numberOfTrucks}} st</span>
+    <span class="li-rate"></span>
+    <span class="li-total">&#8364; {{transportCost}}</span>
   </div>
   {{/hasTransport}}
 
   <!-- 7. Montage -->
   <div class="section-header">
-    <span class="section-header-left">Montage</span>
-    <span class="section-header-right">EUR {{montageCost}}</span>
+    <span class="sh-left">Montage</span>
+    <span class="sh-right">&#8364; {{montageCost}}</span>
   </div>
-  <div class="bullet">- Monteren van CLT</div>
-  <div class="bullet">- Monteren van glulam</div>
-  <div class="bullet">- Kraan geleverd door CLTxPRT</div>
-  <div class="bullet">- Transporteur op rupsen geleverd door CLTxPRT</div>
-  <div class="bullet">- Gereedschap geleverd door CLTxPRT</div>
+  <div class="bullet">Monteren van CLT</div>
+  <div class="bullet">Monteren van glulam</div>
+  <div class="bullet">Kraan geleverd door CLTxPRT</div>
+  <div class="bullet">Transporteur op rupsen geleverd door CLTxPRT</div>
+  <div class="bullet">Gereedschap geleverd door CLTxPRT</div>
 
   <!-- Totals -->
-  <div class="totals-table">
+  <div class="totals-wrap">
     <div class="total-row">
-      <span class="total-label">Totaal excl. BTW</span>
-      <span class="total-value">EUR {{subtotalExclVat}}</span>
+      <span class="tr-label">Totaal excl. BTW</span>
+      <span class="tr-value">&#8364; {{subtotalExclVat}}</span>
     </div>
     <div class="total-row">
-      <span class="total-label">BTW 21%</span>
-      <span class="total-value">EUR {{vat}}</span>
+      <span class="tr-label">BTW: 21%</span>
+      <span class="tr-value">&#8364; {{vat}}</span>
     </div>
     <div class="total-row grand">
-      <span class="total-label">Totaal incl. BTW</span>
-      <span class="total-value">EUR {{totalInclVat}}</span>
+      <span class="tr-label">Totaal incl. BTW</span>
+      <span class="tr-value">&#8364; {{totalInclVat}}</span>
     </div>
   </div>
 
   {{#notes}}
-  <div class="notes-box"><strong>Opmerkingen:</strong><br/>{{notes}}</div>
+  <div class="notes-box"><strong>Opmerkingen:</strong> {{notes}}</div>
   {{/notes}}
 
+  <!-- ── Algemene Voorwaarden (flows after totals) ── -->
+  <div class="legal-section">
+
+    <div class="legal-clause-title">Bindende kracht</div>
+    <div class="legal-clause-body">1. Behalve bijzondere voorwaarden, vermeld op de voorzijde van de bestelbon, offerte of overeenkomst en ondertekend voor akkoord door beide partijen, zijn enkel en bij uitsluiting van alle andere, de voorwaarden van toepassing dewelke hieronder zijn gemeld. Indien enige bepaling van deze Algemene Voorwaarden nietig is of vernietigd wordt, zullen de overige bepalingen van deze Algemene Voorwaarden volledig van kracht blijven en zullen CLTxPRT en de Klant in overleg treden teneinde nieuwe bepalingen ter vervanging van de nietige of vernietigde bepalingen overeen te komen.</div>
+
+    <div class="legal-clause-title">Geldigheidsduur van de offertes</div>
+    <div class="legal-clause-body">2. Tenzij anders bepaald zijn onze offertes slechts geldig tijdens een periode van 30 kalenderdagen vanaf de datum van verzending. Wij zijn enkel gehouden door onze offertes indien de aanvaarding door de klant ons binnen deze termijn bereikt.</div>
+
+    <div class="legal-clause-title">Prijzen</div>
+    <div class="legal-clause-body">3. De prijzen zijn bepaald in een van CLTxPRT uitgaande offerte. Enig ander aanbod, alsook informatie, kladversies, presentaties, berekeningen edm. uitgaande van CLTxPRT, mogen enkel als informatie worden beschouwd en kunnen CLTxPRT in geen geval binden.</div>
+
+    <div class="legal-clause-title">Betaling</div>
+    <div class="legal-clause-body">4. Bij goedkeuring van de productieplannen dient 50% van het bedrag van het materiaal betaalt te worden. De overige 50% dient betaalt te worden voor het laden van het transport. Betalingen kunnen ook in de vorm van een bankgarantie gebeuren. Voorstudie dient vooraf betaald te worden.</div>
+    <div class="legal-indent">1ste schijf: 100% voorstudie</div>
+    <div class="legal-indent">2de schijf: 50% materialen (bij goedkeuring voorstudie)</div>
+    <div class="legal-indent">3de schijf: 50% materialen 2 weken voor levering</div>
+    <div class="legal-indent">4de schijf: montage + eventuele overschot na gemaakte afspraken</div>
+
+    <div class="legal-clause-title">Prijsherziening</div>
+    <div class="legal-clause-body">5. Zelfs in geval van een absoluut forfait leidt elke wijziging van de lonen, de sociale lasten, de prijzen van de materialen of van hun transport tot een prijsherziening die toegepast wordt op de betrokken facturering van de uitgevoerde werken volgens de onderstaande formule:</div>
+    <div class="legal-clause-body">6. "P" is het bedrag van de uitgevoerde werken en "p" is het herziene bedrag.</div>
+    <div class="legal-clause-body">7. "S" is het gemiddelde uurloon bepaald door het Paritair Comit&#233; voor het Bouwbedrijf van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte, en verhoogd met het op die datum door de FOD Economie aanvaarde totaalpercentage van de sociale lasten en verzekeringen; "s" is dit uurloon zoals het werd opgenomen v&#243;&#243;r de aanvang van de werken waarvoor gedeeltelijke betaling wordt gevraagd, verhoogd met het hiervoor vermelde totaalpercentage dat in die periode aangenomen was.</div>
+    <div class="legal-clause-body">8. "I" is het maandelijkse indexcijfer bepaald door de Commissie van de Prijslijst der Bouwmaterialen, zoals van kracht op de 10de dag v&#243;&#243;r het indienen van de offerte. i is ditzelfde indexcijfer zoals het werd opgenomen v&#243;&#243;r de aanvang van de werken waarvoor gedeeltelijke betaling wordt gevraagd.</div>
+    <div class="legal-clause-body">9. Voorzieningen opgelegd door de veiligheidsco&#246;rdinator zijn niet in onze offerte inbegrepen, tenzij anders vermeld.</div>
+
+    <div class="legal-clause-title">Uitvoeringsmodaliteiten</div>
+    <div class="legal-clause-body">10. De klant dient ervoor te zorgen dat de werken onmiddellijk kunnen worden aangevat. Bij gebreke daaraan, zullen de rechtstreekse en onrechtstreekse kosten welke voortvloeien uit het tijdsverlies ten laste van de klant worden gelegd, zonder voorafgaande ingebrekestelling. De werf dient door de klant in ons voordeel gratis voorzien te worden van elektriciteit en water. De klant zorgt voor een zorgvuldige stockering van de op de werf geleverde goederen en voor de beveiliging daarvan.</div>
+    <div class="legal-clause-body">11. Wij voeren elke opdracht uit volgens de regels van de kunst zonder dat dit evenwel enige resultaatsverbintenis inhoudt met betrekking tot de materialen, diensten of uitvoeringstermijnen.</div>
+    <div class="legal-clause-body">12. Bij opdrachten waarbij administratieve vergunningen te pas komen, dragen wij geen enkele verantwoordelijkheid wat de administratieve vergunningen betreft. Eventuele daaruit voortvloeiende schade en boetes vallen integraal ten laste van de klant.</div>
+    <div class="legal-clause-body">13. De (diensten)prestaties zijn berekend in de veronderstelling dat er ononderbroken kan doorgewerkt worden, indien anders vermeld.</div>
+
+    <div class="legal-clause-title">Levering en termijnen</div>
+    <div class="legal-clause-body">14. Elke termijn van levering van arbeid en uitvoering van werken, indien deze vermeld wordt, wordt slechts op indicatieve wijze aangeduid, en laattijdigheid in de levering of uitvoering laat aan de klant niet toe de bestelling af te zeggen of schadevergoeding te vorderen, evenmin om zijn betalingsverplichtingen op te schorten.</div>
+
+    <div class="legal-clause-title">Onvoorziene omstandigheden</div>
+    <div class="legal-clause-body">15. Alle omstandigheden die bij het indienen van de bestelbon, offerte of overeenkomst redelijkerwijze onvoorzienbaar waren en onvermijdbaar zijn, en die de uitvoering van de overeenkomst financieel of op een andere manier zwaarder of moeilijker zouden maken dan normaal voorzien is, zullen worden beschouwd als gevallen van overmacht: voorbeelden (niet-limitatief): ongevallen, oorlogen en hun gevolgen, slechte weersomstandigheden, stakingen, lock-out, tekort aan werkkrachten en materiaal, storingen en moeilijkheden inzake transport, enz... die zich bij onszelf of bij onze leveranciers voordoen. Gevallen van overmacht geven ons het recht om de herziening of ontbinding van de overeenkomst aan te vragen. Wanneer deze omstandigheden een onderbreking van de werken tot gevolg hebben, wordt de uitvoeringstermijn van rechtswege geschorst voor de duur van de onderbreking, vermeerderd met de tijd die nodig is om de werf terug op te starten.</div>
+    <div class="legal-clause-body">16. Een tenietgaan of beschadiging door toeval of overmacht van de geleverde zaak of het uitgevoerde werk, of nog ingevolge de eigen fout van de klant of van personen voor wie hij instaat, is steeds en integraal ten laste van de klant.</div>
+
+    <div class="legal-clause-title">Wijzigingen en bijkomende werken</div>
+    <div class="legal-clause-body">17. Elke door de klant bestelde wijziging of bijkomend werk alsook de vaststelling van de prijs vereist een voorafgaand akkoord van beide partijen. Wijzigingen of bijkomend werk mogen met alle middelen van recht bewezen worden.</div>
+    <div class="legal-clause-body">18. Elke wijziging, toevoeging of weglating met betrekking tot de werkzaamheden zoals omschreven in de bestelbon, offerte of de overeenkomst, moet het voorwerp uitmaken van een aanhangsel bij de bestelbon, offerte of de overeenkomst. Bij ontstentenis daarvan, zal er steeds en onherroepelijk van worden uitgegaan dat deze werken conform de verbale instructies van de klant werden uitgevoerd. Elke door ons gebeurlijke schriftelijke bevestiging of melding inzake een wijziging, toevoeging of weglating van de werkzaamheden zal in hoofde van de klant onweerlegbaar, aanvaard en onherroepelijk zijn bij gebrek aan diens schriftelijke opmerkingen binnen de 48 uren vanaf de verzending van onze mededeling of bevestiging.</div>
+
+    <div class="legal-clause-title">Verbreking</div>
+    <div class="legal-clause-body">19. Indien de klant geheel of gedeeltelijk afziet van de overeengekomen werken, dan is deze conform art. 1794 BW gehouden ons schadeloos te stellen voor al onze uitgaven, al onze arbeid, en alles wat wij bij die werken hadden kunnen winnen, hetgeen forfaitair wordt begroot op 20% van de niet uitgevoerde werken, onverminderd ons recht om onze werkelijke schade aan te tonen indien deze hoger zou liggen.</div>
+
+    <div class="legal-clause-title">Eenzijdige be&#235;indiging in gevolge wanprestatie</div>
+    <div class="legal-clause-body">20. Indien &#233;&#233;n van beide partijen enige wettelijke dan wel contractuele verplichting niet nakomt, kan de andere partij vanaf de 10e dag na het verzenden van een ingebrekestelling waarop geen reactie werd ontvangen, eenzijdig overgaan tot de ontbinding van het contract, waarop deze recht heeft vanwege de in gebreke blijvende partij op betaling van een forfaitaire schadevergoeding ten belope van 50% van het totale factuurbedrag, tenzij de werkelijk gedane uitgaven dit percentage overstijgen.</div>
+
+    <div class="legal-clause-title">Oplevering</div>
+    <div class="legal-clause-body">21. Zodra de werken be&#235;indigd zijn, dient de klant over te gaan tot de oplevering van de werken. Kleine onvolkomenheden of onafgewerktheden, waarvan de waarde minder dan 10% van de aannemingssom beloopt, kunnen geenszins worden ingeroepen om de oplevering te weigeren. In voorkomend geval dient de klant slechts te betalen ten belope van wat voor aanvaarding in aanmerking is genomen en zullen de eventuele gebreken binnen de maand worden verholpen. Als de klant nalaat aan deze oplevering deel te nemen, of er zich geldig te laten vertegenwoordigen binnen 15 dagen na hierom verzocht te zijn, wordt de oplevering als verkregen beschouwd vanaf het einde van deze periode van 15 dagen. De oplevering houdt de goedkeuring in door de klant en sluit voor hem elk beroep wegens zichtbare gebreken uit. De datum van de oplevering bepaalt het vertrekpunt van de tienjarige aansprakelijkheid. De werken die in staat zijn bevonden worden vermoed, tot bewijs van het tegendeel, zo te zijn geweest op de datum van de voltooiing van de werken.</div>
+    <div class="legal-clause-body">22. Een bestelling is klaar voor Oplevering als alle onderdelen (goederen en/of diensten) van die bestelling geleverd zijn en klaar zijn voor Oplevering.</div>
+    <div class="legal-clause-body">23. Zodra CLTxPRT oordeelt dat alle goederen klaar zijn voor Oplevering en als alle dienstenprestaties zijn uitgevoerd zonder dat de Klant hieromtrent tijdig voorbehoud heeft aangetekend, zal CLTxPRT de Klant per post of per mail een 'Oplevering' toesturen.</div>
+    <div class="legal-clause-body">24. De Klant heeft vervolgens 10 werkdagen de tijd om na te gaan of de geleverde goederen fundamentele tekorten vertonen die de operationele werking redelijkerwijze onmogelijk maken.</div>
+    <div class="legal-clause-body">25. In het geval CLTxPRT de gemotiveerde weigering, conform de in paragraaf xx gespecificeerde Opleveringscriteria ontvankelijk acht, zal CLTxPRT vooreerst en zo spoedig mogelijk de fundamentele tekorten die de operationele werking van de goederen verhinderen, herstellen. Indien CLTxPRT de weigering niet ontvankelijk acht, zullen beide partijen in overleg treden om te streven naar een aanvaardbare regeling.</div>
+    <div class="legal-clause-body">26. Vervolgens zal CLTxPRT een nieuwe Opleveringsprocedure starten.</div>
+
+    <div class="legal-clause-title">Lichte verborgen gebreken</div>
+    <div class="legal-clause-body">27. Gedurende een periode van een jaar na de oplevering is de aannemer aansprakelijk voor de lichte verborgen gebreken die niet gedekt zijn door de artikelen 1792 en 2270 van het Burgerlijk Wetboek. Op straffe van verval van de aansprakelijkheid van de aannemer moet het gebrek door de klant worden aangeklaagd binnen 6 maanden vanaf de ontdekking ervan of vanaf de dag waarop het bekend had moeten zijn. Elke rechtsvordering op die grond is maar ontvankelijk als ze ingesteld wordt binnen de termijn van jaar na de oplevering van de werken.</div>
+
+    <div class="legal-clause-title">Overdracht van risico's</div>
+    <div class="legal-clause-body">28. De door de artikelen 1788 en 1789 van het Burgerlijk Wetboek beoogde overdracht van risico's vindt plaats naarmate de uitvoering van de werken of de levering van de materialen, goederen of installaties vordert.</div>
+
+    <div class="legal-clause-title">Eigendomsvoorbehoud</div>
+    <div class="legal-clause-body">29. Zelfs na hun incorporatie blijven de materialen die geleverd werden in het kader van deze overeenkomst onze eigendom en is de klant er slechts de houder van. Wij mogen zonder toestemming van de klant de materialen weer losmaken en terugnemen. Dit recht vervalt en de eigendom gaat over zodra de klant al zijn schulden aan ons gedelgd heeft. Bij een beroep op het recht op terugneming mogen wij de betaalde voorschotten houden ter vergoeding van zijn schade. Wanneer wij dit recht uitoefenen, brengen wij de klant hiervan bij aangetekende brief op de hoogte en wordt die geacht hiervan kennis te hebben op de tweede werkdag na de verzending ervan.</div>
+
+    <div class="legal-clause-title">Geschillen</div>
+    <div class="legal-clause-body">30. Bij geschil over de geldigheid, de uitvoering of de interpretatie van deze overeenkomst zijn enkel de rechtbanken van de woonplaats van onze maatschappelijke zetel bevoegd.</div>
+
+    <div class="legal-clause-title">Geldigheid</div>
+    <div class="legal-clause-body">31. De eventuele nietigheid of ongeldigheid van &#233;&#233;n van de voornoemde algemene en/of bijzondere voorwaarden heeft geen invloed op de geldigheid van de andere voorwaarden en/of de overeenkomst.</div>
+
+    <div class="legal-clause-title">Algemene bepalingen</div>
+    <div class="legal-clause-body">32. Indien &#233;&#233;n of meerdere bepalingen van deze Algemene Voorwaarden nietig of onuitvoerbaar worden verklaard, zullen partijen deze bepalingen vervangen door een geldige en uitvoerbare bepaling die, in de mate van het mogelijke, het economische, zakelijke of andere doel van genoemde nietige of onuitvoerbare bepaling zal bereiken en blijven de overige bepalingen van de Algemene Voorwaarden van kracht.</div>
+    <div class="legal-clause-body">33. Het loutere feit dat een partij niet aandringt op de strikte naleving van enige bepaling van de Algemene Voorwaarden of dit niet afdwingt, kan niet worden ge&#239;nterpreteerd als een verzaking aan of afstand van de rechten van deze partij, tenzij dit schriftelijk wordt bevestigd.</div>
+    <div class="legal-clause-body">34. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
+    <div class="legal-clause-body">35. De rechten en herstelmaatregelen die aan de partijen worden toegekend ingevolge de Algemene Voorwaarden zijn complementair met en beperken geenszins enige andere rechten of herstelmaatregelen die aan de partijen wettelijk zijn toegekend. Alle dergelijke rechten en herstelmaatregelen zijn cumulatief en kunnen afzonderlijk of samen worden uitgeoefend.</div>
+    <div class="legal-clause-body">36. Alle kennisgevingen tussen CLTxPRT en de Klant zullen schriftelijk, daarbij inbegrepen per e-mail, gebeuren. Kennisgevingen per e-mail worden geacht te zijn gedaan op de eerste werkdag na verzending per e-mail.</div>
+
+  </div>
+
 </div>
-
-<!-- ── PAGE 2: Algemene Voorwaarden ── -->
-<div class="page-break" style="margin-bottom: 80px;">
-  <div class="legal-title">Algemene Voorwaarden</div>
-
-  <div class="legal-clause">
-    <div class="legal-clause-title">1. Bindende kracht</div>
-    <div class="legal-clause-body">Behalve bijzondere voorwaarden, ondertekend voor akkoord door beide partijen, zijn enkel de voorwaarden van toepassing dewelke hieronder zijn vermeld.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">2. Geldigheidsduur</div>
-    <div class="legal-clause-body">Tenzij anders bepaald zijn onze offertes slechts geldig tijdens een periode van 30 kalenderdagen vanaf de datum van verzending.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">3. Prijzen</div>
-    <div class="legal-clause-body">De prijzen zijn bepaald in een van CLTxPRT uitgaande offerte. Enig ander aanbod mag enkel als informatie worden beschouwd.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">4. Betaling</div>
-    <div class="legal-clause-body">Bij goedkeuring van de productieplannen dient 50% van het bedrag betaalt te worden. De overige 50% dient betaalt te worden voor het laden van het transport.
-      <ul>
-        <li>1ste schijf: 100% voorstudie</li>
-        <li>2de schijf: 50% materialen (bij goedkeuring voorstudie)</li>
-        <li>3de schijf: 50% materialen 2 weken voor levering</li>
-        <li>4de schijf: montage + eventuele overschot</li>
-      </ul>
-    </div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">5. Prijsherziening</div>
-    <div class="legal-clause-body">Elke wijziging van lonen, sociale lasten of materiaalprijzen leidt tot een prijsherziening toegepast op de betrokken facturering.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">6. Uitvoeringsmodaliteiten</div>
-    <div class="legal-clause-body">De klant dient ervoor te zorgen dat de werken onmiddellijk kunnen worden aangevat. De werf dient gratis voorzien te worden van elektriciteit en water.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">7. Levering en termijnen</div>
-    <div class="legal-clause-body">Elke termijn van levering wordt slechts op indicatieve wijze aangeduid. Laattijdigheid laat de klant niet toe de bestelling af te zeggen.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">8. Onvoorziene omstandigheden</div>
-    <div class="legal-clause-body">Ongevallen, stakingen, tekort aan materiaal en soortgelijke omstandigheden worden als overmacht beschouwd en geven recht op herziening of ontbinding.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">9. Wijzigingen</div>
-    <div class="legal-clause-body">Elke door de klant bestelde wijziging vereist een voorafgaand schriftelijk akkoord van beide partijen.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">10. Verbreking</div>
-    <div class="legal-clause-body">Indien de klant afziet van de overeengekomen werken is deze gehouden ons schadeloos te stellen, forfaitair begroot op 20% van de niet uitgevoerde werken.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">11. Oplevering</div>
-    <div class="legal-clause-body">Zodra de werken beeindigd zijn, dient de klant over te gaan tot de oplevering. Kleine onvolkomenheden (&lt; 10% aannemingssom) kunnen niet worden ingeroepen om de oplevering te weigeren.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">12. Eigendomsvoorbehoud</div>
-    <div class="legal-clause-body">De materialen blijven eigendom van CLTxPRT tot volledige betaling van alle schulden.</div>
-  </div>
-  <div class="legal-clause">
-    <div class="legal-clause-title">13. Geschillen</div>
-    <div class="legal-clause-body">Bij geschil zijn enkel de rechtbanken van de woonplaats van de maatschappelijke zetel van CLTxPRT bevoegd.</div>
-  </div>
-</div>
-
 </body>
 </html>
