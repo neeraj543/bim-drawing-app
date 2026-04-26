@@ -18,19 +18,6 @@ const EMPTY_FORM = {
   clientCity: '',
   clientVatNumber: '',
   siteAddress: '',
-  finishGrade: '',
-  projectType: '',
-  numberOfUnits: '',
-  buildingDimensions: '',
-  numberOfFloors: '',
-  roofType: '',
-  roofPitch: '',
-  corniceHeight: '',
-  ridgeHeight: '',
-  ceilingHeightKelder: '',
-  ceilingHeightGelijkvloers: '',
-  ceilingHeightVerdiep1: '',
-  ceilingHeightZolderverdiep: '',
   cltM2: '',
   cltPricePerM2: '',
   glColumnsM3: '',
@@ -197,56 +184,6 @@ export default function OfferteForm() {
             <Field label="City">
               <input className={inputClass} value={form.clientCity} onChange={set('clientCity')} />
             </Field>
-          </div>
-        </FormSection>
-
-        {/* Building Details */}
-        <FormSection title="Building Details">
-          <div className="grid grid-cols-3 gap-4">
-            <Field label="Finish Grade">
-              <input className={inputClass} value={form.finishGrade} onChange={set('finishGrade')} placeholder="Structuur" />
-            </Field>
-            <Field label="Project Type">
-              <input className={inputClass} value={form.projectType} onChange={set('projectType')} placeholder="Particulier" />
-            </Field>
-            <Field label="Number of Units">
-              <input type="number" className={inputClass} value={form.numberOfUnits} onChange={set('numberOfUnits')} />
-            </Field>
-            <Field label="Building Dimensions (L×B)">
-              <input className={inputClass} value={form.buildingDimensions} onChange={set('buildingDimensions')} placeholder="12m × 8m" />
-            </Field>
-            <Field label="Number of Floors">
-              <input type="number" className={inputClass} value={form.numberOfFloors} onChange={set('numberOfFloors')} />
-            </Field>
-            <Field label="Roof Type">
-              <input className={inputClass} value={form.roofType} onChange={set('roofType')} placeholder="Zadeldak" />
-            </Field>
-            <Field label="Roof Pitch">
-              <input className={inputClass} value={form.roofPitch} onChange={set('roofPitch')} />
-            </Field>
-            <Field label="Cornice Height">
-              <input className={inputClass} value={form.corniceHeight} onChange={set('corniceHeight')} />
-            </Field>
-            <Field label="Ridge Height">
-              <input className={inputClass} value={form.ridgeHeight} onChange={set('ridgeHeight')} />
-            </Field>
-          </div>
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-400 mb-3">Ceiling Heights</p>
-            <div className="grid grid-cols-4 gap-4">
-              <Field label="Kelder">
-                <input className={inputClass} value={form.ceilingHeightKelder} onChange={set('ceilingHeightKelder')} />
-              </Field>
-              <Field label="Gelijkvloers">
-                <input className={inputClass} value={form.ceilingHeightGelijkvloers} onChange={set('ceilingHeightGelijkvloers')} />
-              </Field>
-              <Field label="Verdiep 1">
-                <input className={inputClass} value={form.ceilingHeightVerdiep1} onChange={set('ceilingHeightVerdiep1')} />
-              </Field>
-              <Field label="Zolderverdiep">
-                <input className={inputClass} value={form.ceilingHeightZolderverdiep} onChange={set('ceilingHeightZolderverdiep')} />
-              </Field>
-            </div>
           </div>
         </FormSection>
 

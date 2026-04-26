@@ -174,8 +174,8 @@ export default function OfferteDetail() {
               <Field label="Date" value={offerte.date} />
               <Field label="Prepared By" value={offerte.preparedBy} />
               <Field label="Submission Deadline" value={offerte.submissionDeadline} />
-              <Field label="Finish Grade" value={offerte.finishGrade} />
-              <Field label="Project Type" value={offerte.projectType} />
+              <Field label="Geldig tot" value={offerte.validUntil} />
+              <Field label="Levering" value={offerte.deliveryQuarter} />
             </div>
           </Section>
 
@@ -187,30 +187,6 @@ export default function OfferteDetail() {
               <Field label="Address" value={[offerte.clientStreet, offerte.clientStreetNumber, offerte.clientPostcode, offerte.clientCity].filter(Boolean).join(' ')} />
               <Field label="Construction Site" value={offerte.siteAddress} />
             </div>
-          </Section>
-
-          {/* Building Details */}
-          <Section title="Building Details">
-            <div className="grid grid-cols-3 gap-4">
-              <Field label="Units" value={offerte.numberOfUnits} />
-              <Field label="Dimensions (L×B)" value={offerte.buildingDimensions} />
-              <Field label="Floors" value={offerte.numberOfFloors} />
-              <Field label="Roof Type" value={offerte.roofType} />
-              <Field label="Roof Pitch" value={offerte.roofPitch} />
-              <Field label="Cornice Height" value={offerte.corniceHeight} />
-              <Field label="Ridge Height" value={offerte.ridgeHeight} />
-            </div>
-            {(offerte.ceilingHeightKelder || offerte.ceilingHeightGelijkvloers || offerte.ceilingHeightVerdiep1 || offerte.ceilingHeightZolderverdiep) && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-400 mb-3">Ceiling Heights</p>
-                <div className="grid grid-cols-4 gap-4">
-                  <Field label="Kelder" value={offerte.ceilingHeightKelder} />
-                  <Field label="Gelijkvloers" value={offerte.ceilingHeightGelijkvloers} />
-                  <Field label="Verdiep 1" value={offerte.ceilingHeightVerdiep1} />
-                  <Field label="Zolderverdiep" value={offerte.ceilingHeightZolderverdiep} />
-                </div>
-              </div>
-            )}
           </Section>
 
           {/* Structure */}
