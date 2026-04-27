@@ -123,51 +123,61 @@ export default function OfferteDetail() {
   if (!offerte) return null
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <button onClick={() => navigate('/offertes')} className="text-sm text-gray-400 hover:text-gray-600 mb-2 flex items-center gap-1">
+      <div className="mb-6">
+        {/* Row 1: back + lang toggle */}
+        <div className="flex items-center justify-between mb-3">
+          <button onClick={() => navigate('/offertes')} className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1">
             {t.back}
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">{offerte.offerteNumber}</h1>
-          <p className="text-gray-500 mt-1">{offerte.projectDescription}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggle}
-            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={toggle} className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
             {lang === 'nl' ? 'NL' : 'EN'}
           </button>
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[offerte.status]}`}>
-            {t.status[offerte.status]}
-          </span>
-          <select
-            onChange={e => handleStatusChange(e.target.value)}
-            disabled={updatingStatus}
-            value={offerte.status}
-            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-          >
-            {Object.keys(t.status).map(s => (
-              <option key={s} value={s}>{t.status[s]}</option>
-            ))}
-          </select>
-          <button onClick={handlePreviewPdf} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+        </div>
+
+        {/* Row 2: title + status */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{offerte.offerteNumber}</h1>
+            <p className="text-gray-500 mt-1">{offerte.projectDescription}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[offerte.status]}`}>
+              {t.status[offerte.status]}
+            </span>
+            <select
+              onChange={e => handleStatusChange(e.target.value)}
+              disabled={updatingStatus}
+              value={offerte.status}
+              className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            >
+              {Object.keys(t.status).map(s => (
+                <option key={s} value={s}>{t.status[s]}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Row 3: action buttons */}
+        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+          <button onClick={handlePreviewPdf} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
             {t.previewPdf}
           </button>
-          <button onClick={handleDownloadPdf} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors">
+          <button onClick={handleDownloadPdf} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors">
             {t.downloadPdf}
           </button>
-          <button onClick={() => navigate(`/offertes/${id}/edit`)} className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors">
+          <button onClick={() => navigate(`/offertes/${id}/edit`)} className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors">
             {t.edit}
           </button>
-          <button onClick={handleDuplicate} className="px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+          <button onClick={handleDuplicate} className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors">
             {t.duplicate}
           </button>
-          <button onClick={handleDelete} className="px-3 py-1.5 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm font-medium transition-colors">
-            {t.delete}
-          </button>
+          <div className="ml-auto">
+            <button onClick={handleDelete} className="px-4 py-2 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm font-medium transition-colors">
+              {t.delete}
+            </button>
+          </div>
         </div>
       </div>
 
