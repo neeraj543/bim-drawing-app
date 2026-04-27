@@ -5,6 +5,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "offertes")
@@ -86,13 +88,27 @@ public class Offerte {
     // Transport
     private Integer numberOfTrucks;
 
-    // Overrides (user can override auto-calculated values)
+    // Custom rates per offerte (null = use default)
+    private BigDecimal engineeringRatePct;    // e.g. 5.0 means 5%
+    private BigDecimal cncCltRatePerM2;       // e.g. 11.0
+    private BigDecimal cncGlRatePerM3;        // e.g. 260.0
+    private BigDecimal accessoiresRatePct;    // e.g. 12.0
+    private BigDecimal montageRatePct;        // e.g. 22.0
+    private BigDecimal transportRatePerTruck; // e.g. 2250.0
+
+    // Fixed overrides — if set, take priority over rate
     private BigDecimal engineeringOverride;
     private BigDecimal cncCltOverride;
     private BigDecimal cncGlOverride;
     private BigDecimal accessoiresOverride;
     private BigDecimal montageOverride;
     private BigDecimal transportOverride;
+
+    // Free-form line items
+    @OneToMany(mappedBy = "offerte", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("sortOrder ASC, id ASC")
+    @Builder.Default
+    private List<OfferteLineItem> lineItems = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String notes;

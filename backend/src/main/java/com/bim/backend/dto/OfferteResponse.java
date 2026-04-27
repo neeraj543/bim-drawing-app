@@ -5,6 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -62,6 +63,26 @@ public class OfferteResponse {
     // Transport
     private Integer numberOfTrucks;
 
+    // Custom rates
+    private BigDecimal engineeringRatePct;
+    private BigDecimal cncCltRatePerM2;
+    private BigDecimal cncGlRatePerM3;
+    private BigDecimal accessoiresRatePct;
+    private BigDecimal montageRatePct;
+    private BigDecimal transportRatePerTruck;
+
+    // Fixed overrides
+    private BigDecimal engineeringOverride;
+    private BigDecimal cncCltOverride;
+    private BigDecimal cncGlOverride;
+    private BigDecimal accessoiresOverride;
+    private BigDecimal montageOverride;
+    private BigDecimal transportOverride;
+
+    // Free-form line items
+    private List<OfferteLineItemDto> lineItems;
+    private BigDecimal lineItemsTotal;
+
     // Auto-calculated values
     private BigDecimal structuurTotal;
     private BigDecimal engineeringCost;
@@ -74,14 +95,6 @@ public class OfferteResponse {
     private BigDecimal subtotalExclVat;
     private BigDecimal vat;
     private BigDecimal totalInclVat;
-
-    // Overrides
-    private BigDecimal engineeringOverride;
-    private BigDecimal cncCltOverride;
-    private BigDecimal cncGlOverride;
-    private BigDecimal accessoiresOverride;
-    private BigDecimal montageOverride;
-    private BigDecimal transportOverride;
 
     private String notes;
     private String createdByName;

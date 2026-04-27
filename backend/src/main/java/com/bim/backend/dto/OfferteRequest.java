@@ -3,6 +3,7 @@ package com.bim.backend.dto;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class OfferteRequest {
@@ -58,7 +59,15 @@ public class OfferteRequest {
     // Transport
     private Integer numberOfTrucks;
 
-    // Overrides
+    // Custom rates (null = use default)
+    private BigDecimal engineeringRatePct;
+    private BigDecimal cncCltRatePerM2;
+    private BigDecimal cncGlRatePerM3;
+    private BigDecimal accessoiresRatePct;
+    private BigDecimal montageRatePct;
+    private BigDecimal transportRatePerTruck;
+
+    // Fixed overrides (take priority over rate)
     private BigDecimal engineeringOverride;
     private BigDecimal cncCltOverride;
     private BigDecimal cncGlOverride;
@@ -66,5 +75,6 @@ public class OfferteRequest {
     private BigDecimal montageOverride;
     private BigDecimal transportOverride;
 
+    private List<OfferteLineItemDto> lineItems;
     private String notes;
 }
