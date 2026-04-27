@@ -27,4 +27,10 @@ public class OfferteLineItem {
     private String unit; // m², m³, pce, forfait, ...
     private BigDecimal pricePerUnit;
     private Integer sortOrder;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private LineItemSection section = LineItemSection.EXTRA;
+
+    public enum LineItemSection { STRUCTUUR, EXTRA }
 }

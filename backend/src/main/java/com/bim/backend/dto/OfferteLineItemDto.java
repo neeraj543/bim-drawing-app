@@ -11,4 +11,5 @@ public class OfferteLineItemDto {
     private String unit;
     private BigDecimal pricePerUnit;
     private Integer sortOrder;
+    private String section; // STRUCTUUR or EXTRA
 }

@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OffertePdfService {
@@ -54,23 +56,25 @@ public class OffertePdfService {
         boolean hasGl        = hasGlColumns || hasGlBeams;
         boolean hasGlCnc     = gt(glTotalM3);
         boolean hasTransport = o.getNumberOfTrucks() != null && o.getNumberOfTrucks() > 0;
-        boolean hasLineItems = o.getLineItems() != null && !o.getLineItems().isEmpty();
-
         BigDecimal cncCltRate = o.getCncCltRatePerM2() != null ? o.getCncCltRatePerM2() : new BigDecimal("11.00");
         BigDecimal cncGlRate  = o.getCncGlRatePerM3()  != null ? o.getCncGlRatePerM3()  : new BigDecimal("260.00");
 
+        List<OfferteLineItemDto> structuurItems = o.getLineItems() == null ? List.of() :
+                o.getLineItems().stream().filter(i -> "STRUCTUUR".equals(i.getSection())).collect(Collectors.toList());
+        List<OfferteLineItemDto> extraItems = o.getLineItems() == null ? List.of() :
+                o.getLineItems().stream().filter(i -> !"STRUCTUUR".equals(i.getSection())).collect(Collectors.toList());
+
+        boolean hasLineItems = !extraItems.isEmpty();
+        boolean hasStructuurLineItems = !structuurItems.isEmpty();
+
+        StringBuilder structuurLineItemsHtml = new StringBuilder();
+        for (OfferteLineItemDto item : structuurItems) {
+            structuurLineItemsHtml.append(buildLineItemRow(item));
+        }
+
         StringBuilder lineItemsHtml = new StringBuilder();
-        if (hasLineItems) {
-            for (OfferteLineItemDto item : o.getLineItems()) {
-                BigDecimal rowTotal = mul(item.getQuantity(), item.getPricePerUnit());
-                String unit = item.getUnit() != null ? item.getUnit() : "";
-                lineItemsHtml.append("<table class=\"li\"><tr>")
-                    .append("<td class=\"desc\">").append(s(item.getDescription())).append("</td>")
-                    .append("<td class=\"qty\">").append(item.getQuantity() != null ? fmt(item.getQuantity()) : "").append(unit.isEmpty() ? "" : " " + unit).append("</td>")
-                    .append("<td class=\"rate\">").append(item.getPricePerUnit() != null ? "&#8364; " + fmt(item.getPricePerUnit()) + (unit.isEmpty() ? "" : "/" + unit) : "").append("</td>")
-                    .append("<td class=\"tot\">&#8364; ").append(fmt(rowTotal)).append("</td>")
-                    .append("</tr></table>\n");
-            }
+        for (OfferteLineItemDto item : extraItems) {
+            lineItemsHtml.append(buildLineItemRow(item));
         }
 
         html = html.replace("{{logoBase64}}", logoSrc);
@@ -119,15 +123,17 @@ public class OffertePdfService {
         html = html.replace("{{cncGlRate}}", fmt(cncGlRate));
         html = html.replace("{{lineItemsRows}}", lineItemsHtml.toString());
         html = html.replace("{{lineItemsTotal}}", fmt(o.getLineItemsTotal()));
+        html = html.replace("{{structuurLineItemsRows}}", structuurLineItemsHtml.toString());
 
         // Conditional blocks: {{#flag}}...{{/flag}} and {{#field}}...{{/field}}
-        html = conditional(html, "hasClt",       hasClt);
-        html = conditional(html, "hasGl",        hasGl);
-        html = conditional(html, "hasGlColumns", hasGlColumns);
-        html = conditional(html, "hasGlBeams",   hasGlBeams);
-        html = conditional(html, "hasGlCnc",     hasGlCnc);
-        html = conditional(html, "hasTransport", hasTransport);
-        html = conditional(html, "hasLineItems", hasLineItems);
+        html = conditional(html, "hasClt",               hasClt);
+        html = conditional(html, "hasGl",                hasGl);
+        html = conditional(html, "hasGlColumns",         hasGlColumns);
+        html = conditional(html, "hasGlBeams",           hasGlBeams);
+        html = conditional(html, "hasGlCnc",             hasGlCnc);
+        html = conditional(html, "hasTransport",         hasTransport);
+        html = conditional(html, "hasLineItems",         hasLineItems);
+        html = conditional(html, "hasStructuurLineItems", hasStructuurLineItems);
         html = conditional(html, "includeRoostring", Boolean.TRUE.equals(o.getIncludeRoostring()) && gt(o.getRoosteringM2()));
         html = conditional(html, "clientVatNumber", o.getClientVatNumber() != null && !o.getClientVatNumber().isBlank());
         html = conditional(html, "siteAddress",    o.getSiteAddress() != null && !o.getSiteAddress().isBlank());
@@ -154,6 +160,17 @@ public class OffertePdfService {
             }
             return html;
         }
+    }
+
+    private String buildLineItemRow(OfferteLineItemDto item) {
+        BigDecimal rowTotal = mul(item.getQuantity(), item.getPricePerUnit());
+        String unit = item.getUnit() != null ? item.getUnit() : "";
+        return "<table class=\"li\"><tr>"
+            + "<td class=\"desc\">" + s(item.getDescription()) + "</td>"
+            + "<td class=\"qty\">" + (item.getQuantity() != null ? fmt(item.getQuantity()) : "") + (unit.isEmpty() ? "" : " " + unit) + "</td>"
+            + "<td class=\"rate\">" + (item.getPricePerUnit() != null ? "&#8364; " + fmt(item.getPricePerUnit()) + (unit.isEmpty() ? "" : "/" + unit) : "") + "</td>"
+            + "<td class=\"tot\">&#8364; " + fmt(rowTotal) + "</td>"
+            + "</tr></table>\n";
     }
 
     private String fmt(BigDecimal v) {

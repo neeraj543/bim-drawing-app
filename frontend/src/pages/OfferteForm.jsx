@@ -71,7 +71,8 @@ export default function OfferteForm() {
   const isEdit = Boolean(id)
 
   const [form, setForm] = useState(EMPTY_FORM)
-  const [lineItems, setLineItems] = useState([])
+  const [structuurItems, setStructuurItems] = useState([])
+  const [extraItems, setExtraItems] = useState([])
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -85,7 +86,8 @@ export default function OfferteForm() {
             ...EMPTY_FORM,
             ...Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, v ?? '']))
           })
-          setLineItems(items || [])
+          setStructuurItems((items || []).filter(i => i.section === 'STRUCTUUR'))
+          setExtraItems((items || []).filter(i => i.section !== 'STRUCTUUR'))
         })
         .catch(err => setError(err.message))
         .finally(() => setLoading(false))
@@ -97,25 +99,31 @@ export default function OfferteForm() {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
-  const addLineItem = () => setLineItems(prev => [...prev, { description: '', quantity: '', unit: '', pricePerUnit: '' }])
-  const removeLineItem = (idx) => setLineItems(prev => prev.filter((_, i) => i !== idx))
-  const setLineItem = (idx, field, value) => setLineItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item))
+  const addStructuurItem = () => setStructuurItems(prev => [...prev, { description: '', quantity: '', unit: '', pricePerUnit: '', section: 'STRUCTUUR' }])
+  const removeStructuurItem = (idx) => setStructuurItems(prev => prev.filter((_, i) => i !== idx))
+  const setStructuurItem = (idx, field, value) => setStructuurItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item))
+
+  const addExtraItem = () => setExtraItems(prev => [...prev, { description: '', quantity: '', unit: '', pricePerUnit: '', section: 'EXTRA' }])
+  const removeExtraItem = (idx) => setExtraItems(prev => prev.filter((_, i) => i !== idx))
+  const setExtraItem = (idx, field, value) => setExtraItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
     try {
+      const serializeItems = (items, section) => items
+        .filter(item => item.description || item.quantity || item.pricePerUnit)
+        .map((item, idx) => ({
+          description: item.description || null,
+          quantity: item.quantity === '' ? null : item.quantity,
+          unit: item.unit || null,
+          pricePerUnit: item.pricePerUnit === '' ? null : item.pricePerUnit,
+          sortOrder: idx,
+          section,
+        }))
       const payload = {
         ...Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v === '' ? null : v])),
-        lineItems: lineItems
-          .filter(item => item.description || item.quantity || item.pricePerUnit)
-          .map((item, idx) => ({
-            description: item.description || null,
-            quantity: item.quantity === '' ? null : item.quantity,
-            unit: item.unit || null,
-            pricePerUnit: item.pricePerUnit === '' ? null : item.pricePerUnit,
-            sortOrder: idx,
-          }))
+        lineItems: [...serializeItems(structuurItems, 'STRUCTUUR'), ...serializeItems(extraItems, 'EXTRA')]
       }
       if (isEdit) {
         await api.put(`/api/offertes/${id}`, payload)
@@ -264,6 +272,29 @@ export default function OfferteForm() {
             </div>
           </div>
 
+          {/* Extra structural items */}
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <p className="text-xs font-medium text-gray-500 mb-2">{t.structuurLineItemsSection}</p>
+            {structuurItems.length > 0 && (
+              <div className="mb-2">
+                <div className="grid gap-2 mb-1 text-xs text-gray-400" style={{ gridTemplateColumns: '1fr 80px 90px 120px 90px 32px' }}>
+                  <span>{t.lineItemDescLabel}</span><span>{t.lineItemQtyLabel}</span><span>{t.lineItemUnitLabel}</span><span>{t.lineItemPriceLabel}</span><span className="text-right">Total</span><span />
+                </div>
+                {structuurItems.map((item, idx) => (
+                  <div key={idx} className="grid gap-2 mb-2" style={{ gridTemplateColumns: '1fr 80px 90px 120px 90px 32px' }}>
+                    <input className={inputClass} value={item.description} onChange={e => setStructuurItem(idx, 'description', e.target.value)} placeholder="Omschrijving..." />
+                    <input type="number" step="0.01" className={inputClass} value={item.quantity} onChange={e => setStructuurItem(idx, 'quantity', e.target.value)} placeholder="0" />
+                    <input className={inputClass} value={item.unit} onChange={e => setStructuurItem(idx, 'unit', e.target.value)} placeholder="m², m³..." />
+                    <input type="number" step="0.01" className={inputClass} value={item.pricePerUnit} onChange={e => setStructuurItem(idx, 'pricePerUnit', e.target.value)} placeholder="0.00" />
+                    <div className="px-3 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg text-right font-mono">€{((Number(item.quantity)||0)*(Number(item.pricePerUnit)||0)).toLocaleString('nl-BE',{minimumFractionDigits:2})}</div>
+                    <button type="button" onClick={() => removeStructuurItem(idx)} className="flex items-center justify-center text-red-400 hover:text-red-600 text-xl font-bold">×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button type="button" onClick={addStructuurItem} className="text-sm text-amber-600 hover:text-amber-700 font-medium">{t.addLineItem}</button>
+          </div>
+
           {/* Roostering */}
           <div className="mt-4 pt-4 border-t border-gray-100">
             <label className="flex items-center gap-2 text-sm text-gray-700 mb-3 cursor-pointer">
@@ -283,67 +314,26 @@ export default function OfferteForm() {
           </div>
         </FormSection>
 
-        {/* Additional Line Items */}
+        {/* Extra posten */}
         <FormSection title={t.lineItemsSection}>
-          {lineItems.length > 0 && (
+          {extraItems.length > 0 && (
             <div className="mb-3">
               <div className="grid gap-2 mb-1 text-xs text-gray-400" style={{ gridTemplateColumns: '1fr 80px 90px 120px 90px 32px' }}>
-                <span>{t.lineItemDescLabel}</span>
-                <span>{t.lineItemQtyLabel}</span>
-                <span>{t.lineItemUnitLabel}</span>
-                <span>{t.lineItemPriceLabel}</span>
-                <span className="text-right">Total</span>
-                <span />
+                <span>{t.lineItemDescLabel}</span><span>{t.lineItemQtyLabel}</span><span>{t.lineItemUnitLabel}</span><span>{t.lineItemPriceLabel}</span><span className="text-right">Total</span><span />
               </div>
-              {lineItems.map((item, idx) => (
+              {extraItems.map((item, idx) => (
                 <div key={idx} className="grid gap-2 mb-2" style={{ gridTemplateColumns: '1fr 80px 90px 120px 90px 32px' }}>
-                  <input
-                    className={inputClass}
-                    value={item.description}
-                    onChange={e => setLineItem(idx, 'description', e.target.value)}
-                    placeholder="Omschrijving..."
-                  />
-                  <input
-                    type="number" step="0.01"
-                    className={inputClass}
-                    value={item.quantity}
-                    onChange={e => setLineItem(idx, 'quantity', e.target.value)}
-                    placeholder="0"
-                  />
-                  <input
-                    className={inputClass}
-                    value={item.unit}
-                    onChange={e => setLineItem(idx, 'unit', e.target.value)}
-                    placeholder="m², pce..."
-                  />
-                  <input
-                    type="number" step="0.01"
-                    className={inputClass}
-                    value={item.pricePerUnit}
-                    onChange={e => setLineItem(idx, 'pricePerUnit', e.target.value)}
-                    placeholder="0.00"
-                  />
-                  <div className="px-3 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg text-right font-mono">
-                    €{((Number(item.quantity) || 0) * (Number(item.pricePerUnit) || 0)).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeLineItem(idx)}
-                    className="flex items-center justify-center text-red-400 hover:text-red-600 text-xl font-bold rounded-lg"
-                  >
-                    ×
-                  </button>
+                  <input className={inputClass} value={item.description} onChange={e => setExtraItem(idx, 'description', e.target.value)} placeholder="Omschrijving..." />
+                  <input type="number" step="0.01" className={inputClass} value={item.quantity} onChange={e => setExtraItem(idx, 'quantity', e.target.value)} placeholder="0" />
+                  <input className={inputClass} value={item.unit} onChange={e => setExtraItem(idx, 'unit', e.target.value)} placeholder="m², pce..." />
+                  <input type="number" step="0.01" className={inputClass} value={item.pricePerUnit} onChange={e => setExtraItem(idx, 'pricePerUnit', e.target.value)} placeholder="0.00" />
+                  <div className="px-3 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg text-right font-mono">€{((Number(item.quantity)||0)*(Number(item.pricePerUnit)||0)).toLocaleString('nl-BE',{minimumFractionDigits:2})}</div>
+                  <button type="button" onClick={() => removeExtraItem(idx)} className="flex items-center justify-center text-red-400 hover:text-red-600 text-xl font-bold">×</button>
                 </div>
               ))}
             </div>
           )}
-          <button
-            type="button"
-            onClick={addLineItem}
-            className="text-sm text-amber-600 hover:text-amber-700 font-medium"
-          >
-            {t.addLineItem}
-          </button>
+          <button type="button" onClick={addExtraItem} className="text-sm text-amber-600 hover:text-amber-700 font-medium">{t.addLineItem}</button>
         </FormSection>
 
         {/* Rates & Overrides */}

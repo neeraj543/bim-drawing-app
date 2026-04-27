@@ -224,6 +224,8 @@ public class OfferteService {
                 item.setUnit(dto.getUnit());
                 item.setPricePerUnit(dto.getPricePerUnit());
                 item.setSortOrder(dto.getSortOrder() != null ? dto.getSortOrder() : order);
+                item.setSection(dto.getSection() != null && dto.getSection().equals("STRUCTUUR")
+                        ? OfferteLineItem.LineItemSection.STRUCTUUR : OfferteLineItem.LineItemSection.EXTRA);
                 offerte.getLineItems().add(item);
                 order++;
             }
@@ -236,7 +238,12 @@ public class OfferteService {
         BigDecimal cltTotal       = safe(o.getCltM2()).multiply(safe(o.getCltPricePerM2()));
         BigDecimal glColumnsTotal = safe(o.getGlColumnsM3()).multiply(safe(o.getGlColumnsPricePerM3()));
         BigDecimal glBeamsTotal   = safe(o.getGlBeamsM3()).multiply(safe(o.getGlBeamsPricePerM3()));
-        BigDecimal structuurTotal = cltTotal.add(glColumnsTotal).add(glBeamsTotal);
+        BigDecimal structuurLineItemsTotal = o.getLineItems().stream()
+                .filter(item -> OfferteLineItem.LineItemSection.STRUCTUUR.equals(item.getSection()))
+                .map(item -> safe(item.getQuantity()).multiply(safe(item.getPricePerUnit())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal structuurTotal = cltTotal.add(glColumnsTotal).add(glBeamsTotal).add(structuurLineItemsTotal);
 
         BigDecimal engPct   = o.getEngineeringRatePct()   != null ? o.getEngineeringRatePct()   : DEFAULT_ENGINEERING_PCT;
         BigDecimal accPct   = o.getAccessoiresRatePct()   != null ? o.getAccessoiresRatePct()   : DEFAULT_ACCESSORIES_PCT;
@@ -268,6 +275,7 @@ public class OfferteService {
                 : structuurTotal.multiply(monPct).divide(HUNDRED, 2, RoundingMode.HALF_UP);
 
         BigDecimal lineItemsTotal = o.getLineItems().stream()
+                .filter(item -> OfferteLineItem.LineItemSection.EXTRA.equals(item.getSection()))
                 .map(item -> safe(item.getQuantity()).multiply(safe(item.getPricePerUnit())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(2, RoundingMode.HALF_UP);
@@ -288,6 +296,7 @@ public class OfferteService {
             dto.setUnit(item.getUnit());
             dto.setPricePerUnit(item.getPricePerUnit());
             dto.setSortOrder(item.getSortOrder());
+            dto.setSection(item.getSection() != null ? item.getSection().name() : "EXTRA");
             return dto;
         }).collect(Collectors.toList());
 
