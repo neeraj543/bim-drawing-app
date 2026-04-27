@@ -67,6 +67,10 @@ public class OffertePdfService {
         boolean hasLineItems = !extraItems.isEmpty();
         boolean hasStructuurLineItems = !structuurItems.isEmpty();
 
+        BigDecimal structuurLineItemsSubtotal = structuurItems.stream()
+                .map(i -> mul(i.getQuantity(), i.getPricePerUnit()) != null ? mul(i.getQuantity(), i.getPricePerUnit()) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         StringBuilder structuurLineItemsHtml = new StringBuilder();
         for (OfferteLineItemDto item : structuurItems) {
             structuurLineItemsHtml.append(buildLineItemRow(item));
@@ -124,6 +128,7 @@ public class OffertePdfService {
         html = html.replace("{{lineItemsRows}}", lineItemsHtml.toString());
         html = html.replace("{{lineItemsTotal}}", fmt(o.getLineItemsTotal()));
         html = html.replace("{{structuurLineItemsRows}}", structuurLineItemsHtml.toString());
+        html = html.replace("{{structuurLineItemsSubtotal}}", fmt(structuurLineItemsSubtotal));
 
         // Conditional blocks: {{#flag}}...{{/flag}} and {{#field}}...{{/field}}
         html = conditional(html, "hasClt",               hasClt);

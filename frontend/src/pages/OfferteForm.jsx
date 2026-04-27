@@ -295,23 +295,6 @@ export default function OfferteForm() {
             <button type="button" onClick={addStructuurItem} className="text-sm text-amber-600 hover:text-amber-700 font-medium">{t.addLineItem}</button>
           </div>
 
-          {/* Roostering */}
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <label className="flex items-center gap-2 text-sm text-gray-700 mb-3 cursor-pointer">
-              <input type="checkbox" checked={form.includeRoostring} onChange={set('includeRoostring')} className="rounded" />
-              {t.includeRoostring}
-            </label>
-            {form.includeRoostring && (
-              <div className="grid grid-cols-2 gap-3 ml-6">
-                <Field label="m²">
-                  <input type="number" step="0.01" className={inputClass} value={form.roosteringM2} onChange={set('roosteringM2')} />
-                </Field>
-                <Field label="Price/m² (€)">
-                  <input type="number" step="0.01" className={inputClass} value={form.roosteringPricePerM2} onChange={set('roosteringPricePerM2')} />
-                </Field>
-              </div>
-            )}
-          </div>
         </FormSection>
 
         {/* Extra posten */}

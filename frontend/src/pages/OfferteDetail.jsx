@@ -229,15 +229,6 @@ export default function OfferteDetail() {
                   <Field label="Price/m³" value={offerte.glBeamsPricePerM3 ? `€${offerte.glBeamsPricePerM3}` : null} />
                 </div>
               </div>
-              {offerte.includeRoostring && (
-                <div>
-                  <p className="text-xs text-gray-400 mb-2">Roostering met Beplating</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="m²" value={offerte.roosteringM2} />
-                    <Field label="Price/m²" value={offerte.roosteringPricePerM2 ? `€${offerte.roosteringPricePerM2}` : null} />
-                  </div>
-                </div>
-              )}
             </div>
             <div className="mt-4 pt-4 border-t border-gray-100">
               <Field label={t.numberOfTrucks} value={offerte.numberOfTrucks} />
@@ -282,7 +273,6 @@ export default function OfferteDetail() {
             <MoneyRow label={`CNC — CLT (€${offerte.cncCltRatePerM2 ?? 11}/m²)`} value={offerte.cncCltCost} />
             <MoneyRow label={`CNC — GL (€${offerte.cncGlRatePerM3 ?? 260}/m³)`} value={offerte.cncGlCost} />
             <MoneyRow label={`Accessoires (${offerte.accessoiresRatePct ?? 12}%)`} value={offerte.accessoiresCost} />
-            {offerte.includeRoostring && <MoneyRow label="Roostering" value={offerte.roosteringTotal} />}
             <MoneyRow label={t.trucks(offerte.numberOfTrucks || 0)} value={offerte.transportCost} />
             <MoneyRow label={`Montage (${offerte.montageRatePct ?? 22}%)`} value={offerte.montageCost} />
             {offerte.lineItems && offerte.lineItems.length > 0 && (
