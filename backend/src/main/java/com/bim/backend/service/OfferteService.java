@@ -1,12 +1,15 @@
 package com.bim.backend.service;
 
+import com.bim.backend.dto.OfferteLineItemDto;
 import com.bim.backend.dto.OfferteRequest;
 import com.bim.backend.dto.OfferteResponse;
 import com.bim.backend.entity.Offerte;
+import com.bim.backend.entity.OfferteLineItem;
 import com.bim.backend.entity.User;
 import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.OfferteRepository;
 import com.bim.backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,15 +22,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OfferteService {
 
-    private static final BigDecimal CNC_CLT_RATE = new BigDecimal("11.00");   // â‚¬8 + 12% markup
-    private static final BigDecimal CNC_GL_RATE = new BigDecimal("260.00");
-    private static final BigDecimal TRANSPORT_RATE = new BigDecimal("2250.00");
-    private static final BigDecimal ENGINEERING_RATE = new BigDecimal("0.05");
-    private static final BigDecimal ACCESSORIES_RATE = new BigDecimal("0.12");
-    private static final BigDecimal MONTAGE_RATE = new BigDecimal("0.22");
-    private static final BigDecimal VAT_RATE = new BigDecimal("0.21");
+    private static final BigDecimal DEFAULT_CNC_CLT_RATE    = new BigDecimal("11.00");
+    private static final BigDecimal DEFAULT_CNC_GL_RATE     = new BigDecimal("260.00");
+    private static final BigDecimal DEFAULT_TRANSPORT_RATE  = new BigDecimal("2250.00");
+    private static final BigDecimal DEFAULT_ENGINEERING_PCT = new BigDecimal("5.0");
+    private static final BigDecimal DEFAULT_ACCESSORIES_PCT = new BigDecimal("12.0");
+    private static final BigDecimal DEFAULT_MONTAGE_PCT     = new BigDecimal("22.0");
+    private static final BigDecimal DEFAULT_VAT_PCT         = new BigDecimal("21.0");
+    private static final BigDecimal HUNDRED                 = new BigDecimal("100");
 
     @Autowired private OfferteRepository offerteRepository;
     @Autowired private UserRepository userRepository;
@@ -48,21 +53,22 @@ public class OfferteService {
     }
 
     public OfferteResponse createOfferte(OfferteRequest request) {
-        if (offerteRepository.existsByOfferteNumber(request.getOfferteNumber())) {
-            throw new IllegalArgumentException("Offerte number already exists: " + request.getOfferteNumber());
-        }
-
         User currentUser = getCurrentUser();
         Offerte offerte = buildOfferte(new Offerte(), request);
-        offerte.setCreatedBy(currentUser);
 
+        if (offerte.getOfferteNumber() == null || offerte.getOfferteNumber().isBlank()) {
+            offerte.setOfferteNumber(generateNextOfferteNumber());
+        } else if (offerteRepository.existsByOfferteNumber(offerte.getOfferteNumber())) {
+            throw new IllegalArgumentException("Offerte number already exists: " + offerte.getOfferteNumber());
+        }
+
+        offerte.setCreatedBy(currentUser);
         return mapToResponse(offerteRepository.save(offerte));
     }
 
     public OfferteResponse updateOfferte(Long id, OfferteRequest request) {
         Offerte offerte = offerteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Offerte not found with id: " + id));
-
         buildOfferte(offerte, request);
         return mapToResponse(offerteRepository.save(offerte));
     }
@@ -79,7 +85,7 @@ public class OfferteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Offerte not found with id: " + id));
 
         Offerte copy = Offerte.builder()
-                .offerteNumber(original.getOfferteNumber() + "-COPY")
+                .offerteNumber(generateNextOfferteNumber())
                 .date(LocalDate.now())
                 .preparedBy(original.getPreparedBy())
                 .projectDescription(original.getProjectDescription())
@@ -115,6 +121,12 @@ public class OfferteService {
                 .roosteringM2(original.getRoosteringM2())
                 .roosteringPricePerM2(original.getRoosteringPricePerM2())
                 .numberOfTrucks(original.getNumberOfTrucks())
+                .engineeringRatePct(original.getEngineeringRatePct())
+                .cncCltRatePerM2(original.getCncCltRatePerM2())
+                .cncGlRatePerM3(original.getCncGlRatePerM3())
+                .accessoiresRatePct(original.getAccessoiresRatePct())
+                .montageRatePct(original.getMontageRatePct())
+                .transportRatePerTruck(original.getTransportRatePerTruck())
                 .engineeringOverride(original.getEngineeringOverride())
                 .cncCltOverride(original.getCncCltOverride())
                 .cncGlOverride(original.getCncGlOverride())
@@ -125,7 +137,21 @@ public class OfferteService {
                 .createdBy(getCurrentUser())
                 .build();
 
-        return mapToResponse(offerteRepository.save(copy));
+        Offerte savedCopy = offerteRepository.save(copy);
+
+        for (OfferteLineItem item : original.getLineItems()) {
+            OfferteLineItem copyItem = OfferteLineItem.builder()
+                    .offerte(savedCopy)
+                    .description(item.getDescription())
+                    .quantity(item.getQuantity())
+                    .unit(item.getUnit())
+                    .pricePerUnit(item.getPricePerUnit())
+                    .sortOrder(item.getSortOrder())
+                    .build();
+            savedCopy.getLineItems().add(copyItem);
+        }
+
+        return mapToResponse(offerteRepository.save(savedCopy));
     }
 
     public void deleteOfferte(Long id) {
@@ -173,6 +199,12 @@ public class OfferteService {
         offerte.setRoosteringM2(req.getRoosteringM2());
         offerte.setRoosteringPricePerM2(req.getRoosteringPricePerM2());
         offerte.setNumberOfTrucks(req.getNumberOfTrucks());
+        offerte.setEngineeringRatePct(req.getEngineeringRatePct());
+        offerte.setCncCltRatePerM2(req.getCncCltRatePerM2());
+        offerte.setCncGlRatePerM3(req.getCncGlRatePerM3());
+        offerte.setAccessoiresRatePct(req.getAccessoiresRatePct());
+        offerte.setMontageRatePct(req.getMontageRatePct());
+        offerte.setTransportRatePerTruck(req.getTransportRatePerTruck());
         offerte.setEngineeringOverride(req.getEngineeringOverride());
         offerte.setCncCltOverride(req.getCncCltOverride());
         offerte.setCncGlOverride(req.getCncGlOverride());
@@ -180,44 +212,84 @@ public class OfferteService {
         offerte.setMontageOverride(req.getMontageOverride());
         offerte.setTransportOverride(req.getTransportOverride());
         offerte.setNotes(req.getNotes());
+
+        offerte.getLineItems().clear();
+        if (req.getLineItems() != null) {
+            int order = 0;
+            for (OfferteLineItemDto dto : req.getLineItems()) {
+                OfferteLineItem item = new OfferteLineItem();
+                item.setOfferte(offerte);
+                item.setDescription(dto.getDescription());
+                item.setQuantity(dto.getQuantity());
+                item.setUnit(dto.getUnit());
+                item.setPricePerUnit(dto.getPricePerUnit());
+                item.setSortOrder(dto.getSortOrder() != null ? dto.getSortOrder() : order);
+                offerte.getLineItems().add(item);
+                order++;
+            }
+        }
+
         return offerte;
     }
 
     private OfferteResponse mapToResponse(Offerte o) {
-        BigDecimal zero = BigDecimal.ZERO;
-
-        BigDecimal cltTotal = safe(o.getCltM2()).multiply(safe(o.getCltPricePerM2()));
+        BigDecimal cltTotal       = safe(o.getCltM2()).multiply(safe(o.getCltPricePerM2()));
         BigDecimal glColumnsTotal = safe(o.getGlColumnsM3()).multiply(safe(o.getGlColumnsPricePerM3()));
-        BigDecimal glBeamsTotal = safe(o.getGlBeamsM3()).multiply(safe(o.getGlBeamsPricePerM3()));
+        BigDecimal glBeamsTotal   = safe(o.getGlBeamsM3()).multiply(safe(o.getGlBeamsPricePerM3()));
         BigDecimal structuurTotal = cltTotal.add(glColumnsTotal).add(glBeamsTotal);
 
+        BigDecimal engPct   = o.getEngineeringRatePct()   != null ? o.getEngineeringRatePct()   : DEFAULT_ENGINEERING_PCT;
+        BigDecimal accPct   = o.getAccessoiresRatePct()   != null ? o.getAccessoiresRatePct()   : DEFAULT_ACCESSORIES_PCT;
+        BigDecimal monPct   = o.getMontageRatePct()        != null ? o.getMontageRatePct()        : DEFAULT_MONTAGE_PCT;
+        BigDecimal cncClt   = o.getCncCltRatePerM2()       != null ? o.getCncCltRatePerM2()       : DEFAULT_CNC_CLT_RATE;
+        BigDecimal cncGl    = o.getCncGlRatePerM3()        != null ? o.getCncGlRatePerM3()        : DEFAULT_CNC_GL_RATE;
+        BigDecimal truckRate= o.getTransportRatePerTruck() != null ? o.getTransportRatePerTruck() : DEFAULT_TRANSPORT_RATE;
+
         BigDecimal engineeringCost = o.getEngineeringOverride() != null ? o.getEngineeringOverride()
-                : structuurTotal.multiply(ENGINEERING_RATE).setScale(2, RoundingMode.HALF_UP);
+                : structuurTotal.multiply(engPct).divide(HUNDRED, 2, RoundingMode.HALF_UP);
 
         BigDecimal cncCltCost = o.getCncCltOverride() != null ? o.getCncCltOverride()
-                : safe(o.getCltM2()).multiply(CNC_CLT_RATE).setScale(2, RoundingMode.HALF_UP);
+                : safe(o.getCltM2()).multiply(cncClt).setScale(2, RoundingMode.HALF_UP);
 
         BigDecimal cncGlCost = o.getCncGlOverride() != null ? o.getCncGlOverride()
-                : safe(o.getGlColumnsM3()).add(safe(o.getGlBeamsM3())).multiply(CNC_GL_RATE).setScale(2, RoundingMode.HALF_UP);
+                : safe(o.getGlColumnsM3()).add(safe(o.getGlBeamsM3())).multiply(cncGl).setScale(2, RoundingMode.HALF_UP);
 
         BigDecimal accessoiresCost = o.getAccessoiresOverride() != null ? o.getAccessoiresOverride()
-                : structuurTotal.multiply(ACCESSORIES_RATE).setScale(2, RoundingMode.HALF_UP);
+                : structuurTotal.multiply(accPct).divide(HUNDRED, 2, RoundingMode.HALF_UP);
 
         BigDecimal roosteringTotal = Boolean.TRUE.equals(o.getIncludeRoostring())
                 ? safe(o.getRoosteringM2()).multiply(safe(o.getRoosteringPricePerM2())).setScale(2, RoundingMode.HALF_UP)
-                : zero;
+                : BigDecimal.ZERO;
 
         BigDecimal transportCost = o.getTransportOverride() != null ? o.getTransportOverride()
-                : BigDecimal.valueOf(o.getNumberOfTrucks() != null ? o.getNumberOfTrucks() : 0).multiply(TRANSPORT_RATE);
+                : BigDecimal.valueOf(o.getNumberOfTrucks() != null ? o.getNumberOfTrucks() : 0).multiply(truckRate);
 
         BigDecimal montageCost = o.getMontageOverride() != null ? o.getMontageOverride()
-                : structuurTotal.multiply(MONTAGE_RATE).setScale(2, RoundingMode.HALF_UP);
+                : structuurTotal.multiply(monPct).divide(HUNDRED, 2, RoundingMode.HALF_UP);
+
+        BigDecimal lineItemsTotal = o.getLineItems().stream()
+                .map(item -> safe(item.getQuantity()).multiply(safe(item.getPricePerUnit())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
 
         BigDecimal subtotal = structuurTotal.add(engineeringCost).add(cncCltCost).add(cncGlCost)
-                .add(accessoiresCost).add(roosteringTotal).add(transportCost).add(montageCost);
+                .add(accessoiresCost).add(roosteringTotal).add(transportCost).add(montageCost)
+                .add(lineItemsTotal);
 
-        BigDecimal vat = subtotal.multiply(VAT_RATE).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal vatPct = DEFAULT_VAT_PCT;
+        BigDecimal vat   = subtotal.multiply(vatPct).divide(HUNDRED, 2, RoundingMode.HALF_UP);
         BigDecimal total = subtotal.add(vat);
+
+        List<OfferteLineItemDto> lineItemDtos = o.getLineItems().stream().map(item -> {
+            OfferteLineItemDto dto = new OfferteLineItemDto();
+            dto.setId(item.getId());
+            dto.setDescription(item.getDescription());
+            dto.setQuantity(item.getQuantity());
+            dto.setUnit(item.getUnit());
+            dto.setPricePerUnit(item.getPricePerUnit());
+            dto.setSortOrder(item.getSortOrder());
+            return dto;
+        }).collect(Collectors.toList());
 
         return OfferteResponse.builder()
                 .id(o.getId())
@@ -259,6 +331,20 @@ public class OfferteService {
                 .roosteringM2(o.getRoosteringM2())
                 .roosteringPricePerM2(o.getRoosteringPricePerM2())
                 .numberOfTrucks(o.getNumberOfTrucks())
+                .engineeringRatePct(o.getEngineeringRatePct())
+                .cncCltRatePerM2(o.getCncCltRatePerM2())
+                .cncGlRatePerM3(o.getCncGlRatePerM3())
+                .accessoiresRatePct(o.getAccessoiresRatePct())
+                .montageRatePct(o.getMontageRatePct())
+                .transportRatePerTruck(o.getTransportRatePerTruck())
+                .engineeringOverride(o.getEngineeringOverride())
+                .cncCltOverride(o.getCncCltOverride())
+                .cncGlOverride(o.getCncGlOverride())
+                .accessoiresOverride(o.getAccessoiresOverride())
+                .montageOverride(o.getMontageOverride())
+                .transportOverride(o.getTransportOverride())
+                .lineItems(lineItemDtos)
+                .lineItemsTotal(lineItemsTotal)
                 .structuurTotal(structuurTotal.setScale(2, RoundingMode.HALF_UP))
                 .engineeringCost(engineeringCost)
                 .cncCltCost(cncCltCost)
@@ -270,17 +356,24 @@ public class OfferteService {
                 .subtotalExclVat(subtotal.setScale(2, RoundingMode.HALF_UP))
                 .vat(vat)
                 .totalInclVat(total.setScale(2, RoundingMode.HALF_UP))
-                .engineeringOverride(o.getEngineeringOverride())
-                .cncCltOverride(o.getCncCltOverride())
-                .cncGlOverride(o.getCncGlOverride())
-                .accessoiresOverride(o.getAccessoiresOverride())
-                .montageOverride(o.getMontageOverride())
-                .transportOverride(o.getTransportOverride())
                 .notes(o.getNotes())
                 .createdByName(o.getCreatedBy() != null ? o.getCreatedBy().getUsername() : null)
                 .createdAt(o.getCreatedAt())
                 .updatedAt(o.getUpdatedAt())
                 .build();
+    }
+
+    private String generateNextOfferteNumber() {
+        String yearPrefix = String.valueOf(LocalDate.now().getYear()).substring(2);
+        List<String> existing = offerteRepository.findOfferteNumbersByYearPrefix(yearPrefix);
+        int nextSeq = 1;
+        for (String num : existing) {
+            try {
+                int seq = Integer.parseInt(num.substring(yearPrefix.length()));
+                if (seq >= nextSeq) nextSeq = seq + 1;
+            } catch (NumberFormatException ignored) {}
+        }
+        return String.format("%s%03d", yearPrefix, nextSeq);
     }
 
     private BigDecimal safe(BigDecimal val) {
