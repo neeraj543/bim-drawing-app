@@ -1,5 +1,6 @@
 package com.bim.backend.service;
 
+import com.bim.backend.dto.OfferteLineItemDto;
 import com.bim.backend.dto.OfferteResponse;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.springframework.core.io.ClassPathResource;
@@ -53,6 +54,24 @@ public class OffertePdfService {
         boolean hasGl        = hasGlColumns || hasGlBeams;
         boolean hasGlCnc     = gt(glTotalM3);
         boolean hasTransport = o.getNumberOfTrucks() != null && o.getNumberOfTrucks() > 0;
+        boolean hasLineItems = o.getLineItems() != null && !o.getLineItems().isEmpty();
+
+        BigDecimal cncCltRate = o.getCncCltRatePerM2() != null ? o.getCncCltRatePerM2() : new BigDecimal("11.00");
+        BigDecimal cncGlRate  = o.getCncGlRatePerM3()  != null ? o.getCncGlRatePerM3()  : new BigDecimal("260.00");
+
+        StringBuilder lineItemsHtml = new StringBuilder();
+        if (hasLineItems) {
+            for (OfferteLineItemDto item : o.getLineItems()) {
+                BigDecimal rowTotal = mul(item.getQuantity(), item.getPricePerUnit());
+                String unit = item.getUnit() != null ? item.getUnit() : "";
+                lineItemsHtml.append("<table class=\"li\"><tr>")
+                    .append("<td class=\"desc\">").append(s(item.getDescription())).append("</td>")
+                    .append("<td class=\"qty\">").append(item.getQuantity() != null ? fmt(item.getQuantity()) : "").append(unit.isEmpty() ? "" : " " + unit).append("</td>")
+                    .append("<td class=\"rate\">").append(item.getPricePerUnit() != null ? "&#8364; " + fmt(item.getPricePerUnit()) + (unit.isEmpty() ? "" : "/" + unit) : "").append("</td>")
+                    .append("<td class=\"tot\">&#8364; ").append(fmt(rowTotal)).append("</td>")
+                    .append("</tr></table>\n");
+            }
+        }
 
         html = html.replace("{{logoBase64}}", logoSrc);
         html = html.replace("{{offerteNumber}}", s(o.getOfferteNumber()));
@@ -96,6 +115,10 @@ public class OffertePdfService {
         html = html.replace("{{totalInclVat}}", fmt(o.getTotalInclVat()));
         html = html.replace("{{notes}}", s(o.getNotes()));
         html = html.replace("{{clientVatNumber}}", s(o.getClientVatNumber()));
+        html = html.replace("{{cncCltRate}}", fmt(cncCltRate));
+        html = html.replace("{{cncGlRate}}", fmt(cncGlRate));
+        html = html.replace("{{lineItemsRows}}", lineItemsHtml.toString());
+        html = html.replace("{{lineItemsTotal}}", fmt(o.getLineItemsTotal()));
 
         // Conditional blocks: {{#flag}}...{{/flag}} and {{#field}}...{{/field}}
         html = conditional(html, "hasClt",       hasClt);
@@ -104,6 +127,7 @@ public class OffertePdfService {
         html = conditional(html, "hasGlBeams",   hasGlBeams);
         html = conditional(html, "hasGlCnc",     hasGlCnc);
         html = conditional(html, "hasTransport", hasTransport);
+        html = conditional(html, "hasLineItems", hasLineItems);
         html = conditional(html, "includeRoostring", Boolean.TRUE.equals(o.getIncludeRoostring()) && gt(o.getRoosteringM2()));
         html = conditional(html, "clientVatNumber", o.getClientVatNumber() != null && !o.getClientVatNumber().isBlank());
         html = conditional(html, "siteAddress",    o.getSiteAddress() != null && !o.getSiteAddress().isBlank());

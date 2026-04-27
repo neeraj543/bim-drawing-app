@@ -234,6 +234,28 @@ export default function OfferteDetail() {
             </div>
           </Section>
 
+          {/* Extra line items */}
+          {offerte.lineItems && offerte.lineItems.length > 0 && (
+            <Section title={t.lineItemsSection}>
+              <div className="grid gap-1 mb-2 text-xs text-gray-400" style={{ gridTemplateColumns: '1fr 60px 80px 100px 90px' }}>
+                <span>{t.lineItemDescLabel}</span>
+                <span className="text-right">{t.lineItemQtyLabel}</span>
+                <span>{t.lineItemUnitLabel}</span>
+                <span className="text-right">{t.lineItemPriceLabel}</span>
+                <span className="text-right">Total</span>
+              </div>
+              {offerte.lineItems.map((item, idx) => (
+                <div key={idx} className="grid gap-3 py-2 border-b border-gray-50 last:border-0 text-sm" style={{ gridTemplateColumns: '1fr 60px 80px 100px 90px' }}>
+                  <span className="text-gray-800">{item.description || '—'}</span>
+                  <span className="text-gray-500 text-right">{item.quantity}</span>
+                  <span className="text-gray-500">{item.unit}</span>
+                  <span className="text-gray-500 text-right">€{Number(item.pricePerUnit || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
+                  <span className="text-gray-800 text-right font-mono">€{((Number(item.quantity) || 0) * (Number(item.pricePerUnit) || 0)).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
+                </div>
+              ))}
+            </Section>
+          )}
+
           {offerte.notes && (
             <Section title={t.notesSection}>
               <p className="text-sm text-gray-700 whitespace-pre-wrap">{offerte.notes}</p>
@@ -246,13 +268,16 @@ export default function OfferteDetail() {
           <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-6">
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t.priceSummary}</h3>
             <MoneyRow label="Structuur (CLT + GL)" value={offerte.structuurTotal} />
-            <MoneyRow label="Engineering (5%)" value={offerte.engineeringCost} />
-            <MoneyRow label="CNC — CLT" value={offerte.cncCltCost} />
-            <MoneyRow label="CNC — GL" value={offerte.cncGlCost} />
-            <MoneyRow label="Accessoires (12%)" value={offerte.accessoiresCost} />
+            <MoneyRow label={`Engineering (${offerte.engineeringRatePct ?? 5}%)`} value={offerte.engineeringCost} />
+            <MoneyRow label={`CNC — CLT (€${offerte.cncCltRatePerM2 ?? 11}/m²)`} value={offerte.cncCltCost} />
+            <MoneyRow label={`CNC — GL (€${offerte.cncGlRatePerM3 ?? 260}/m³)`} value={offerte.cncGlCost} />
+            <MoneyRow label={`Accessoires (${offerte.accessoiresRatePct ?? 12}%)`} value={offerte.accessoiresCost} />
             {offerte.includeRoostring && <MoneyRow label="Roostering" value={offerte.roosteringTotal} />}
             <MoneyRow label={t.trucks(offerte.numberOfTrucks || 0)} value={offerte.transportCost} />
-            <MoneyRow label="Montage (22%)" value={offerte.montageCost} />
+            <MoneyRow label={`Montage (${offerte.montageRatePct ?? 22}%)`} value={offerte.montageCost} />
+            {offerte.lineItems && offerte.lineItems.length > 0 && (
+              <MoneyRow label={t.extraLineItems} value={offerte.lineItemsTotal} />
+            )}
             <MoneyRow label={t.subtotalExclVat} value={offerte.subtotalExclVat} highlight />
             <MoneyRow label={t.vat} value={offerte.vat} />
             <MoneyRow label={t.totalInclVat} value={offerte.totalInclVat} highlight />

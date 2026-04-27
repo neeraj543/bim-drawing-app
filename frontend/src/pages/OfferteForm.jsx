@@ -29,6 +29,12 @@ const EMPTY_FORM = {
   roosteringM2: '',
   roosteringPricePerM2: '',
   numberOfTrucks: '',
+  engineeringRatePct: '',
+  cncCltRatePerM2: '',
+  cncGlRatePerM3: '',
+  accessoiresRatePct: '',
+  montageRatePct: '',
+  transportRatePerTruck: '',
   engineeringOverride: '',
   cncCltOverride: '',
   cncGlOverride: '',
@@ -65,6 +71,7 @@ export default function OfferteForm() {
   const isEdit = Boolean(id)
 
   const [form, setForm] = useState(EMPTY_FORM)
+  const [lineItems, setLineItems] = useState([])
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -73,10 +80,12 @@ export default function OfferteForm() {
     if (isEdit) {
       api.get(`/api/offertes/${id}`)
         .then(data => {
+          const { lineItems: items, ...rest } = data
           setForm({
             ...EMPTY_FORM,
-            ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v ?? '']))
+            ...Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, v ?? '']))
           })
+          setLineItems(items || [])
         })
         .catch(err => setError(err.message))
         .finally(() => setLoading(false))
@@ -88,13 +97,26 @@ export default function OfferteForm() {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
+  const addLineItem = () => setLineItems(prev => [...prev, { description: '', quantity: '', unit: '', pricePerUnit: '' }])
+  const removeLineItem = (idx) => setLineItems(prev => prev.filter((_, i) => i !== idx))
+  const setLineItem = (idx, field, value) => setLineItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item))
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
     try {
-      const payload = Object.fromEntries(
-        Object.entries(form).map(([k, v]) => [k, v === '' ? null : v])
-      )
+      const payload = {
+        ...Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v === '' ? null : v])),
+        lineItems: lineItems
+          .filter(item => item.description || item.quantity || item.pricePerUnit)
+          .map((item, idx) => ({
+            description: item.description || null,
+            quantity: item.quantity === '' ? null : item.quantity,
+            unit: item.unit || null,
+            pricePerUnit: item.pricePerUnit === '' ? null : item.pricePerUnit,
+            sortOrder: idx,
+          }))
+      }
       if (isEdit) {
         await api.put(`/api/offertes/${id}`, payload)
         navigate(`/offertes/${id}`)
@@ -135,8 +157,13 @@ export default function OfferteForm() {
         {/* General Info */}
         <FormSection title={t.generalInfoSection}>
           <div className="grid grid-cols-3 gap-4">
-            <Field label={t.offerteNumberLabel}>
-              <input className={inputClass} value={form.offerteNumber} onChange={set('offerteNumber')} required placeholder="001/2025" />
+            <Field label={t.offerteNumberLabel.replace(' *', '')}>
+              <input
+                className={inputClass}
+                value={form.offerteNumber}
+                onChange={set('offerteNumber')}
+                placeholder={isEdit ? '' : 'Auto (e.g. 26001)'}
+              />
             </Field>
             <Field label={t.dateLabel}>
               <input type="date" className={inputClass} value={form.date} onChange={set('date')} required />
@@ -256,27 +283,114 @@ export default function OfferteForm() {
           </div>
         </FormSection>
 
-        {/* Overrides */}
-        <FormSection title={t.overrideSection}>
-          <p className="text-xs text-gray-400 mb-4">{t.overrideHint}</p>
+        {/* Additional Line Items */}
+        <FormSection title={t.lineItemsSection}>
+          {lineItems.length > 0 && (
+            <div className="mb-3">
+              <div className="grid gap-2 mb-1 text-xs text-gray-400" style={{ gridTemplateColumns: '1fr 80px 90px 120px 90px 32px' }}>
+                <span>{t.lineItemDescLabel}</span>
+                <span>{t.lineItemQtyLabel}</span>
+                <span>{t.lineItemUnitLabel}</span>
+                <span>{t.lineItemPriceLabel}</span>
+                <span className="text-right">Total</span>
+                <span />
+              </div>
+              {lineItems.map((item, idx) => (
+                <div key={idx} className="grid gap-2 mb-2" style={{ gridTemplateColumns: '1fr 80px 90px 120px 90px 32px' }}>
+                  <input
+                    className={inputClass}
+                    value={item.description}
+                    onChange={e => setLineItem(idx, 'description', e.target.value)}
+                    placeholder="Omschrijving..."
+                  />
+                  <input
+                    type="number" step="0.01"
+                    className={inputClass}
+                    value={item.quantity}
+                    onChange={e => setLineItem(idx, 'quantity', e.target.value)}
+                    placeholder="0"
+                  />
+                  <input
+                    className={inputClass}
+                    value={item.unit}
+                    onChange={e => setLineItem(idx, 'unit', e.target.value)}
+                    placeholder="m², pce..."
+                  />
+                  <input
+                    type="number" step="0.01"
+                    className={inputClass}
+                    value={item.pricePerUnit}
+                    onChange={e => setLineItem(idx, 'pricePerUnit', e.target.value)}
+                    placeholder="0.00"
+                  />
+                  <div className="px-3 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg text-right font-mono">
+                    €{((Number(item.quantity) || 0) * (Number(item.pricePerUnit) || 0)).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeLineItem(idx)}
+                    className="flex items-center justify-center text-red-400 hover:text-red-600 text-xl font-bold rounded-lg"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={addLineItem}
+            className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+          >
+            {t.addLineItem}
+          </button>
+        </FormSection>
+
+        {/* Rates & Overrides */}
+        <FormSection title={t.ratesOverrideSection}>
+          <p className="text-xs text-gray-400 mb-5">{t.ratesOverrideHint}</p>
+
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{t.customRatesLabel}</p>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <Field label="Engineering (% van structuur)">
+              <input type="number" step="0.1" className={inputClass} value={form.engineeringRatePct} onChange={set('engineeringRatePct')} placeholder="Standaard: 5%" />
+            </Field>
+            <Field label="CNC — CLT (€/m²)">
+              <input type="number" step="0.01" className={inputClass} value={form.cncCltRatePerM2} onChange={set('cncCltRatePerM2')} placeholder="Standaard: €11" />
+            </Field>
+            <Field label="CNC — GL (€/m³)">
+              <input type="number" step="0.01" className={inputClass} value={form.cncGlRatePerM3} onChange={set('cncGlRatePerM3')} placeholder="Standaard: €260" />
+            </Field>
+            <Field label="Accessoires (% van structuur)">
+              <input type="number" step="0.1" className={inputClass} value={form.accessoiresRatePct} onChange={set('accessoiresRatePct')} placeholder="Standaard: 12%" />
+            </Field>
+            <Field label="Montage (% van structuur)">
+              <input type="number" step="0.1" className={inputClass} value={form.montageRatePct} onChange={set('montageRatePct')} placeholder="Standaard: 22%" />
+            </Field>
+            <Field label="Transport (€/vrachtwagen)">
+              <input type="number" step="0.01" className={inputClass} value={form.transportRatePerTruck} onChange={set('transportRatePerTruck')} placeholder="Standaard: €2.250" />
+            </Field>
+          </div>
+
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{t.fixedOverrideLabel}</p>
           <div className="grid grid-cols-3 gap-4">
             <Field label="Engineering (€)">
-              <input type="number" step="0.01" className={inputClass} value={form.engineeringOverride} onChange={set('engineeringOverride')} placeholder="Auto (5%)" />
+              <input type="number" step="0.01" className={inputClass} value={form.engineeringOverride} onChange={set('engineeringOverride')} placeholder="Vaste prijs..." />
             </Field>
             <Field label="CNC — CLT (€)">
-              <input type="number" step="0.01" className={inputClass} value={form.cncCltOverride} onChange={set('cncCltOverride')} placeholder="Auto (€11/m²)" />
+              <input type="number" step="0.01" className={inputClass} value={form.cncCltOverride} onChange={set('cncCltOverride')} placeholder="Vaste prijs..." />
             </Field>
             <Field label="CNC — GL (€)">
-              <input type="number" step="0.01" className={inputClass} value={form.cncGlOverride} onChange={set('cncGlOverride')} placeholder="Auto (€260/m³)" />
+              <input type="number" step="0.01" className={inputClass} value={form.cncGlOverride} onChange={set('cncGlOverride')} placeholder="Vaste prijs..." />
             </Field>
             <Field label="Accessoires (€)">
-              <input type="number" step="0.01" className={inputClass} value={form.accessoiresOverride} onChange={set('accessoiresOverride')} placeholder="Auto (12%)" />
+              <input type="number" step="0.01" className={inputClass} value={form.accessoiresOverride} onChange={set('accessoiresOverride')} placeholder="Vaste prijs..." />
             </Field>
             <Field label="Montage (€)">
-              <input type="number" step="0.01" className={inputClass} value={form.montageOverride} onChange={set('montageOverride')} placeholder="Auto (22%)" />
+              <input type="number" step="0.01" className={inputClass} value={form.montageOverride} onChange={set('montageOverride')} placeholder="Vaste prijs..." />
             </Field>
             <Field label="Transport (€)">
-              <input type="number" step="0.01" className={inputClass} value={form.transportOverride} onChange={set('transportOverride')} placeholder="Auto (€2250/truck)" />
+              <input type="number" step="0.01" className={inputClass} value={form.transportOverride} onChange={set('transportOverride')} placeholder="Vaste prijs..." />
             </Field>
           </div>
         </FormSection>

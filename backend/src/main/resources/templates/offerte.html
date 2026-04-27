@@ -186,7 +186,7 @@
   <table class="li"><tr>
     <td class="desc">CLT: Dimensioneren en zagen van elementen</td>
     <td class="qty">{{cltM2}} m&#178;</td>
-    <td class="rate">11,00 euro/m&#178;</td>
+    <td class="rate">{{cncCltRate}} euro/m&#178;</td>
     <td class="tot">&#8364; {{cncCltCost}}</td>
   </tr></table>
   <div class="bullet">Inclusief uitsparingen voor technieken</div>
@@ -195,7 +195,7 @@
   <table class="li"><tr>
     <td class="desc">GL: Dimensioneren en zagen van elementen</td>
     <td class="qty">{{glTotalM3}} m&#179;</td>
-    <td class="rate">260,00 euro/m&#179;</td>
+    <td class="rate">{{cncGlRate}} euro/m&#179;</td>
     <td class="tot">&#8364; {{cncGlCost}}</td>
   </tr></table>
   <div class="bullet">Inclusief uitsparingen voor verbindingsmaterialen</div>
@@ -242,6 +242,12 @@
   <div class="bullet">Kraan geleverd door CLTxPRT</div>
   <div class="bullet">Transporteur op rupsen geleverd door CLTxPRT</div>
   <div class="bullet">Gereedschap geleverd door CLTxPRT</div>
+
+  <!-- 8. Extra posten (optional free-form line items) -->
+  {{#hasLineItems}}
+  <table class="sh"><tr><td>Extra posten</td><td class="sr">&#8364; {{lineItemsTotal}}</td></tr></table>
+  {{lineItemsRows}}
+  {{/hasLineItems}}
 
   <!-- Totals -->
   <div class="totals-outer">
