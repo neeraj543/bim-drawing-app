@@ -48,13 +48,24 @@ See [OFFERTE_SPEC.md](OFFERTE_SPEC.md) for full technical spec.
 - Create/edit form
 - Sample data
 
-**Remaining:**
-- PDF generation (iText or PDFBox)
+**Built (MVP complete as of 2026-04-27):**
+- PDF generation via openhtmltopdf with full HTML template
+- Free-form line items per offerte (description, qty, unit, price — shown in PDF under "Extra posten")
+- Per-offerte custom rates (engineering %, CNC €/m², transport €/truck, etc.) with fallback to defaults
+- Fixed amount overrides per line (highest priority over rates)
+- Auto-increment offerte number per year (format: 26001, 26002, ...)
+- EN/NL language toggle throughout
+- Duplicate offerte (copies all fields + line items, gets new auto number)
+
+**Remaining / Future:**
 - XLS quantity sheet upload + parsing (Apache POI)
 - Email integration via Microsoft Graph API (Outlook)
-- AI parsing of email fields + XLS via Gemini Flash API
-- Werkblad rates editable in settings page (currently hardcoded)
-- Auto-increment offerte number per year (001/2026 format)
+- Ask Emiel: should line items be groupable under a specific section (Structuur, Engineering, etc.) in the PDF?
+
+**Potential AI features:**
+- **Email/doc parsing** — paste client email or upload spec sheet, AI pre-fills the form (client, site, quantities). Biggest time saver.
+- **Price suggestions** — based on past accepted offertes, suggest rates for similar project type/size
+- **Auto follow-up flagging** — flag offertes with no response after X days
 
 ### 3. UI Overhaul
 - General UI cleanup and modernisation across the app
