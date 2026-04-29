@@ -6,6 +6,7 @@ import { AdminRoute } from './components/AdminRoute'
 import Layout from './components/layout/Layout'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
+import Projects from './pages/Projects'
 import ProjectDetails from './pages/ProjectDetails'
 import Tasks from './pages/Tasks'
 import Timesheet from './pages/Timesheet'
@@ -31,6 +32,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/projects"
+              element={
+                <PrivateRoute>
+                  <Projects />
                 </PrivateRoute>
               }
             />

@@ -168,7 +168,18 @@ function Header() {
                 <Link
                   to="/dashboard"
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    isActive('/dashboard') || location.pathname.startsWith('/projects')
+                    isActive('/dashboard')
+                      ? 'bg-amber-50 text-amber-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  Dashboard
+                </Link>
+
+                <Link
+                  to="/projects"
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    location.pathname.startsWith('/projects')
                       ? 'bg-amber-50 text-amber-700'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}

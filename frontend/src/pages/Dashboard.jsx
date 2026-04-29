@@ -1,252 +1,394 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ProjectCard from '../components/ProjectCard'
-import CreateProjectForm from '../components/CreateProjectForm'
 import { api } from '../utils/api'
 import { useAuth } from '../contexts/AuthContext'
 
-function Dashboard() {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const [projects, setProjects] = useState([])
-  const [tasks, setTasks] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [tasksLoading, setTasksLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
+const STATUS_COLORS = {
+  DRAFT:    'bg-gray-100 text-gray-600',
+  SENT:     'bg-blue-100 text-blue-700',
+  PENDING:  'bg-yellow-100 text-yellow-700',
+  ACCEPTED: 'bg-green-100 text-green-700',
+  REJECTED: 'bg-red-100 text-red-600',
+}
 
-  useEffect(() => {
-    fetchProjects()
-    fetchTasks()
-  }, [])
+const STATUS_DOT = {
+  DRAFT:    'bg-gray-400',
+  SENT:     'bg-blue-500',
+  PENDING:  'bg-yellow-500',
+  ACCEPTED: 'bg-green-500',
+  REJECTED: 'bg-red-500',
+}
 
-  const handleProjectCreated = () => {
-    fetchProjects()
-  }
+function greeting() {
+  const h = new Date().getHours()
+  if (h < 12) return 'Good morning'
+  if (h < 18) return 'Good afternoon'
+  return 'Good evening'
+}
 
-  const fetchProjects = async () => {
-    try {
-      setLoading(true)
-      const data = await api.get('/api/projects')
-      setProjects(data)
-      setError(null)
-    } catch (err) {
-      setError(err.message)
-      setProjects([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchTasks = async () => {
-    try {
-      setTasksLoading(true)
-      const data = await api.get('/api/tasks')
-      // Sort by due date and get next 5 tasks
-      const sortedTasks = data
-        .filter(task => task.status !== 'DONE')
-        .sort((a, b) => {
-          if (!a.dueDate) return 1
-          if (!b.dueDate) return -1
-          return new Date(a.dueDate) - new Date(b.dueDate)
-        })
-        .slice(0, 5)
-      setTasks(sortedTasks)
-    } catch (err) {
-      console.error('Failed to fetch tasks:', err)
-      setTasks([])
-    } finally {
-      setTasksLoading(false)
-    }
-  }
-
-  // Filter projects based on search query
-  const filteredProjects = projects.filter(project => {
-    const searchLower = searchQuery.toLowerCase()
-    return (
-      project.name.toLowerCase().includes(searchLower) ||
-      (project.description && project.description.toLowerCase().includes(searchLower))
-    )
-  })
-
+function StatCard({ label, value, sub, color = 'text-gray-900', icon }) {
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Welcome Message */}
-      <div className="mb-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl shadow-lg p-6 text-white">
-        <h1 className="text-3xl font-bold mb-2">
-          Welcome back, {user?.fullName || user?.username}! 👋
-        </h1>
-        <p className="text-amber-50">Here's what's happening with your projects and tasks today.</p>
-      </div>
-
-      {/* My Tasks Section */}
-      {!tasksLoading && tasks.length > 0 && (
-        <div className="mb-8 bg-white rounded-xl shadow-md p-6 border border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-              My Tasks ({tasks.length})
-            </h2>
-            <button
-              onClick={() => navigate('/tasks')}
-              className="text-amber-600 hover:text-amber-800 font-medium text-sm flex items-center gap-1"
-            >
-              View all tasks
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-          <div className="space-y-3">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                onClick={() => navigate('/tasks')}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors border border-gray-200"
-              >
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 mb-1">{task.title}</h3>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span className="flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
-                    </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      task.priority === 'HIGH' ? 'bg-red-100 text-red-700' :
-                      task.priority === 'MEDIUM' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-green-100 text-green-700'
-                    }`}>
-                      {task.priority}
-                    </span>
-                  </div>
-                </div>
-                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  task.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' :
-                  task.status === 'TO_DO' ? 'bg-gray-200 text-gray-700' :
-                  'bg-green-100 text-green-700'
-                }`}>
-                  {task.status.replace('_', ' ')}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Header Section */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-amber-600 text-white rounded-lg p-2">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-            </svg>
-          </div>
-          <h2 className="text-4xl font-bold text-gray-800">My Projects</h2>
-        </div>
-        <p className="text-gray-600 ml-14">Manage and organize your BIM projects</p>
-      </div>
-
-      {/* Search Bar */}
-      {!loading && projects.length > 0 && (
-        <div className="mb-6">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <input
-              type="text"
-              placeholder="Search projects by name or description..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Create Project Form */}
-      {!loading && <CreateProjectForm onProjectCreated={handleProjectCreated} />}
-
-      {/* Loading State */}
-      {loading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <svg className="animate-spin h-12 w-12 text-amber-600 mx-auto mb-4" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p className="text-gray-600">Loading projects...</p>
-          </div>
-        </div>
-      )}
-
-      {/* Error State */}
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
-          <div className="flex items-center gap-3">
-            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-red-700 font-medium">Error: {error}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!loading && !error && projects.length === 0 && (
-        <div className="bg-white rounded-xl shadow-md p-12 text-center border-2 border-dashed border-gray-300">
-          <svg className="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">No projects yet</h3>
-          <p className="text-gray-500">Create your first project using the form above to get started!</p>
-        </div>
-      )}
-
-      {/* No Search Results */}
-      {!loading && !error && projects.length > 0 && filteredProjects.length === 0 && (
-        <div className="bg-white rounded-xl shadow-md p-12 text-center border-2 border-dashed border-gray-300">
-          <svg className="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">No projects found</h3>
-          <p className="text-gray-500">Try adjusting your search query</p>
-        </div>
-      )}
-
-      {/* Projects Grid */}
-      {!loading && !error && filteredProjects.length > 0 && (
+    <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <div className="flex items-start justify-between">
         <div>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-gray-800">
-              {searchQuery ? 'Search Results' : 'All Projects'} <span className="text-amber-600">({filteredProjects.length})</span>
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
+          <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">{label}</p>
+          <p className={`text-2xl font-bold ${color}`}>{value}</p>
+          {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
         </div>
-      )}
+        {icon && <div className="text-gray-200 mt-0.5">{icon}</div>}
+      </div>
     </div>
   )
 }
 
-export default Dashboard
+function PipelineBar({ offertes }) {
+  const total = offertes.length
+  if (total === 0) return null
+
+  const statuses = ['DRAFT', 'SENT', 'PENDING', 'ACCEPTED', 'REJECTED']
+  const barColors = {
+    DRAFT:    'bg-gray-300',
+    SENT:     'bg-blue-400',
+    PENDING:  'bg-yellow-400',
+    ACCEPTED: 'bg-green-500',
+    REJECTED: 'bg-red-400',
+  }
+  const counts = statuses.reduce((acc, s) => {
+    acc[s] = offertes.filter(o => o.status === s).length
+    return acc
+  }, {})
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-4 mb-8">
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Pipeline breakdown</p>
+      <div className="flex rounded-full overflow-hidden h-2.5 mb-3">
+        {statuses.map(s => counts[s] > 0 && (
+          <div
+            key={s}
+            className={`${barColors[s]} transition-all`}
+            style={{ width: `${(counts[s] / total) * 100}%` }}
+          />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-x-5 gap-y-1.5">
+        {statuses.map(s => counts[s] > 0 && (
+          <div key={s} className="flex items-center gap-1.5">
+            <span className={`w-2 h-2 rounded-full ${barColors[s]}`} />
+            <span className="text-xs text-gray-500">{s.charAt(0) + s.slice(1).toLowerCase()} <span className="font-semibold text-gray-700">{counts[s]}</span></span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default function Dashboard() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [offertes, setOffertes] = useState([])
+  const [projects, setProjects] = useState([])
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+  const now = new Date()
+
+  useEffect(() => {
+    Promise.all([
+      api.get('/api/offertes'),
+      api.get('/api/projects'),
+      api.get('/api/tasks'),
+    ]).then(([o, p, t]) => {
+      setOffertes(o)
+      setProjects(p)
+      setTasks(
+        t.filter(task => task.status !== 'DONE')
+          .sort((a, b) => {
+            if (!a.dueDate) return 1
+            if (!b.dueDate) return -1
+            return new Date(a.dueDate) - new Date(b.dueDate)
+          })
+          .slice(0, 5)
+      )
+    }).catch(console.error).finally(() => setLoading(false))
+  }, [])
+
+  const pipelineValue = offertes
+    .filter(o => ['SENT', 'PENDING'].includes(o.status))
+    .reduce((s, o) => s + (o.totalInclVat || 0), 0)
+
+  const acceptedThisMonth = offertes.filter(o => {
+    if (o.status !== 'ACCEPTED') return false
+    const d = new Date(o.updatedAt)
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  })
+  const acceptedValue = acceptedThisMonth.reduce((s, o) => s + (o.totalInclVat || 0), 0)
+
+  const recentOffertes = [...offertes]
+    .sort((a, b) => new Date(b.updatedAt || b.date) - new Date(a.updatedAt || a.date))
+    .slice(0, 5)
+
+  const urgentCount = tasks.filter(t => {
+    if (!t.dueDate) return false
+    const days = (new Date(t.dueDate) - now) / (1000 * 60 * 60 * 24)
+    return days <= 7
+  }).length
+
+  const todayStr = now.toLocaleDateString('en-BE', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  })
+
+  const fmt = v => `€${Number(v).toLocaleString('nl-BE', { maximumFractionDigits: 0 })}`
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <svg className="animate-spin h-8 w-8 text-amber-600" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto p-6">
+
+      {/* Welcome banner */}
+      <div className="mb-8 bg-linear-to-r from-amber-500 to-orange-500 rounded-xl p-6 text-white">
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold mb-0.5">{greeting()}, {user?.fullName || user?.username}</h1>
+            <p className="text-amber-100 text-sm">{todayStr}</p>
+          </div>
+          {urgentCount > 0 && (
+            <button
+              onClick={() => navigate('/tasks')}
+              className="bg-white/20 hover:bg-white/30 transition-colors rounded-lg px-4 py-2 text-right shrink-0"
+            >
+              <p className="text-xs text-amber-100 uppercase tracking-wide font-medium">Heads up</p>
+              <p className="text-base font-bold">{urgentCount} task{urgentCount !== 1 ? 's' : ''} due this week</p>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Offerte stats */}
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Offerte overview</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <StatCard
+          label="Total offertes"
+          value={offertes.length}
+          icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
+        />
+        <StatCard
+          label="Open pipeline"
+          value={fmt(pipelineValue)}
+          sub="SENT + PENDING"
+          color="text-yellow-600"
+          icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+        />
+        <StatCard
+          label="Accepted this month"
+          value={acceptedThisMonth.length}
+          color="text-green-600"
+          icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+        />
+        <StatCard
+          label="Accepted value"
+          value={fmt(acceptedValue)}
+          sub="this month"
+          color="text-green-600"
+          icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
+        />
+      </div>
+
+      {/* Pipeline bar */}
+      <PipelineBar offertes={offertes} />
+
+      {/* Main 2-col layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+        {/* Recent offertes — 2/3 width */}
+        <div className="lg:col-span-2">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Recent offertes</p>
+            <button
+              onClick={() => navigate('/offertes')}
+              className="text-xs text-amber-600 hover:text-amber-800 font-medium flex items-center gap-1 transition-colors"
+            >
+              View all
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            {recentOffertes.length === 0 ? (
+              <div className="text-center py-14 text-gray-400 text-sm">
+                <div className="text-3xl mb-2">📋</div>
+                No offertes yet
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-100">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Number</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Client</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wide">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {recentOffertes.map(o => (
+                    <tr
+                      key={o.id}
+                      onClick={() => navigate(`/offertes/${o.id}`)}
+                      className="hover:bg-amber-50 cursor-pointer transition-colors"
+                    >
+                      <td className="px-4 py-3 font-mono text-xs font-semibold text-gray-800">{o.offerteNumber}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900">{o.clientName}</td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[o.status]}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[o.status]}`} />
+                          {o.status.charAt(0) + o.status.slice(1).toLowerCase()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right font-semibold text-gray-900">
+                        {fmt(o.totalInclVat || 0)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+        {/* Right sidebar — 1/3 */}
+        <div className="flex flex-col gap-4">
+
+          {/* Project count */}
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Projects</p>
+            <div
+              onClick={() => navigate('/projects')}
+              className="bg-white border border-gray-200 rounded-xl p-5 cursor-pointer hover:border-amber-300 hover:shadow-sm transition-all"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-amber-100 rounded-xl p-3">
+                  <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-gray-900">{projects.length}</p>
+                  <p className="text-sm text-gray-400">active project{projects.length !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+              <p className="text-xs text-amber-600 mt-3 font-medium">Open projects →</p>
+            </div>
+          </div>
+
+          {/* Upcoming tasks */}
+          {tasks.length > 0 ? (
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Upcoming tasks</p>
+                <button
+                  onClick={() => navigate('/tasks')}
+                  className="text-xs text-amber-600 hover:text-amber-800 font-medium transition-colors"
+                >
+                  View all
+                </button>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100 overflow-hidden">
+                {tasks.map(task => {
+                  const days = task.dueDate
+                    ? Math.ceil((new Date(task.dueDate) - now) / (1000 * 60 * 60 * 24))
+                    : null
+                  const isOverdue = days !== null && days < 0
+                  const isSoon = days !== null && days >= 0 && days <= 3
+                  return (
+                    <div
+                      key={task.id}
+                      onClick={() => navigate('/tasks')}
+                      className="px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm font-medium text-gray-800 leading-tight truncate">{task.title}</p>
+                        <span className={`text-xs shrink-0 font-medium px-2 py-0.5 rounded-full ${
+                          task.priority === 'HIGH' ? 'bg-red-100 text-red-700' :
+                          task.priority === 'MEDIUM' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-green-100 text-green-700'
+                        }`}>
+                          {task.priority}
+                        </span>
+                      </div>
+                      {task.dueDate && (
+                        <p className={`text-xs mt-0.5 font-medium ${
+                          isOverdue ? 'text-red-500' : isSoon ? 'text-orange-500' : 'text-gray-400'
+                        }`}>
+                          {isOverdue
+                            ? `${Math.abs(days)}d overdue`
+                            : days === 0 ? 'Due today'
+                            : `Due in ${days}d`}
+                        </p>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Upcoming tasks</p>
+              <div className="bg-white border border-gray-200 rounded-xl p-6 text-center text-gray-400 text-sm">
+                No open tasks
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Quick actions */}
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Quick actions</p>
+      <div className="flex flex-wrap gap-3">
+        <button
+          onClick={() => navigate('/offertes/new')}
+          className="flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          New Offerte
+        </button>
+        <button
+          onClick={() => navigate('/offertes')}
+          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          All Offertes
+        </button>
+        <button
+          onClick={() => navigate('/projects')}
+          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+          </svg>
+          Projects
+        </button>
+        <button
+          onClick={() => navigate('/tasks')}
+          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+          Tasks
+        </button>
+      </div>
+    </div>
+  )
+}

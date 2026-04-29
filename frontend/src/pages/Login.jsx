@@ -37,7 +37,7 @@ function Login() {
       login(data)
       navigate('/dashboard', { replace: true })
     } catch (err) {
-      setError(err.message)
+      setError('Invalid username or password.')
       setLoading(false)
     }
   }
