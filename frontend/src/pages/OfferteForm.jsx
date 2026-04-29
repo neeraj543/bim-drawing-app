@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../utils/api'
 import { useLang } from '../contexts/LanguageContext'
@@ -213,10 +213,10 @@ export default function OfferteForm() {
             <div>
               <p className="text-xs text-gray-400 mb-3 font-medium">CLT</p>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="mÂ²">
+                <Field label="m²">
                   <input type="number" step="0.01" className={inputClass} value={form.cltM2} onChange={set('cltM2')} />
                 </Field>
-                <Field label="Price/mÂ² (â‚¬)">
+                <Field label="Price/m² (€)">
                   <input type="number" step="0.01" className={inputClass} value={form.cltPricePerM2} onChange={set('cltPricePerM2')} />
                 </Field>
               </div>
@@ -224,10 +224,10 @@ export default function OfferteForm() {
             <div>
               <p className="text-xs text-gray-400 mb-3 font-medium">GL Columns</p>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="mÂ³">
+                <Field label="m³">
                   <input type="number" step="0.01" className={inputClass} value={form.glColumnsM3} onChange={set('glColumnsM3')} />
                 </Field>
-                <Field label="Price/mÂ³ (â‚¬)">
+                <Field label="Price/m³ (€)">
                   <input type="number" step="0.01" className={inputClass} value={form.glColumnsPricePerM3} onChange={set('glColumnsPricePerM3')} />
                 </Field>
               </div>
@@ -235,10 +235,10 @@ export default function OfferteForm() {
             <div>
               <p className="text-xs text-gray-400 mb-3 font-medium">GL Beams</p>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="mÂ³">
+                <Field label="m³">
                   <input type="number" step="0.01" className={inputClass} value={form.glBeamsM3} onChange={set('glBeamsM3')} />
                 </Field>
-                <Field label="Price/mÂ³ (â‚¬)">
+                <Field label="Price/m³ (€)">
                   <input type="number" step="0.01" className={inputClass} value={form.glBeamsPricePerM3} onChange={set('glBeamsPricePerM3')} />
                 </Field>
               </div>
@@ -259,7 +259,7 @@ export default function OfferteForm() {
               onRemove={(idx) => setStructuurItems(prev => prev.filter((_, i) => i !== idx))}
               onChange={(idx, field, value) => setStructuurItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item))}
               addLabel={t.addLineItem}
-              unitPlaceholder="mÂ², mÂ³..."
+              unitPlaceholder="m², m³..."
               t={t}
             />
           </div>
@@ -272,7 +272,7 @@ export default function OfferteForm() {
             onRemove={(idx) => setExtraItems(prev => prev.filter((_, i) => i !== idx))}
             onChange={(idx, field, value) => setExtraItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item))}
             addLabel={t.addLineItem}
-            unitPlaceholder="mÂ², pce..."
+            unitPlaceholder="m², pce..."
             t={t}
           />
         </FormSection>
@@ -284,11 +284,11 @@ export default function OfferteForm() {
             <Field label="Engineering (% van structuur)">
               <input type="number" step="0.1" className={inputClass} value={form.engineeringRatePct} onChange={set('engineeringRatePct')} placeholder="Standaard: 5%" />
             </Field>
-            <Field label="CNC â€” CLT (â‚¬/mÂ²)">
-              <input type="number" step="0.01" className={inputClass} value={form.cncCltRatePerM2} onChange={set('cncCltRatePerM2')} placeholder="Standaard: â‚¬11" />
+            <Field label="CNC — CLT (€/m²)">
+              <input type="number" step="0.01" className={inputClass} value={form.cncCltRatePerM2} onChange={set('cncCltRatePerM2')} placeholder="Standaard: €11" />
             </Field>
-            <Field label="CNC â€” GL (â‚¬/mÂ³)">
-              <input type="number" step="0.01" className={inputClass} value={form.cncGlRatePerM3} onChange={set('cncGlRatePerM3')} placeholder="Standaard: â‚¬260" />
+            <Field label="CNC — GL (€/m³)">
+              <input type="number" step="0.01" className={inputClass} value={form.cncGlRatePerM3} onChange={set('cncGlRatePerM3')} placeholder="Standaard: €260" />
             </Field>
             <Field label="Accessoires (% van structuur)">
               <input type="number" step="0.1" className={inputClass} value={form.accessoiresRatePct} onChange={set('accessoiresRatePct')} placeholder="Standaard: 12%" />
@@ -296,28 +296,28 @@ export default function OfferteForm() {
             <Field label="Montage (% van structuur)">
               <input type="number" step="0.1" className={inputClass} value={form.montageRatePct} onChange={set('montageRatePct')} placeholder="Standaard: 22%" />
             </Field>
-            <Field label="Transport (â‚¬/vrachtwagen)">
-              <input type="number" step="0.01" className={inputClass} value={form.transportRatePerTruck} onChange={set('transportRatePerTruck')} placeholder="Standaard: â‚¬2.250" />
+            <Field label="Transport (€/vrachtwagen)">
+              <input type="number" step="0.01" className={inputClass} value={form.transportRatePerTruck} onChange={set('transportRatePerTruck')} placeholder="Standaard: €2.250" />
             </Field>
           </div>
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{t.fixedOverrideLabel}</p>
           <div className="grid grid-cols-3 gap-4">
-            <Field label="Engineering (â‚¬)">
+            <Field label="Engineering (€)">
               <input type="number" step="0.01" className={inputClass} value={form.engineeringOverride} onChange={set('engineeringOverride')} placeholder="Vaste prijs..." />
             </Field>
-            <Field label="CNC â€” CLT (â‚¬)">
+            <Field label="CNC — CLT (€)">
               <input type="number" step="0.01" className={inputClass} value={form.cncCltOverride} onChange={set('cncCltOverride')} placeholder="Vaste prijs..." />
             </Field>
-            <Field label="CNC â€” GL (â‚¬)">
+            <Field label="CNC — GL (€)">
               <input type="number" step="0.01" className={inputClass} value={form.cncGlOverride} onChange={set('cncGlOverride')} placeholder="Vaste prijs..." />
             </Field>
-            <Field label="Accessoires (â‚¬)">
+            <Field label="Accessoires (€)">
               <input type="number" step="0.01" className={inputClass} value={form.accessoiresOverride} onChange={set('accessoiresOverride')} placeholder="Vaste prijs..." />
             </Field>
-            <Field label="Montage (â‚¬)">
+            <Field label="Montage (€)">
               <input type="number" step="0.01" className={inputClass} value={form.montageOverride} onChange={set('montageOverride')} placeholder="Vaste prijs..." />
             </Field>
-            <Field label="Transport (â‚¬)">
+            <Field label="Transport (€)">
               <input type="number" step="0.01" className={inputClass} value={form.transportOverride} onChange={set('transportOverride')} placeholder="Vaste prijs..." />
             </Field>
           </div>
