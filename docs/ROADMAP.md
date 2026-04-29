@@ -22,13 +22,6 @@
 
 ---
 
-## What's Broken
-
-- **Render deployment is down** — backend not responding at `https://bim-frontend-f5e4.onrender.com`
-- Moving to **Railway** (Emiel pays) — needs PostgreSQL setup + env vars
-
----
-
 ## What's Coming (Internship 2 — 2 months)
 
 ### 1. Fix & Redeploy
