@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
 import { useLang } from '../contexts/LanguageContext'
@@ -40,7 +40,7 @@ function Field({ label, value }) {
   return (
     <div>
       <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-      <p className="text-sm text-gray-800 font-medium">{value || <span className="text-gray-300">—</span>}</p>
+      <p className="text-sm text-gray-800 font-medium">{value || <span className="text-gray-300">â€”</span>}</p>
     </div>
   )
 }
@@ -51,7 +51,7 @@ function MoneyRow({ label, value, highlight, subTotal }) {
     <div className={`py-2 ${highlight ? 'border-t border-gray-200 mt-2 pt-3' : ''}`}>
       <div className={`flex justify-between ${highlight ? 'font-semibold text-gray-900' : 'text-gray-600'}`}>
         <span className="text-sm">{label}</span>
-        <span className="text-sm font-mono">€{Number(value || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
+        <span className="text-sm font-mono">â‚¬{Number(value || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
       </div>
       {!highlight && pct > 0 && (
         <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
@@ -65,7 +65,7 @@ function MoneyRow({ label, value, highlight, subTotal }) {
 export default function OfferteDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { lang, toggle, t } = useLang()
+  const { t } = useLang()
   const [offerte, setOfferte] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -138,9 +138,6 @@ export default function OfferteDetail() {
           <button onClick={() => navigate('/offertes')} className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors">
             {t.back}
           </button>
-          <button onClick={toggle} className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-            {lang === 'nl' ? 'NL' : 'EN'}
-          </button>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-5">
@@ -151,7 +148,7 @@ export default function OfferteDetail() {
               {offerte.clientName && <p className="text-sm text-gray-400 mt-1">{offerte.clientName}</p>}
             </div>
             <div className="text-right shrink-0">
-              <p className="text-2xl font-bold text-gray-900">€{Number(offerte.totalInclVat || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</p>
+              <p className="text-2xl font-bold text-gray-900">â‚¬{Number(offerte.totalInclVat || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</p>
               <p className="text-xs text-gray-400 mt-0.5">{t.totalInclVat}</p>
             </div>
           </div>
@@ -167,7 +164,7 @@ export default function OfferteDetail() {
                 >
                   {t.status[s]}
                 </button>
-                {i < STATUS_FLOW.length - 1 && <span className="text-gray-300 text-xs">→</span>}
+                {i < STATUS_FLOW.length - 1 && <span className="text-gray-300 text-xs">â†’</span>}
               </div>
             ))}
             <div className="ml-2">
@@ -225,7 +222,7 @@ export default function OfferteDetail() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-gray-400 mb-0.5">{t.clientName}</p>
-                <p className="text-sm font-semibold text-gray-900">{offerte.clientName || <span className="text-gray-300 font-normal">—</span>}</p>
+                <p className="text-sm font-semibold text-gray-900">{offerte.clientName || <span className="text-gray-300 font-normal">â€”</span>}</p>
                 {clientAddress && <p className="text-sm text-gray-600 mt-0.5">{clientAddress}</p>}
                 {clientCity    && <p className="text-sm text-gray-600">{clientCity}</p>}
               </div>
@@ -241,18 +238,18 @@ export default function OfferteDetail() {
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-xs font-medium text-gray-400 mb-2">CLT</p>
-                <p className="text-sm font-semibold text-gray-800">{offerte.cltM2 ? `${offerte.cltM2} m²` : '—'}</p>
-                <p className="text-xs text-gray-400">{offerte.cltPricePerM2 ? `€${offerte.cltPricePerM2}/m²` : ''}</p>
+                <p className="text-sm font-semibold text-gray-800">{offerte.cltM2 ? `${offerte.cltM2} mÂ²` : 'â€”'}</p>
+                <p className="text-xs text-gray-400">{offerte.cltPricePerM2 ? `â‚¬${offerte.cltPricePerM2}/mÂ²` : ''}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-xs font-medium text-gray-400 mb-2">GL Columns</p>
-                <p className="text-sm font-semibold text-gray-800">{offerte.glColumnsM3 ? `${offerte.glColumnsM3} m³` : '—'}</p>
-                <p className="text-xs text-gray-400">{offerte.glColumnsPricePerM3 ? `€${offerte.glColumnsPricePerM3}/m³` : ''}</p>
+                <p className="text-sm font-semibold text-gray-800">{offerte.glColumnsM3 ? `${offerte.glColumnsM3} mÂ³` : 'â€”'}</p>
+                <p className="text-xs text-gray-400">{offerte.glColumnsPricePerM3 ? `â‚¬${offerte.glColumnsPricePerM3}/mÂ³` : ''}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-xs font-medium text-gray-400 mb-2">GL Beams</p>
-                <p className="text-sm font-semibold text-gray-800">{offerte.glBeamsM3 ? `${offerte.glBeamsM3} m³` : '—'}</p>
-                <p className="text-xs text-gray-400">{offerte.glBeamsPricePerM3 ? `€${offerte.glBeamsPricePerM3}/m³` : ''}</p>
+                <p className="text-sm font-semibold text-gray-800">{offerte.glBeamsM3 ? `${offerte.glBeamsM3} mÂ³` : 'â€”'}</p>
+                <p className="text-xs text-gray-400">{offerte.glBeamsPricePerM3 ? `â‚¬${offerte.glBeamsPricePerM3}/mÂ³` : ''}</p>
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-gray-100">
@@ -287,8 +284,8 @@ export default function OfferteDetail() {
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t.priceSummary}</h3>
             <MoneyRow label="Structuur (CLT + GL)" value={offerte.structuurTotal} subTotal={offerte.subtotalExclVat} />
             <MoneyRow label={`Engineering (${offerte.engineeringRatePct ?? 5}%)`} value={offerte.engineeringCost} subTotal={offerte.subtotalExclVat} />
-            <MoneyRow label={`CNC — CLT (€${offerte.cncCltRatePerM2 ?? 11}/m²)`} value={offerte.cncCltCost} subTotal={offerte.subtotalExclVat} />
-            <MoneyRow label={`CNC — GL (€${offerte.cncGlRatePerM3 ?? 260}/m³)`} value={offerte.cncGlCost} subTotal={offerte.subtotalExclVat} />
+            <MoneyRow label={`CNC â€” CLT (â‚¬${offerte.cncCltRatePerM2 ?? 11}/mÂ²)`} value={offerte.cncCltCost} subTotal={offerte.subtotalExclVat} />
+            <MoneyRow label={`CNC â€” GL (â‚¬${offerte.cncGlRatePerM3 ?? 260}/mÂ³)`} value={offerte.cncGlCost} subTotal={offerte.subtotalExclVat} />
             <MoneyRow label={`Accessoires (${offerte.accessoiresRatePct ?? 12}%)`} value={offerte.accessoiresCost} subTotal={offerte.subtotalExclVat} />
             <MoneyRow label={t.trucks(offerte.numberOfTrucks || 0)} value={offerte.transportCost} subTotal={offerte.subtotalExclVat} />
             <MoneyRow label={`Montage (${offerte.montageRatePct ?? 22}%)`} value={offerte.montageCost} subTotal={offerte.subtotalExclVat} />
@@ -298,7 +295,7 @@ export default function OfferteDetail() {
             <div className="mt-3 pt-3 border-t-2 border-gray-900">
               <div className="flex justify-between items-baseline">
                 <span className="text-sm font-bold text-gray-900">{t.totalInclVat}</span>
-                <span className="text-xl font-bold text-gray-900 font-mono">€{Number(offerte.totalInclVat || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
+                <span className="text-xl font-bold text-gray-900 font-mono">â‚¬{Number(offerte.totalInclVat || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
               </div>
             </div>
           </div>
@@ -320,11 +317,11 @@ function LineItemTable({ items, t }) {
       </div>
       {items.map((item, idx) => (
         <div key={idx} className="grid gap-3 py-2 border-b border-gray-50 last:border-0 text-sm" style={{ gridTemplateColumns: '1fr 60px 80px 100px 90px' }}>
-          <span className="text-gray-800">{item.description || '—'}</span>
+          <span className="text-gray-800">{item.description || 'â€”'}</span>
           <span className="text-gray-500 text-right">{item.quantity}</span>
           <span className="text-gray-500">{item.unit}</span>
-          <span className="text-gray-500 text-right font-mono">€{Number(item.pricePerUnit || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
-          <span className="text-gray-800 text-right font-mono">€{((Number(item.quantity) || 0) * (Number(item.pricePerUnit) || 0)).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
+          <span className="text-gray-500 text-right font-mono">â‚¬{Number(item.pricePerUnit || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
+          <span className="text-gray-800 text-right font-mono">â‚¬{((Number(item.quantity) || 0) * (Number(item.pricePerUnit) || 0)).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}</span>
         </div>
       ))}
     </div>

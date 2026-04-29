@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
 import { useLang } from '../contexts/LanguageContext'
@@ -34,13 +34,13 @@ function deadlineState(deadline) {
 }
 
 function SortIcon({ field, sort }) {
-  if (sort.field !== field) return <span className="text-gray-300 ml-1">↕</span>
-  return <span className="text-amber-600 ml-1">{sort.dir === 'asc' ? '↑' : '↓'}</span>
+  if (sort.field !== field) return <span className="text-gray-300 ml-1">â†•</span>
+  return <span className="text-amber-600 ml-1">{sort.dir === 'asc' ? 'â†‘' : 'â†“'}</span>
 }
 
 export default function Offertes() {
   const navigate = useNavigate()
-  const { lang, toggle, t } = useLang()
+  const { lang, t } = useLang()
   const [offertes, setOffertes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -101,9 +101,6 @@ export default function Offertes() {
           <p className="text-sm text-gray-400 mt-0.5">{offertes.length} {lang === 'nl' ? 'in totaal' : 'total'}</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={toggle} className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-            {lang === 'nl' ? 'NL' : 'EN'}
-          </button>
           <button onClick={() => navigate('/offertes/new')} className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors">
             {t.newOfferte}
           </button>
@@ -118,7 +115,7 @@ export default function Offertes() {
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">{t.valuePending}</p>
-          <p className="text-2xl font-bold text-yellow-600">€{totalPending.toLocaleString('nl-BE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+          <p className="text-2xl font-bold text-yellow-600">â‚¬{totalPending.toLocaleString('nl-BE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">{t.acceptedThisMonth}</p>
@@ -126,7 +123,7 @@ export default function Offertes() {
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">{lang === 'nl' ? 'Aanvaard waarde' : 'Accepted Value'}</p>
-          <p className="text-2xl font-bold text-green-600">€{acceptedValue.toLocaleString('nl-BE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+          <p className="text-2xl font-bold text-green-600">â‚¬{acceptedValue.toLocaleString('nl-BE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
         </div>
       </div>
 
@@ -178,7 +175,7 @@ export default function Offertes() {
             {filtered.length === 0 && (
               <tr>
                 <td colSpan={8} className="text-center py-16 text-gray-400">
-                  <div className="text-3xl mb-2">📋</div>
+                  <div className="text-3xl mb-2">ðŸ“‹</div>
                   <div>{t.noOffertes}</div>
                 </td>
               </tr>
@@ -200,9 +197,9 @@ export default function Offertes() {
                   <td className="px-4 py-3">
                     {o.submissionDeadline ? (
                       <span className={`text-xs font-medium ${ds === 'passed' ? 'text-red-600' : ds === 'soon' ? 'text-orange-500' : 'text-gray-400'}`}>
-                        {ds === 'passed' ? '⚠ ' : ds === 'soon' ? '⏰ ' : ''}{fmt(o.submissionDeadline)}
+                        {ds === 'passed' ? 'âš  ' : ds === 'soon' ? 'â° ' : ''}{fmt(o.submissionDeadline)}
                       </span>
-                    ) : <span className="text-gray-200">—</span>}
+                    ) : <span className="text-gray-200">â€”</span>}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[o.status].split(' ').slice(0, 2).join(' ')}`}>
@@ -211,14 +208,14 @@ export default function Offertes() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right font-semibold text-gray-900">
-                    €{Number(o.totalInclVat || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
+                    â‚¬{Number(o.totalInclVat || 0).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={e => { e.stopPropagation(); navigate(`/offertes/${o.id}/edit`) }}
                       className={`text-gray-300 hover:text-amber-600 transition-colors text-base ${hoveredId === o.id ? 'opacity-100' : 'opacity-0'}`}
                     >
-                      ✏
+                      âœ
                     </button>
                   </td>
                 </tr>
@@ -232,7 +229,7 @@ export default function Offertes() {
                   {filtered.length} {lang === 'nl' ? 'offerte(s) zichtbaar' : 'offerte(s) visible'}
                 </td>
                 <td className="px-4 py-3 text-right text-sm font-bold text-gray-900">
-                  €{filteredTotal.toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
+                  â‚¬{filteredTotal.toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
                 </td>
                 <td />
               </tr>
