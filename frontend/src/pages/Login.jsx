@@ -99,7 +99,7 @@ function Login() {
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center">
               <label className="flex items-center">
                 <input
                   type="checkbox"
@@ -107,9 +107,6 @@ function Login() {
                 />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <a href="#" className="text-sm text-amber-600 hover:text-amber-700 font-medium">
-                Forgot password?
-              </a>
             </div>
 
             <button
