@@ -4,6 +4,7 @@ import com.bim.backend.dto.AuthResponse;
 import com.bim.backend.dto.ChangePasswordRequest;
 import com.bim.backend.dto.ChangeUsernameRequest;
 import com.bim.backend.dto.CreateUserRequest;
+import com.bim.backend.dto.UpdateUserRequest;
 import com.bim.backend.dto.UserResponse;
 import com.bim.backend.entity.User;
 import com.bim.backend.exception.BadRequestException;
@@ -11,7 +12,6 @@ import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.UserRepository;
 import com.bim.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,6 +91,28 @@ public class UserService {
                 .build();
     }
 
+    public UserResponse updateUser(Long id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new IllegalArgumentException("Email already in use");
+            }
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+
+        if (request.getRole() != null) {
+            user.setRole(request.getRole());
+        }
+
+        return mapToResponse(userRepository.save(user));
+    }
+
     public void deleteUser(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userRepository.findByUsername(authentication.getName())
@@ -103,11 +125,7 @@ public class UserService {
         User userToDelete = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-        try {
-            userRepository.delete(userToDelete);
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Cannot delete user: they have linked offertes or projects. Delete those first.");
-        }
+        userRepository.delete(userToDelete);
     }
 
     private UserResponse mapToResponse(User user) {

@@ -46,6 +46,8 @@ export default function OfferteDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [actionError, setActionError] = useState(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   useEffect(() => {
     fetchOfferte()
@@ -64,36 +66,40 @@ export default function OfferteDetail() {
 
   const handleStatusChange = async (newStatus) => {
     setUpdatingStatus(true)
+    setActionError(null)
     try {
       const updated = await api.patch(`/api/offertes/${id}/status?status=${newStatus}`)
       setOfferte(updated)
     } catch (err) {
-      alert(err.message)
+      setActionError(err.message)
     } finally {
       setUpdatingStatus(false)
     }
   }
 
   const handleDuplicate = async () => {
+    setActionError(null)
     try {
       const copy = await api.post(`/api/offertes/${id}/duplicate`)
       navigate(`/offertes/${copy.id}`)
     } catch (err) {
-      alert(err.message)
+      setActionError(err.message)
     }
   }
 
   const handleDelete = async () => {
-    if (!confirm(t.deleteConfirm)) return
+    setActionError(null)
     try {
       await api.delete(`/api/offertes/${id}`)
       navigate('/offertes')
     } catch (err) {
-      alert(err.message)
+      setShowDeleteConfirm(false)
+      setActionError(err.message)
     }
   }
 
   const handleDownloadPdf = async () => {
+    setActionError(null)
     try {
       const blob = await api.download(`/api/offertes/${id}/pdf`)
       const url = URL.createObjectURL(blob)
@@ -103,18 +109,19 @@ export default function OfferteDetail() {
       a.click()
       setTimeout(() => URL.revokeObjectURL(url), 10000)
     } catch (err) {
-      alert(err.message)
+      setActionError(err.message)
     }
   }
 
   const handlePreviewPdf = async () => {
+    setActionError(null)
     try {
       const blob = await api.download(`/api/offertes/${id}/pdf`)
       const url = URL.createObjectURL(blob)
       window.open(url, '_blank')
       setTimeout(() => URL.revokeObjectURL(url), 60000)
     } catch (err) {
-      alert(err.message)
+      setActionError(err.message)
     }
   }
 
@@ -170,12 +177,30 @@ export default function OfferteDetail() {
           <button onClick={handleDuplicate} className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors">
             {t.duplicate}
           </button>
-          <div className="ml-auto">
-            <button onClick={handleDelete} className="px-4 py-2 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm font-medium transition-colors">
-              {t.delete}
-            </button>
+          <div className="ml-auto flex items-center gap-2">
+            {showDeleteConfirm ? (
+              <>
+                <span className="text-sm text-gray-600">{t.deleteConfirm || 'Are you sure?'}</span>
+                <button onClick={handleDelete} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors">
+                  {t.confirmDelete || 'Confirm'}
+                </button>
+                <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+                  {t.cancel || 'Cancel'}
+                </button>
+              </>
+            ) : (
+              <button onClick={() => setShowDeleteConfirm(true)} className="px-4 py-2 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm font-medium transition-colors">
+                {t.delete}
+              </button>
+            )}
           </div>
         </div>
+
+        {actionError && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mt-4">
+            <p className="text-sm">{actionError}</p>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-3 gap-4">

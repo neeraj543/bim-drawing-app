@@ -4,6 +4,7 @@ import com.bim.backend.dto.AuthResponse;
 import com.bim.backend.dto.ChangePasswordRequest;
 import com.bim.backend.dto.ChangeUsernameRequest;
 import com.bim.backend.dto.CreateUserRequest;
+import com.bim.backend.dto.UpdateUserRequest;
 import com.bim.backend.dto.UserResponse;
 import com.bim.backend.service.UserService;
 import jakarta.validation.Valid;
@@ -49,6 +50,11 @@ public class UserController {
     @PutMapping("/me/username")
     public ResponseEntity<AuthResponse> changeUsername(@RequestBody ChangeUsernameRequest request) {
         return ResponseEntity.ok(userService.changeUsername(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     @DeleteMapping("/{id}")

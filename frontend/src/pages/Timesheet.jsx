@@ -28,6 +28,7 @@ function Timesheet() {
 
   // Edit modal state
   const [editEntry, setEditEntry] = useState(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
 
   useEffect(() => {
     fetchEntries()
@@ -100,11 +101,12 @@ function Timesheet() {
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t.timesheet.deleteConfirm)) return
     try {
       await api.delete(`/api/time-entries/${id}`)
+      setConfirmDeleteId(null)
       await fetchEntries()
     } catch (err) {
+      setConfirmDeleteId(null)
       setError(err.message)
     }
   }
@@ -271,26 +273,44 @@ function Timesheet() {
                   <td className="px-5 py-4 text-gray-600">{entry.description || <span className="text-gray-400">—</span>}</td>
                   <td className="px-5 py-4 font-mono font-semibold text-gray-800">{formatDuration(entry.durationSeconds)}</td>
                   <td className="px-5 py-4">
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={() => setEditEntry(entry)}
-                        className="p-1.5 text-gray-500 hover:bg-gray-100 rounded transition-colors"
-                        title="Edit"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(entry.id)}
-                        className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors"
-                        title="Delete"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
+                    {confirmDeleteId === entry.id ? (
+                      <div className="flex items-center gap-2 justify-end">
+                        <span className="text-xs text-gray-600">{t.timesheet.deleteConfirm}</span>
+                        <button
+                          onClick={() => handleDelete(entry.id)}
+                          className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium transition-colors"
+                        >
+                          {t.timesheet.deleteConfirmBtn || 'Delete'}
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="px-2 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-xs font-medium border border-gray-300 transition-colors"
+                        >
+                          {t.timesheet.cancel}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2 justify-end">
+                        <button
+                          onClick={() => setEditEntry(entry)}
+                          className="p-1.5 text-gray-500 hover:bg-gray-100 rounded transition-colors"
+                          title="Edit"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(entry.id)}
+                          className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors"
+                          title="Delete"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

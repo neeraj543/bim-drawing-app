@@ -12,6 +12,7 @@ function Tasks() {
   const [filterStatus, setFilterStatus] = useState('ALL')
   const [filterPriority, setFilterPriority] = useState('ALL')
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [confirmDeleteTaskId, setConfirmDeleteTaskId] = useState(null)
   const [users, setUsers] = useState([])
   const [drawingSets, setDrawingSets] = useState([])
 
@@ -68,14 +69,12 @@ function Tasks() {
   }
 
   const handleDeleteTask = async (taskId) => {
-    if (!window.confirm(t.tasks.deleteConfirm)) {
-      return
-    }
-
     try {
       await api.delete(`/api/tasks/${taskId}`)
+      setConfirmDeleteTaskId(null)
       await fetchTasks()
     } catch (err) {
+      setConfirmDeleteTaskId(null)
       setError(err.message)
     }
   }
@@ -234,15 +233,33 @@ function Tasks() {
                 </div>
 
                 {isAdmin() && (
-                  <button
-                    onClick={() => handleDeleteTask(task.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors ml-4"
-                    title="Delete task"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
+                  confirmDeleteTaskId === task.id ? (
+                    <div className="flex items-center gap-2 ml-4">
+                      <span className="text-sm text-gray-600">{t.tasks.deleteConfirm}</span>
+                      <button
+                        onClick={() => handleDeleteTask(task.id)}
+                        className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium transition-colors"
+                      >
+                        {t.tasks.deleteConfirmBtn || 'Delete'}
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteTaskId(null)}
+                        className="px-2 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-xs font-medium transition-colors"
+                      >
+                        {t.tasks.cancel}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmDeleteTaskId(task.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors ml-4"
+                      title="Delete task"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  )
                 )}
               </div>
 

@@ -3,28 +3,52 @@ import { useAuth } from '../contexts/AuthContext';
 import { api } from '../utils/api';
 import { useLang } from '../contexts/LanguageContext';
 
+function initials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(' ').filter(Boolean);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function Avatar({ name, role }) {
+  const bg = role === 'ADMIN' ? 'bg-amber-500' : 'bg-blue-500';
+  return (
+    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 ${bg}`}>
+      {initials(name)}
+    </div>
+  );
+}
+
+function RoleBadge({ role }) {
+  return (
+    <span className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ${
+      role === 'ADMIN' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+    }`}>
+      {role}
+    </span>
+  );
+}
+
+function ErrorBanner({ message }) {
+  return (
+    <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-5">
+      <p className="text-sm">{message}</p>
+    </div>
+  );
+}
+
 function UserManagement() {
   const { user: currentUser } = useAuth();
   const { t } = useLang();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    email: '',
-    fullName: '',
-    role: 'USER'
-  });
-  const [formError, setFormError] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editUser, setEditUser] = useState(null);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  useEffect(() => { fetchUsers(); }, []);
 
   const fetchUsers = async () => {
     try {
@@ -35,29 +59,6 @@ function UserManagement() {
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCreateUser = async (e) => {
-    e.preventDefault();
-    setFormError(null);
-    setSubmitting(true);
-
-    try {
-      await api.post('/api/users', formData);
-      await fetchUsers();
-      setShowCreateModal(false);
-      setFormData({
-        username: '',
-        password: '',
-        email: '',
-        fullName: '',
-        role: 'USER'
-      });
-    } catch (err) {
-      setFormError(err.message);
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -76,111 +77,118 @@ function UserManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">{t.users.loading}</div>
+        <svg className="animate-spin h-8 w-8 text-amber-600" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
       </div>
     );
   }
 
   return (
     <>
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">{t.users.title}</h1>
-            <p className="text-gray-600 mt-1">{t.users.subtitle}</p>
+      <div className="max-w-5xl mx-auto">
+
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-amber-600 text-white rounded-lg p-2">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-4xl font-bold text-gray-800">{t.users.title}</h2>
+              <p className="text-gray-600">{t.users.subtitle}</p>
+            </div>
           </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-          >
-            {t.users.addUser}
-          </button>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full font-medium">
+              {users.length} {users.length === 1 ? 'user' : 'users'}
+            </span>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              {t.users.addUser}
+            </button>
+          </div>
         </div>
 
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
-            <p>{error}</p>
-          </div>
-        )}
+        {error && <ErrorBanner message={error} />}
+        {deleteError && <ErrorBanner message={deleteError} />}
 
-        {deleteError && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
-            <p>{deleteError}</p>
-          </div>
-        )}
-
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        {/* Table */}
+        <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t.users.colUser}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t.users.colEmail}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t.users.colRole}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t.users.colCreated}
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t.users.colActions}
-                </th>
+                <th className="text-left px-5 py-3.5 font-semibold text-gray-600">{t.users.colUser}</th>
+                <th className="text-left px-5 py-3.5 font-semibold text-gray-600">{t.users.colEmail}</th>
+                <th className="text-left px-5 py-3.5 font-semibold text-gray-600">{t.users.colRole}</th>
+                <th className="text-left px-5 py-3.5 font-semibold text-gray-600">{t.users.colCreated}</th>
+                <th className="px-5 py-3.5" />
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{user.fullName || user.username}</div>
-                      <div className="text-sm text-gray-500">@{user.username}</div>
+                <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar name={user.fullName || user.username} role={user.role} />
+                      <div>
+                        <div className="font-medium text-gray-900">{user.fullName || user.username}</div>
+                        <div className="text-xs text-gray-500">@{user.username}</div>
+                      </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {user.email}
+                  <td className="px-5 py-4 text-gray-600">{user.email}</td>
+                  <td className="px-5 py-4"><RoleBadge role={user.role} /></td>
+                  <td className="px-5 py-4 text-gray-500 text-xs">
+                    {new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        user.role === 'ADMIN'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-blue-100 text-blue-800'
-                      }`}
-                    >
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-5 py-4">
                     {user.username !== currentUser.username && (
                       confirmDeleteId === user.id ? (
-                        <span className="inline-flex items-center gap-2">
-                          <span className="text-gray-700 text-sm">{t.users.deleteConfirm}</span>
+                        <div className="flex items-center gap-2 justify-end">
+                          <span className="text-xs text-gray-500">{t.users.deleteConfirm}</span>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs font-medium transition-colors"
+                            className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium transition-colors"
                           >
                             {t.users.delete}
                           </button>
                           <button
                             onClick={() => setConfirmDeleteId(null)}
-                            className="text-gray-600 hover:text-gray-900 px-3 py-1 rounded text-xs font-medium border border-gray-300 hover:border-gray-400 transition-colors"
+                            className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-xs font-medium transition-colors"
                           >
                             {t.users.cancel}
                           </button>
-                        </span>
+                        </div>
                       ) : (
-                        <button
-                          onClick={() => { setDeleteError(null); setConfirmDeleteId(user.id); }}
-                          className="text-red-600 hover:text-red-900 transition-colors"
-                        >
-                          {t.users.delete}
-                        </button>
+                        <div className="flex gap-1 justify-end">
+                          <button
+                            onClick={() => { setEditUser(user); }}
+                            className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                            title="Edit"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => { setDeleteError(null); setConfirmDeleteId(user.id); }}
+                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
                       )
                     )}
                   </td>
@@ -188,114 +196,252 @@ function UserManagement() {
               ))}
             </tbody>
           </table>
-        </div>
 
-        {users.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            {t.users.noUsers}
-          </div>
-        )}
+          {users.length === 0 && (
+            <div className="text-center py-16 text-gray-400">
+              <svg className="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <p>{t.users.noUsers}</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Create User Modal */}
+      {/* Edit Modal */}
+      {editUser && (
+        <EditUserModal
+          user={editUser}
+          onClose={() => setEditUser(null)}
+          onSaved={() => { setEditUser(null); fetchUsers(); }}
+          t={t}
+        />
+      )}
+
+      {/* Create Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.users.addNewUser}</h2>
-
-            {formError && (
-              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-4">
-                <p className="text-sm">{formError}</p>
-              </div>
-            )}
-
-            <form onSubmit={handleCreateUser} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.username}</label>
-                <input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.password}</label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.email}</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.fullName}</label>
-                <input
-                  type="text"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.role}</label>
-                <select
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                >
-                  <option value="USER">{t.users.roleDeveloper}</option>
-                  <option value="ADMIN">{t.users.roleAdmin}</option>
-                </select>
-              </div>
-
-              <div className="flex gap-3 mt-6">
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white py-2 rounded-lg font-medium transition-colors"
-                >
-                  {submitting ? t.users.creating : t.users.createUser}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    setFormError(null);
-                    setFormData({
-                      username: '',
-                      password: '',
-                      email: '',
-                      fullName: '',
-                      role: 'USER'
-                    });
-                  }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-medium transition-colors"
-                >
-                  {t.users.cancel}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <CreateUserModal
+          onClose={() => setShowCreateModal(false)}
+          onSaved={() => { setShowCreateModal(false); fetchUsers(); }}
+          t={t}
+        />
       )}
     </>
+  );
+}
+
+function EditUserModal({ user, onClose, onSaved, t }) {
+  const [form, setForm] = useState({
+    fullName: user.fullName || '',
+    email: user.email || '',
+    role: user.role,
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSaving(true);
+    try {
+      await api.put(`/api/users/${user.id}`, form);
+      onSaved();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-md shadow-xl">
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b">
+          <h2 className="text-xl font-bold text-gray-800">{t.users.editUser || 'Edit User'}</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* User identity (read-only) */}
+        <div className="px-6 py-4 border-b bg-gray-50 flex items-center gap-3">
+          <Avatar name={user.fullName || user.username} role={user.role} />
+          <div>
+            <div className="font-medium text-gray-800">{user.fullName || user.username}</div>
+            <div className="text-xs text-gray-500">@{user.username}</div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {error && <ErrorBanner message={error} />}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.fullName}</label>
+            <input
+              type="text"
+              value={form.fullName}
+              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              placeholder="Full name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.email}</label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.role}</label>
+            <select
+              value={form.role}
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+            >
+              <option value="USER">{t.users.roleDeveloper}</option>
+              <option value="ADMIN">{t.users.roleAdmin}</option>
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 text-white py-2 rounded-lg font-medium text-sm transition-colors"
+            >
+              {saving ? (t.users.saving || 'Saving…') : (t.users.saveChanges || 'Save changes')}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-colors"
+            >
+              {t.users.cancel}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function CreateUserModal({ onClose, onSaved, t }) {
+  const [form, setForm] = useState({ username: '', password: '', email: '', fullName: '', role: 'USER' });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSaving(true);
+    try {
+      await api.post('/api/users', form);
+      onSaved();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-md shadow-xl">
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b">
+          <h2 className="text-xl font-bold text-gray-800">{t.users.addNewUser}</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {error && <ErrorBanner message={error} />}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.username} *</label>
+              <input
+                type="text"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.password} *</label>
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.fullName}</label>
+            <input
+              type="text"
+              value={form.fullName}
+              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.email} *</label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.users.role}</label>
+            <select
+              value={form.role}
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+            >
+              <option value="USER">{t.users.roleDeveloper}</option>
+              <option value="ADMIN">{t.users.roleAdmin}</option>
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 text-white py-2 rounded-lg font-medium text-sm transition-colors"
+            >
+              {saving ? t.users.creating : t.users.createUser}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-colors"
+            >
+              {t.users.cancel}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 
