@@ -11,6 +11,7 @@ import com.bim.backend.exception.ResourceNotFoundException;
 import com.bim.backend.repository.UserRepository;
 import com.bim.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -102,7 +103,11 @@ public class UserService {
         User userToDelete = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-        userRepository.delete(userToDelete);
+        try {
+            userRepository.delete(userToDelete);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Cannot delete user: they have linked offertes or projects. Delete those first.");
+        }
     }
 
     private UserResponse mapToResponse(User user) {

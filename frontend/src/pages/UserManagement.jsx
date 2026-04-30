@@ -19,6 +19,8 @@ function UserManagement() {
   });
   const [formError, setFormError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -60,15 +62,14 @@ function UserManagement() {
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm(t.users.deleteConfirm)) {
-      return;
-    }
-
+    setDeleteError(null);
     try {
       await api.delete(`/api/users/${userId}`);
+      setConfirmDeleteId(null);
       await fetchUsers();
     } catch (err) {
-      alert('Error deleting user: ' + err.message);
+      setConfirmDeleteId(null);
+      setDeleteError(err.message);
     }
   };
 
@@ -99,6 +100,12 @@ function UserManagement() {
         {error && (
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
             <p>{error}</p>
+          </div>
+        )}
+
+        {deleteError && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
+            <p>{deleteError}</p>
           </div>
         )}
 
@@ -151,12 +158,30 @@ function UserManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     {user.username !== currentUser.username && (
-                      <button
-                        onClick={() => handleDeleteUser(user.id)}
-                        className="text-red-600 hover:text-red-900 transition-colors"
-                      >
-                        {t.users.delete}
-                      </button>
+                      confirmDeleteId === user.id ? (
+                        <span className="inline-flex items-center gap-2">
+                          <span className="text-gray-700 text-sm">{t.users.deleteConfirm}</span>
+                          <button
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs font-medium transition-colors"
+                          >
+                            {t.users.delete}
+                          </button>
+                          <button
+                            onClick={() => setConfirmDeleteId(null)}
+                            className="text-gray-600 hover:text-gray-900 px-3 py-1 rounded text-xs font-medium border border-gray-300 hover:border-gray-400 transition-colors"
+                          >
+                            {t.users.cancel}
+                          </button>
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => { setDeleteError(null); setConfirmDeleteId(user.id); }}
+                          className="text-red-600 hover:text-red-900 transition-colors"
+                        >
+                          {t.users.delete}
+                        </button>
+                      )
                     )}
                   </td>
                 </tr>
