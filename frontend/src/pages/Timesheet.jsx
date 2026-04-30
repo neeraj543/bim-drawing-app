@@ -114,7 +114,7 @@ function Timesheet() {
   const totalSeconds = entries.reduce((sum, e) => sum + e.durationSeconds, 0)
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8 flex items-center gap-3">
         <div className="bg-amber-600 text-white rounded-lg p-2">

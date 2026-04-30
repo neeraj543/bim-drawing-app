@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../utils/api';
 import { useLang } from '../contexts/LanguageContext';
@@ -60,7 +61,7 @@ function UserManagement() {
 
   return (
     <>
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
@@ -173,6 +174,11 @@ function UserCard({ user, isCurrentUser, confirmDeleteId, onEdit, onDeleteStart,
         </div>
 
         {/* Actions */}
+        {isCurrentUser && (
+          <div className="shrink-0">
+            <Link to="/profile" className="text-xs text-amber-600 hover:text-amber-700 font-medium">My Profile →</Link>
+          </div>
+        )}
         {!isCurrentUser && (
           <div className="shrink-0">
             {isConfirming ? (
