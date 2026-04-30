@@ -14,13 +14,13 @@ function CRM() {
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
         <div className="bg-amber-600 text-white rounded-lg p-2">
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
         <div>
-          <h2 className="text-4xl font-bold text-gray-800">CRM</h2>
-          <p className="text-gray-600">{t.crm.subtitle}</p>
+          <h1 className="text-2xl font-bold text-gray-900">CRM</h1>
+          <p className="text-sm text-gray-400">{t.crm.subtitle}</p>
         </div>
       </div>
 

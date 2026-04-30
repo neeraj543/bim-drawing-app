@@ -143,15 +143,15 @@ function Tasks() {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
             <div className="bg-amber-600 text-white rounded-lg p-2">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
             </div>
             <div>
-              <h2 className="text-4xl font-bold text-gray-800">
+              <h1 className="text-2xl font-bold text-gray-900">
                 {isAdmin() ? t.tasks.allTasks : t.tasks.myTasks}
-              </h2>
-              <p className="text-gray-600">{t.tasks.subtitle}</p>
+              </h1>
+              <p className="text-sm text-gray-400">{t.tasks.subtitle}</p>
             </div>
           </div>
 

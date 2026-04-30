@@ -1,140 +1,12 @@
-import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useLang } from '../../contexts/LanguageContext'
-import { api } from '../../utils/api'
-
-function ProfileModal({ onClose }) {
-  const { login } = useAuth()
-  const { t } = useLang()
-  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' })
-  const [usernameForm, setUsernameForm] = useState({ newUsername: '' })
-  const [passwordMsg, setPasswordMsg] = useState(null)
-  const [usernameMsg, setUsernameMsg] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-  const handlePasswordChange = async (e) => {
-    e.preventDefault()
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordMsg({ error: true, text: t.profile.pwdMismatch })
-      return
-    }
-    setLoading(true)
-    try {
-      await api.put('/api/users/me/password', {
-        currentPassword: passwordForm.currentPassword,
-        newPassword: passwordForm.newPassword,
-      })
-      setPasswordMsg({ error: false, text: t.profile.pwdSuccess })
-      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
-    } catch (err) {
-      setPasswordMsg({ error: true, text: err.message })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleUsernameChange = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const data = await api.put('/api/users/me/username', { newUsername: usernameForm.newUsername })
-      login(data)
-      setUsernameMsg({ error: false, text: t.profile.usernameSuccess })
-      setUsernameForm({ newUsername: '' })
-    } catch (err) {
-      setUsernameMsg({ error: true, text: err.message })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-800">{t.profile.title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-        </div>
-
-        {/* Change Password */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t.profile.changePassword}</h3>
-          <form onSubmit={handlePasswordChange} className="space-y-3">
-            <input
-              type="password"
-              placeholder={t.profile.currentPwd}
-              value={passwordForm.currentPassword}
-              onChange={e => setPasswordForm(p => ({ ...p, currentPassword: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-              required
-            />
-            <input
-              type="password"
-              placeholder={t.profile.newPwd}
-              value={passwordForm.newPassword}
-              onChange={e => setPasswordForm(p => ({ ...p, newPassword: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-              required
-            />
-            <input
-              type="password"
-              placeholder={t.profile.confirmPwd}
-              value={passwordForm.confirmPassword}
-              onChange={e => setPasswordForm(p => ({ ...p, confirmPassword: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-              required
-            />
-            {passwordMsg && (
-              <p className={`text-sm ${passwordMsg.error ? 'text-red-600' : 'text-green-600'}`}>{passwordMsg.text}</p>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors disabled:bg-gray-300"
-            >
-              {t.profile.updatePwd}
-            </button>
-          </form>
-        </div>
-
-        <hr className="border-gray-200 mb-6" />
-
-        {/* Change Username */}
-        <div>
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t.profile.changeUsername}</h3>
-          <form onSubmit={handleUsernameChange} className="space-y-3">
-            <input
-              type="text"
-              placeholder={t.profile.newUsername}
-              value={usernameForm.newUsername}
-              onChange={e => setUsernameForm({ newUsername: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-              required
-            />
-            {usernameMsg && (
-              <p className={`text-sm ${usernameMsg.error ? 'text-red-600' : 'text-green-600'}`}>{usernameMsg.text}</p>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors disabled:bg-gray-300"
-            >
-              {t.profile.updateUsername}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 function Header() {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout, isAuthenticated, isAdmin } = useAuth()
   const { lang, toggle, t } = useLang()
-  const [showProfile, setShowProfile] = useState(false)
 
   const isActive = (path) => {
     return location.pathname === path
@@ -255,13 +127,13 @@ function Header() {
                   >
                     {lang === 'nl' ? 'NL' : 'EN'}
                   </button>
-                  <button
-                    onClick={() => setShowProfile(true)}
-                    className="text-right hover:opacity-70 transition-opacity"
+                  <Link
+                    to="/profile"
+                    className={`text-right hover:opacity-70 transition-opacity ${location.pathname === '/profile' ? 'opacity-70' : ''}`}
                   >
                     <p className="text-sm font-medium text-gray-900">{user?.fullName || user?.username}</p>
                     <p className="text-xs text-gray-500">{user?.role}</p>
-                  </button>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
@@ -284,7 +156,6 @@ function Header() {
         </div>
       </div>
 
-      {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
     </header>
   )
 }

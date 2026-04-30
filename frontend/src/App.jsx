@@ -13,6 +13,7 @@ import Timesheet from './pages/Timesheet'
 import CRM from './pages/CRM'
 import Login from './pages/Login'
 import UserManagement from './pages/UserManagement'
+import Profile from './pages/Profile'
 import Offertes from './pages/Offertes'
 import OfferteDetail from './pages/OfferteDetail'
 import OfferteForm from './pages/OfferteForm'
@@ -113,6 +114,14 @@ function App() {
                 <AdminRoute>
                   <UserManagement />
                 </AdminRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
               }
             />
           </Routes>
