@@ -48,6 +48,8 @@ function UserManagement() {
     }
   };
 
+  const adminCount = users.filter(u => u.role === 'ADMIN').length;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -62,8 +64,9 @@ function UserManagement() {
   return (
     <>
       <div className="max-w-7xl mx-auto">
+
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="bg-amber-600 text-white rounded-lg p-2">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,19 +85,31 @@ function UserManagement() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            {t.users.addUser}
+            {t.users.addNewUser}
           </button>
         </div>
 
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm">
-            {error}
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">Total users</p>
+            <p className="text-2xl font-bold text-gray-900">{users.length}</p>
           </div>
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">Admins</p>
+            <p className="text-2xl font-bold text-amber-600">{adminCount}</p>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">Regular users</p>
+            <p className="text-2xl font-bold text-blue-600">{users.length - adminCount}</p>
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm">{error}</div>
         )}
         {deleteError && (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm">
-            {deleteError}
-          </div>
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm">{deleteError}</div>
         )}
 
         {/* User cards */}
@@ -106,7 +121,7 @@ function UserManagement() {
             <p>{t.users.noUsers}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {users.map((user) => (
               <UserCard
                 key={user.id}
@@ -145,44 +160,72 @@ function UserManagement() {
 }
 
 function UserCard({ user, isCurrentUser, confirmDeleteId, onEdit, onDeleteStart, onDeleteConfirm, onDeleteCancel, t }) {
-  const avatarBg = user.role === 'ADMIN' ? 'bg-amber-500' : 'bg-blue-500';
+  const isAdmin = user.role === 'ADMIN';
+  const avatarBg = isAdmin ? 'bg-amber-500' : 'bg-blue-500';
+  const topBorder = isAdmin ? 'border-t-amber-400' : 'border-t-blue-400';
   const isConfirming = confirmDeleteId === user.id;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow">
-      <div className="flex items-start gap-4">
-        {/* Avatar */}
-        <div className={`w-11 h-11 rounded-full ${avatarBg} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
-          {initials(user.fullName || user.username)}
-        </div>
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-gray-900 truncate">{user.fullName || user.username}</span>
-            {isCurrentUser && (
-              <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">you</span>
-            )}
-            <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
-              user.role === 'ADMIN' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
-            }`}>
-              {user.role}
-            </span>
+    <div className={`bg-white rounded-xl border border-gray-200 border-t-2 ${topBorder} shadow-sm hover:shadow-md transition-shadow flex flex-col`}>
+      <div className="p-5 flex-1">
+        <div className="flex items-start gap-4">
+          {/* Avatar */}
+          <div className={`w-12 h-12 rounded-full ${avatarBg} flex items-center justify-center text-white font-bold shrink-0`}>
+            {initials(user.fullName || user.username)}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">@{user.username}</div>
-          <div className="text-xs text-gray-400 mt-1">{user.email}</div>
-        </div>
 
-        {/* Actions */}
-        {isCurrentUser && (
-          <div className="shrink-0">
-            <Link to="/profile" className="text-xs text-amber-600 hover:text-amber-700 font-medium">My Profile →</Link>
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+              <span className="font-semibold text-gray-900 truncate">{user.fullName || user.username}</span>
+              {isCurrentUser && (
+                <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded shrink-0">you</span>
+              )}
+            </div>
+            <div className="text-xs text-gray-500">@{user.username}</div>
+            <div className="text-xs text-gray-400 mt-0.5 truncate">{user.email}</div>
+            <div className="mt-2.5">
+              <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                isAdmin ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+              }`}>
+                {user.role}
+              </span>
+            </div>
           </div>
-        )}
-        {!isCurrentUser && (
-          <div className="shrink-0">
-            {isConfirming ? (
-              <div className="flex items-center gap-1.5">
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 rounded-b-xl flex items-center justify-between">
+        <span className="text-xs text-gray-400">
+          {t.users.colCreated}: {new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+        </span>
+
+        <div className="flex items-center gap-1">
+          {isCurrentUser && (
+            <Link
+              to="/profile"
+              className="px-2.5 py-1 text-xs text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg font-medium transition-colors"
+            >
+              Profile →
+            </Link>
+          )}
+
+          {/* Edit: available for all users */}
+          <button
+            onClick={onEdit}
+            className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+            title="Edit"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+
+          {/* Delete: only for other users */}
+          {!isCurrentUser && (
+            isConfirming ? (
+              <>
                 <button
                   onClick={onDeleteConfirm}
                   className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium transition-colors"
@@ -195,36 +238,20 @@ function UserCard({ user, isCurrentUser, confirmDeleteId, onEdit, onDeleteStart,
                 >
                   {t.users.cancel}
                 </button>
-              </div>
+              </>
             ) : (
-              <div className="flex gap-1">
-                <button
-                  onClick={onEdit}
-                  className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
-                  title="Edit"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <button
-                  onClick={onDeleteStart}
-                  className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Delete"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
-        {t.users.colCreated}: {new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              <button
+                onClick={onDeleteStart}
+                className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                title="Delete"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
