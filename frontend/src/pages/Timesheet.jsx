@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { api } from '../utils/api'
 import { useAuth } from '../contexts/AuthContext'
+import { useLang } from '../contexts/LanguageContext'
 
 function formatDuration(seconds) {
   const h = Math.floor(seconds / 3600)
@@ -11,6 +12,7 @@ function formatDuration(seconds) {
 
 function Timesheet() {
   const { isAdmin } = useAuth()
+  const { t } = useLang()
   const [entries, setEntries] = useState([])
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
@@ -76,7 +78,7 @@ function Timesheet() {
   const handleLogTime = async () => {
     setTimerError(null)
     if (elapsed === 0) {
-      setTimerError('Start the timer first before logging time.')
+      setTimerError(t.timesheet.startFirst)
       return
     }
 
@@ -98,7 +100,7 @@ function Timesheet() {
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this time entry?')) return
+    if (!window.confirm(t.timesheet.deleteConfirm)) return
     try {
       await api.delete(`/api/time-entries/${id}`)
       await fetchEntries()
@@ -119,14 +121,14 @@ function Timesheet() {
           </svg>
         </div>
         <div>
-          <h2 className="text-4xl font-bold text-gray-800">Timesheet</h2>
-          <p className="text-gray-600">Track time spent on projects</p>
+          <h2 className="text-4xl font-bold text-gray-800">{t.timesheet.title}</h2>
+          <p className="text-gray-600">{t.timesheet.subtitle}</p>
         </div>
       </div>
 
       {/* Timer Card */}
       <div className="bg-white rounded-xl shadow border border-gray-200 p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Timer</h3>
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">{t.timesheet.timer}</h3>
 
         {/* Timer display */}
         <div className="text-center mb-6">
@@ -145,7 +147,7 @@ function Timesheet() {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
-              Start
+              {t.timesheet.start}
             </button>
           ) : (
             <button
@@ -155,34 +157,34 @@ function Timesheet() {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
               </svg>
-              Pause
+              {t.timesheet.pause}
             </button>
           )}
           <button
             onClick={resetTimer}
             className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors"
           >
-            Reset
+            {t.timesheet.reset}
           </button>
         </div>
 
         {/* Project + description */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Project (optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.timesheet.project}</label>
             <select
               value={timerProjectId}
               onChange={e => setTimerProjectId(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
-              <option value="">No project</option>
+              <option value="">{t.timesheet.noProject}</option>
               {projects.map(p => (
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Note (what did you do?)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.timesheet.note}</label>
             <input
               type="text"
               value={timerDescription}
@@ -201,7 +203,7 @@ function Timesheet() {
           onClick={handleLogTime}
           className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors"
         >
-          Log Time
+          {t.timesheet.logTime}
         </button>
       </div>
 
@@ -209,7 +211,7 @@ function Timesheet() {
       {entries.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg px-5 py-3 mb-6 flex items-center justify-between">
           <span className="text-amber-800 font-medium">
-            {isAdmin() ? 'Total logged (all users)' : 'Total logged'}
+            {isAdmin() ? t.timesheet.totalAll : t.timesheet.totalMe}
           </span>
           <span className="text-amber-900 font-bold text-lg font-mono">{formatDuration(totalSeconds)}</span>
         </div>
@@ -235,18 +237,18 @@ function Timesheet() {
           <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p className="text-gray-500">No time entries yet. Start the timer to log your first entry.</p>
+          <p className="text-gray-500">{t.timesheet.noEntries}</p>
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Date</th>
-                {isAdmin() && <th className="text-left px-5 py-3 font-semibold text-gray-600">User</th>}
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Project</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Note</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Duration</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.timesheet.colDate}</th>
+                {isAdmin() && <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.timesheet.colUser}</th>}
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.timesheet.colProject}</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.timesheet.colNote}</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.timesheet.colDuration}</th>
                 <th className="px-5 py-3"></th>
               </tr>
             </thead>
@@ -316,6 +318,7 @@ function EditEntryModal({ entry, projects, onClose, onSaved }) {
     date: entry.date,
     projectId: entry.projectId ? String(entry.projectId) : ''
   })
+  const { t } = useLang()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -329,7 +332,7 @@ function EditEntryModal({ entry, projects, onClose, onSaved }) {
     setError(null)
     const totalSecs = hours * 3600 + minutes * 60 + seconds
     if (totalSecs <= 0) {
-      setError('Duration must be greater than 0')
+      setError(t.timesheet.durationError)
       return
     }
     try {
@@ -352,7 +355,7 @@ function EditEntryModal({ entry, projects, onClose, onSaved }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-800">Edit Time Entry</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t.timesheet.editTitle}</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -364,7 +367,7 @@ function EditEntryModal({ entry, projects, onClose, onSaved }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.timesheet.duration}</label>
             <div className="flex gap-2 items-center">
               <input type="number" min="0" value={hours} onChange={e => setHours(+e.target.value)}
                 className="w-20 px-2 py-2 border border-gray-300 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-amber-500" />
@@ -379,22 +382,22 @@ function EditEntryModal({ entry, projects, onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.timesheet.date}</label>
             <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Project (optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.timesheet.projectOpt}</label>
             <select value={form.projectId} onChange={e => setForm({ ...form, projectId: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
-              <option value="">No project</option>
+              <option value="">{t.timesheet.noProject}</option>
               {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.timesheet.noteLabel}</label>
             <input type="text" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
               placeholder="e.g. 3D model opgemaakt"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
@@ -403,11 +406,11 @@ function EditEntryModal({ entry, projects, onClose, onSaved }) {
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={loading}
               className="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg disabled:bg-gray-400 transition-colors">
-              {loading ? 'Saving...' : 'Save'}
+              {loading ? t.timesheet.saving : t.timesheet.save}
             </button>
             <button type="button" onClick={onClose}
               className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
-              Cancel
+              {t.timesheet.cancel}
             </button>
           </div>
         </form>

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { api } from '../utils/api'
 import { useAuth } from '../contexts/AuthContext'
+import { useLang } from '../contexts/LanguageContext'
 
 function Tasks() {
   const { isAdmin } = useAuth()
+  const { t } = useLang()
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -66,7 +68,7 @@ function Tasks() {
   }
 
   const handleDeleteTask = async (taskId) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) {
+    if (!window.confirm(t.tasks.deleteConfirm)) {
       return
     }
 
@@ -129,7 +131,7 @@ function Tasks() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <p className="text-gray-600">Loading tasks...</p>
+            <p className="text-gray-600">{t.tasks.loading}</p>
           </div>
         </div>
       </div>
@@ -148,9 +150,9 @@ function Tasks() {
             </div>
             <div>
               <h2 className="text-4xl font-bold text-gray-800">
-                {isAdmin() ? 'All Tasks' : 'My Tasks'}
+                {isAdmin() ? t.tasks.allTasks : t.tasks.myTasks}
               </h2>
-              <p className="text-gray-600">Manage and track your tasks</p>
+              <p className="text-gray-600">{t.tasks.subtitle}</p>
             </div>
           </div>
 
@@ -162,7 +164,7 @@ function Tasks() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Create Task
+              {t.tasks.createTask}
             </button>
           )}
         </div>
@@ -171,30 +173,30 @@ function Tasks() {
       <div className="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
         <div className="flex gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.tasks.status}</label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
-              <option value="ALL">All</option>
-              <option value="TO_DO">To Do</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="DONE">Done</option>
+              <option value="ALL">{t.tasks.all}</option>
+              <option value="TO_DO">{t.tasks.todo}</option>
+              <option value="IN_PROGRESS">{t.tasks.inProgress}</option>
+              <option value="DONE">{t.tasks.done}</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.tasks.priority}</label>
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
-              <option value="ALL">All</option>
-              <option value="LOW">Low</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HIGH">High</option>
+              <option value="ALL">{t.tasks.all}</option>
+              <option value="LOW">{t.tasks.low}</option>
+              <option value="MEDIUM">{t.tasks.medium}</option>
+              <option value="HIGH">{t.tasks.high}</option>
             </select>
           </div>
         </div>
@@ -216,9 +218,9 @@ function Tasks() {
           <svg className="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">No tasks found</h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">{t.tasks.noTasksFound}</h3>
           <p className="text-gray-500">
-            {isAdmin() ? 'Create your first task to get started!' : 'No tasks assigned to you yet.'}
+            {isAdmin() ? t.tasks.noTasksAdmin : t.tasks.noTasksUser}
           </p>
         </div>
       ) : (
@@ -260,40 +262,40 @@ function Tasks() {
 
               <div className="flex items-center justify-between text-sm text-gray-600 pt-4 border-t">
                 <div>
-                  <span className="font-medium">Drawing Set:</span> {task.drawingSetName}
+                  <span className="font-medium">{t.tasks.drawingSet}</span> {task.drawingSetName}
                 </div>
                 <div>
-                  <span className="font-medium">Assigned to:</span> {task.assignedUserName}
+                  <span className="font-medium">{t.tasks.assignedTo}</span> {task.assignedUserName}
                 </div>
                 <div>
-                  <span className="font-medium">Created by:</span> {task.createdByName}
+                  <span className="font-medium">{t.tasks.createdBy}</span> {task.createdByName}
                 </div>
               </div>
 
               {!isAdmin() && (
                 <div className="mt-4 pt-4 border-t">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Update Status:</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t.tasks.updateStatus}</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleUpdateTaskStatus(task.id, 'TO_DO')}
                       disabled={task.status === 'TO_DO'}
                       className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      To Do
+                      {t.tasks.todo}
                     </button>
                     <button
                       onClick={() => handleUpdateTaskStatus(task.id, 'IN_PROGRESS')}
                       disabled={task.status === 'IN_PROGRESS'}
                       className="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      In Progress
+                      {t.tasks.inProgress}
                     </button>
                     <button
                       onClick={() => handleUpdateTaskStatus(task.id, 'DONE')}
                       disabled={task.status === 'DONE'}
                       className="px-3 py-1 text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      Done
+                      {t.tasks.done}
                     </button>
                   </div>
                 </div>
@@ -327,6 +329,7 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
     drawingSetId: '',
     assignedUserId: ''
   })
+  const { t } = useLang()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -335,15 +338,15 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
     setError(null)
 
     if (!formData.title.trim()) {
-      setError('Title is required')
+      setError(t.tasks.titleRequired)
       return
     }
     if (!formData.drawingSetId) {
-      setError('Please select a drawing set')
+      setError(t.tasks.drawingSetRequired)
       return
     }
     if (!formData.assignedUserId) {
-      setError('Please select a user to assign')
+      setError(t.tasks.userRequired)
       return
     }
 
@@ -366,7 +369,7 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">Create New Task</h2>
+          <h2 className="text-2xl font-bold text-gray-800">{t.tasks.createNewTask}</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -386,7 +389,7 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title <span className="text-red-500">*</span>
+              {t.tasks.titleLabel} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -398,7 +401,7 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.tasks.descriptionLabel}</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -410,20 +413,20 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t.tasks.priority}</label>
               <select
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
               >
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
+                <option value="LOW">{t.tasks.low}</option>
+                <option value="MEDIUM">{t.tasks.medium}</option>
+                <option value="HIGH">{t.tasks.high}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t.tasks.dueDateLabel}</label>
               <input
                 type="date"
                 value={formData.dueDate}
@@ -435,14 +438,14 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Drawing Set <span className="text-red-500">*</span>
+              {t.tasks.drawingSetLabel} <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.drawingSetId}
               onChange={(e) => setFormData({ ...formData, drawingSetId: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
-              <option value="">Select a drawing set</option>
+              <option value="">{t.tasks.selectDrawingSet}</option>
               {drawingSets.map((set) => (
                 <option key={set.id} value={set.id}>
                   {set.projectName} - {set.name}
@@ -453,14 +456,14 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Assign To <span className="text-red-500">*</span>
+              {t.tasks.assignToLabel} <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.assignedUserId}
               onChange={(e) => setFormData({ ...formData, assignedUserId: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
-              <option value="">Select a user</option>
+              <option value="">{t.tasks.selectUser}</option>
               {users.map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.fullName || user.username} ({user.role})
@@ -475,14 +478,14 @@ function CreateTaskModal({ onClose, onTaskCreated, users, drawingSets }) {
               disabled={loading}
               className="flex-1 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg disabled:bg-gray-400 transition-colors"
             >
-              {loading ? 'Creating...' : 'Create Task'}
+              {loading ? t.tasks.creating : t.tasks.createTaskBtn}
             </button>
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors"
             >
-              Cancel
+              {t.tasks.cancel}
             </button>
           </div>
         </form>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { api } from '../utils/api'
+import { useLang } from '../contexts/LanguageContext'
 
 const SALUTATIONS = ['MR', 'MRS', 'DR', 'PROF', 'IR']
 const SALUTATION_LABELS = { MR: 'Mr.', MRS: 'Mrs.', DR: 'Dr.', PROF: 'Prof.', IR: 'Ir.' }
 
 function CRM() {
   const [activeTab, setActiveTab] = useState('contacts')
+  const { t } = useLang()
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -18,7 +20,7 @@ function CRM() {
         </div>
         <div>
           <h2 className="text-4xl font-bold text-gray-800">CRM</h2>
-          <p className="text-gray-600">Manage contacts and companies</p>
+          <p className="text-gray-600">{t.crm.subtitle}</p>
         </div>
       </div>
 
@@ -32,7 +34,7 @@ function CRM() {
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
         >
-          Contacts
+          {t.crm.contacts}
         </button>
         <button
           onClick={() => setActiveTab('companies')}
@@ -42,7 +44,7 @@ function CRM() {
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
         >
-          Companies
+          {t.crm.companies}
         </button>
       </div>
 
@@ -61,6 +63,7 @@ function ContactsTab() {
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(null)   // view detail
   const [editing, setEditing] = useState(null)      // add/edit form
+  const { t } = useLang()
   const [showForm, setShowForm] = useState(false)
 
   useEffect(() => { fetchContacts(); fetchCompanies() }, [])
@@ -80,7 +83,7 @@ function ContactsTab() {
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this contact?')) return
+    if (!window.confirm(t.crm.deleteContactConfirm)) return
     try {
       await api.delete(`/api/contacts/${id}`)
       setSelected(null)
@@ -99,7 +102,7 @@ function ContactsTab() {
       <div className="flex items-center justify-between mb-4">
         <input
           type="text"
-          placeholder="Search contacts..."
+          placeholder={t.crm.searchContacts}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -111,24 +114,24 @@ function ContactsTab() {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Add Contact
+          {t.crm.addContact}
         </button>
       </div>
 
       {error && <ErrorBar message={error} />}
 
       {filtered.length === 0 ? (
-        <EmptyState icon="person" text="No contacts yet. Add your first contact to get started." />
+        <EmptyState text={t.crm.noContacts} />
       ) : (
         <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Name</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Job Title</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Email</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Phone</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colName}</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colCompany}</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colJobTitle}</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colEmail}</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colPhone}</th>
                 <th className="px-5 py-3"></th>
               </tr>
             </thead>
@@ -193,6 +196,7 @@ function ContactsTab() {
 }
 
 function ContactDetailModal({ contact, onClose, onEdit, onDelete }) {
+  const { t } = useLang()
   const sal = contact.salutation ? SALUTATION_LABELS[contact.salutation] + ' ' : ''
   const address = [
     contact.street && contact.streetNumber ? `${contact.street} ${contact.streetNumber}` : contact.street,
@@ -219,21 +223,21 @@ function ContactDetailModal({ contact, onClose, onEdit, onDelete }) {
         </div>
 
         <div className="p-6 space-y-4">
-          <DetailSection label="Contact">
+          <DetailSection label={t.crm.contactSection}>
             {contact.email && <DetailRow icon="email" value={contact.email} />}
-            {contact.phone && <DetailRow icon="phone" label="Phone" value={contact.phone} />}
-            {contact.mobile && <DetailRow icon="mobile" label="Mobile" value={contact.mobile} />}
+            {contact.phone && <DetailRow icon="phone" label={t.crm.colPhone} value={contact.phone} />}
+            {contact.mobile && <DetailRow icon="mobile" label={t.crm.mobile} value={contact.mobile} />}
             {contact.website && <DetailRow icon="web" value={contact.website} />}
           </DetailSection>
 
           {address && (
-            <DetailSection label="Address">
+            <DetailSection label={t.crm.addressSection}>
               <p className="text-gray-700 text-sm">{address}</p>
             </DetailSection>
           )}
 
           {contact.notes && (
-            <DetailSection label="Notes">
+            <DetailSection label={t.crm.notesSection}>
               <p className="text-gray-700 text-sm whitespace-pre-wrap">{contact.notes}</p>
             </DetailSection>
           )}
@@ -242,15 +246,15 @@ function ContactDetailModal({ contact, onClose, onEdit, onDelete }) {
         <div className="flex gap-3 p-6 border-t">
           <button onClick={onEdit}
             className="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors">
-            Edit
+            {t.crm.edit}
           </button>
           <button onClick={onDelete}
             className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition-colors">
-            Delete
+            {t.crm.delete}
           </button>
           <button onClick={onClose}
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">
-            Close
+            {t.crm.close}
           </button>
         </div>
       </div>
@@ -259,6 +263,7 @@ function ContactDetailModal({ contact, onClose, onEdit, onDelete }) {
 }
 
 function ContactFormModal({ contact, companies, onClose, onSaved }) {
+  const { t } = useLang()
   const [form, setForm] = useState({
     salutation: contact?.salutation || '',
     firstName: contact?.firstName || '',
@@ -284,7 +289,7 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!form.lastName.trim()) { setError('Last name is required'); return }
+    if (!form.lastName.trim()) { setError(t.crm.lastNameRequired); return }
     setError(null)
     try {
       setLoading(true)
@@ -301,7 +306,7 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
-          <h3 className="text-xl font-bold text-gray-800">{isEdit ? 'Edit Contact' : 'Add Contact'}</h3>
+          <h3 className="text-xl font-bold text-gray-800">{isEdit ? t.crm.editContact : t.crm.addContactTitle}</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -315,7 +320,7 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
           {/* Name row */}
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Salutation</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t.crm.salutation}</label>
               <select value={form.salutation} onChange={set('salutation')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                 <option value="">—</option>
@@ -323,12 +328,12 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">First Name</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t.crm.firstName}</label>
               <input value={form.firstName} onChange={set('firstName')} placeholder="First name"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Last Name <span className="text-red-500">*</span></label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t.crm.lastName} <span className="text-red-500">*</span></label>
               <input value={form.lastName} onChange={set('lastName')} placeholder="Last name"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
             </div>
@@ -337,10 +342,10 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
           <div className="grid grid-cols-2 gap-3">
             <FormField label="Job Title" value={form.jobTitle} onChange={set('jobTitle')} placeholder="e.g. Project Manager" />
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Company</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t.crm.company}</label>
               <select value={form.companyId} onChange={set('companyId')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                <option value="">No company</option>
+                <option value="">{t.crm.noCompany}</option>
                 {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
@@ -373,19 +378,19 @@ function ContactFormModal({ contact, companies, onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Notes</label>
-            <textarea value={form.notes} onChange={set('notes')} rows="3" placeholder="Additional notes..."
+            <label className="block text-xs font-medium text-gray-600 mb-1">{t.crm.notes}</label>
+            <textarea value={form.notes} onChange={set('notes')} rows="3" placeholder={t.crm.notesPlaceholder}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
           </div>
 
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={loading}
               className="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg disabled:bg-gray-400 transition-colors">
-              {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Contact'}
+              {loading ? t.crm.saving : isEdit ? t.crm.saveChanges : t.crm.addContactBtn}
             </button>
             <button type="button" onClick={onClose}
               className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
-              Cancel
+              {t.crm.cancel}
             </button>
           </div>
         </form>
@@ -403,6 +408,7 @@ function CompaniesTab() {
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(null)
   const [editing, setEditing] = useState(null)
+  const { t } = useLang()
   const [showForm, setShowForm] = useState(false)
 
   useEffect(() => { fetchCompanies() }, [])
@@ -417,7 +423,7 @@ function CompaniesTab() {
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this company?')) return
+    if (!window.confirm(t.crm.deleteCompanyConfirm)) return
     try {
       await api.delete(`/api/companies/${id}`)
       setSelected(null)
@@ -436,7 +442,7 @@ function CompaniesTab() {
       <div className="flex items-center justify-between mb-4">
         <input
           type="text"
-          placeholder="Search companies..."
+          placeholder={t.crm.searchCompanies}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -448,24 +454,24 @@ function CompaniesTab() {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Add Company
+          {t.crm.addCompany}
         </button>
       </div>
 
       {error && <ErrorBar message={error} />}
 
       {filtered.length === 0 ? (
-        <EmptyState icon="building" text="No companies yet. Add your first company to get started." />
+        <EmptyState text={t.crm.noCompanies} />
       ) : (
         <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">City</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colCompany}</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colCity}</th>
                 <th className="text-left px-5 py-3 font-semibold text-gray-600">Phone</th>
                 <th className="text-left px-5 py-3 font-semibold text-gray-600">Email</th>
-                <th className="text-left px-5 py-3 font-semibold text-gray-600">VAT</th>
+                <th className="text-left px-5 py-3 font-semibold text-gray-600">{t.crm.colVat}</th>
                 <th className="px-5 py-3"></th>
               </tr>
             </thead>
@@ -521,6 +527,7 @@ function CompaniesTab() {
 }
 
 function CompanyDetailModal({ company, onClose, onEdit, onDelete }) {
+  const { t } = useLang()
   const address = [
     company.street && company.streetNumber ? `${company.street} ${company.streetNumber}` : company.street,
     company.postcode && company.city ? `${company.postcode} ${company.city}` : company.city,
@@ -540,26 +547,26 @@ function CompanyDetailModal({ company, onClose, onEdit, onDelete }) {
         </div>
 
         <div className="p-6 space-y-4">
-          <DetailSection label="Contact">
-            {company.email && <DetailRow label="Email" value={company.email} />}
-            {company.phone && <DetailRow label="Phone" value={company.phone} />}
-            {company.website && <DetailRow label="Website" value={company.website} />}
+          <DetailSection label={t.crm.contactSection}>
+            {company.email && <DetailRow label={t.crm.email} value={company.email} />}
+            {company.phone && <DetailRow label={t.crm.colPhone} value={company.phone} />}
+            {company.website && <DetailRow label={t.crm.website} value={company.website} />}
           </DetailSection>
 
           {address && (
-            <DetailSection label="Address">
+            <DetailSection label={t.crm.addressSection}>
               <p className="text-gray-700 text-sm">{address}</p>
             </DetailSection>
           )}
 
           {company.vatNumber && (
-            <DetailSection label="Business">
-              <DetailRow label="VAT" value={company.vatNumber} />
+            <DetailSection label={t.crm.businessSection}>
+              <DetailRow label={t.crm.colVat} value={company.vatNumber} />
             </DetailSection>
           )}
 
           {company.notes && (
-            <DetailSection label="Notes">
+            <DetailSection label={t.crm.notesSection}>
               <p className="text-gray-700 text-sm whitespace-pre-wrap">{company.notes}</p>
             </DetailSection>
           )}
@@ -567,11 +574,11 @@ function CompanyDetailModal({ company, onClose, onEdit, onDelete }) {
 
         <div className="flex gap-3 p-6 border-t">
           <button onClick={onEdit}
-            className="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors">Edit</button>
+            className="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors">{t.crm.edit}</button>
           <button onClick={onDelete}
-            className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition-colors">Delete</button>
+            className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition-colors">{t.crm.delete}</button>
           <button onClick={onClose}
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">Close</button>
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">{t.crm.close}</button>
         </div>
       </div>
     </div>
@@ -579,6 +586,7 @@ function CompanyDetailModal({ company, onClose, onEdit, onDelete }) {
 }
 
 function CompanyFormModal({ company, onClose, onSaved }) {
+  const { t } = useLang()
   const [form, setForm] = useState({
     name: company?.name || '',
     email: company?.email || '',
@@ -600,7 +608,7 @@ function CompanyFormModal({ company, onClose, onSaved }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!form.name.trim()) { setError('Company name is required'); return }
+    if (!form.name.trim()) { setError(t.crm.companyNameRequired); return }
     setError(null)
     try {
       setLoading(true)
@@ -615,7 +623,7 @@ function CompanyFormModal({ company, onClose, onSaved }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
-          <h3 className="text-xl font-bold text-gray-800">{isEdit ? 'Edit Company' : 'Add Company'}</h3>
+          <h3 className="text-xl font-bold text-gray-800">{isEdit ? t.crm.editCompany : t.crm.addCompanyTitle}</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -626,7 +634,7 @@ function CompanyFormModal({ company, onClose, onSaved }) {
         {error && <div className="mx-6 mt-4 bg-red-50 border-l-4 border-red-500 p-3 text-red-700 text-sm">{error}</div>}
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <FormField label="Company Name *" value={form.name} onChange={set('name')} placeholder="Company name" />
+          <FormField label={t.crm.companyName} value={form.name} onChange={set('name')} placeholder="Company name" />
 
           <div className="grid grid-cols-2 gap-3">
             <FormField label="Email" value={form.email} onChange={set('email')} placeholder="info@company.com" type="email" />
@@ -635,7 +643,7 @@ function CompanyFormModal({ company, onClose, onSaved }) {
 
           <div className="grid grid-cols-2 gap-3">
             <FormField label="Website" value={form.website} onChange={set('website')} placeholder="https://..." />
-            <FormField label="VAT Number" value={form.vatNumber} onChange={set('vatNumber')} placeholder="BE 0xxx.xxx.xxx" />
+            <FormField label={t.crm.vatNumber} value={form.vatNumber} onChange={set('vatNumber')} placeholder="BE 0xxx.xxx.xxx" />
           </div>
 
           <div>
@@ -654,19 +662,19 @@ function CompanyFormModal({ company, onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Notes</label>
-            <textarea value={form.notes} onChange={set('notes')} rows="3" placeholder="Additional notes..."
+            <label className="block text-xs font-medium text-gray-600 mb-1">{t.crm.notes}</label>
+            <textarea value={form.notes} onChange={set('notes')} rows="3" placeholder={t.crm.notesPlaceholder}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
           </div>
 
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={loading}
               className="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg disabled:bg-gray-400 transition-colors">
-              {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Company'}
+              {loading ? t.crm.saving : isEdit ? t.crm.saveChanges : t.crm.addCompanyBtn}
             </button>
             <button type="button" onClick={onClose}
               className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
-              Cancel
+              {t.crm.cancel}
             </button>
           </div>
         </form>

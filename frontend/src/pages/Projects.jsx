@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import ProjectCard from '../components/ProjectCard'
 import CreateProjectForm from '../components/CreateProjectForm'
 import { api } from '../utils/api'
+import { useLang } from '../contexts/LanguageContext'
 
 function Projects() {
   const navigate = useNavigate()
@@ -10,6 +11,7 @@ function Projects() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const { t } = useLang()
 
   useEffect(() => { fetchProjects() }, [])
 
@@ -45,8 +47,8 @@ function Projects() {
           </svg>
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-sm text-gray-400">Manage and organize your BIM projects</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t.nav.projects}</h1>
+          <p className="text-sm text-gray-400">{t.projects.subtitle}</p>
         </div>
       </div>
 
@@ -65,7 +67,7 @@ function Projects() {
             </div>
             <input
               type="text"
-              placeholder="Search projects by name or description..."
+              placeholder={t.projects.searchPlaceholder}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="block w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
@@ -105,16 +107,16 @@ function Projects() {
           <svg className="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
           </svg>
-          <p className="text-gray-500 font-medium">No projects yet</p>
-          <p className="text-gray-400 text-sm mt-1">Create your first project using the form above</p>
+          <p className="text-gray-500 font-medium">{t.projects.noProjects}</p>
+          <p className="text-gray-400 text-sm mt-1">{t.projects.noProjectsHint}</p>
         </div>
       )}
 
       {/* No results */}
       {!loading && !error && projects.length > 0 && filteredProjects.length === 0 && (
         <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
-          <p className="text-gray-500 font-medium">No projects found</p>
-          <p className="text-gray-400 text-sm mt-1">Try a different search term</p>
+          <p className="text-gray-500 font-medium">{t.projects.noResults}</p>
+          <p className="text-gray-400 text-sm mt-1">{t.projects.noResultsHint}</p>
         </div>
       )}
 
@@ -122,7 +124,7 @@ function Projects() {
       {!loading && !error && filteredProjects.length > 0 && (
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-            {searchQuery ? 'Results' : 'All projects'} ({filteredProjects.length})
+            {searchQuery ? t.projects.results : t.projects.allProjects} ({filteredProjects.length})
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProjects.map(project => (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLang } from '../contexts/LanguageContext'
 import { api } from '../utils/api'
 
 function Login() {
@@ -12,6 +13,7 @@ function Login() {
   })
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const { t } = useLang()
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -37,7 +39,7 @@ function Login() {
       login(data)
       navigate('/dashboard', { replace: true })
     } catch (err) {
-      setError('Invalid username or password.')
+      setError(t.login.invalidCreds)
       setLoading(false)
     }
   }
@@ -52,8 +54,8 @@ function Login() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h2>
-          <p className="text-gray-600">Sign in to your BIM Drawing App account</p>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">{t.login.welcomeBack}</h2>
+          <p className="text-gray-600">{t.login.subtitle}</p>
         </div>
 
         {/* Login Form */}
@@ -67,7 +69,7 @@ function Login() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
-                Username
+                {t.login.username}
               </label>
               <input
                 type="text"
@@ -75,7 +77,7 @@ function Login() {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                placeholder="Enter your username"
+                placeholder={t.login.usernamePlaceholder}
                 className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                 disabled={loading}
                 required
@@ -84,7 +86,7 @@ function Login() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-                Password
+                {t.login.password}
               </label>
               <input
                 type="password"
@@ -92,7 +94,7 @@ function Login() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                placeholder={t.login.passwordPlaceholder}
                 className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                 disabled={loading}
                 required
@@ -105,7 +107,7 @@ function Login() {
                   type="checkbox"
                   className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
                 />
-                <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                <span className="ml-2 text-sm text-gray-600">{t.login.rememberMe}</span>
               </label>
             </div>
 
@@ -120,10 +122,10 @@ function Login() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Signing in...
+                  {t.login.signingIn}
                 </span>
               ) : (
-                'Sign In'
+                t.login.signIn
               )}
             </button>
           </form>
